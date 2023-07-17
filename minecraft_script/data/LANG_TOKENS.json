@@ -1,0 +1,11 @@
+{
+  "+": "TT_PLUS",
+  "-": "TT_MINUS",
+  "*": "TT_MULTIPLY",
+  "/": "TT_DIVIDE",
+
+  "(": "TT_LEFT_PARENTHESES",
+  ")": "TT_RIGHT_PARENTHESES",
+
+  "int": "TT_INTEGER"
+}
