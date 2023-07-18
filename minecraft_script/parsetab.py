@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'DIVIDE LEFT_PARENTHESIS MINUS MULTIPLY NUMBER PLUS RIGHT_PARENTHESISexpression : expression PLUS expressionexpression : expression MINUS expressionexpression : expression MULTIPLY expressionexpression : expression DIVIDE expressionexpression : LEFT_PARENTHESIS expression RIGHT_PARENTHESISexpression : NUMBER'
+_lr_signature = "DIVIDE ELSE FOR IF LEFT_PARENTHESIS LOG MINUS MULTIPLY NAME NUMBER PLUS RIGHT_PARENTHESIS VAR_DEFINE WHILEexpression : expression PLUS expressionexpression : expression MINUS expressionexpression : expression MULTIPLY expressionexpression : expression DIVIDE expressionexpression : LEFT_PARENTHESIS expression RIGHT_PARENTHESISexpression : NUMBERexpression : NAMEstatement : expressionstatement : VAR_DEFINE NAME '=' expressionstatement : LOG expression"
     
-_lr_action_items = {'LEFT_PARENTHESIS':([0,2,4,5,6,7,],[2,2,2,2,2,2,]),'NUMBER':([0,2,4,5,6,7,],[3,3,3,3,3,3,]),'$end':([1,3,9,10,11,12,13,],[0,-6,-1,-2,-3,-4,-5,]),'PLUS':([1,3,8,9,10,11,12,13,],[4,-6,4,4,4,4,4,-5,]),'MINUS':([1,3,8,9,10,11,12,13,],[5,-6,5,5,5,5,5,-5,]),'MULTIPLY':([1,3,8,9,10,11,12,13,],[6,-6,6,6,6,6,6,-5,]),'DIVIDE':([1,3,8,9,10,11,12,13,],[7,-6,7,7,7,7,7,-5,]),'RIGHT_PARENTHESIS':([3,8,9,10,11,12,13,],[-6,13,-1,-2,-3,-4,-5,]),}
+_lr_action_items = {'LEFT_PARENTHESIS':([0,2,5,6,7,8,],[2,2,2,2,2,2,]),'NUMBER':([0,2,5,6,7,8,],[3,3,3,3,3,3,]),'NAME':([0,2,5,6,7,8,],[4,4,4,4,4,4,]),'$end':([1,3,4,10,11,12,13,14,],[0,-6,-7,-1,-2,-3,-4,-5,]),'PLUS':([1,3,4,9,10,11,12,13,14,],[5,-6,-7,5,5,5,5,5,-5,]),'MINUS':([1,3,4,9,10,11,12,13,14,],[6,-6,-7,6,6,6,6,6,-5,]),'MULTIPLY':([1,3,4,9,10,11,12,13,14,],[7,-6,-7,7,7,7,7,7,-5,]),'DIVIDE':([1,3,4,9,10,11,12,13,14,],[8,-6,-7,8,8,8,8,8,-5,]),'RIGHT_PARENTHESIS':([3,4,9,10,11,12,13,14,],[-6,-7,14,-1,-2,-3,-4,-5,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'expression':([0,2,4,5,6,7,],[1,8,9,10,11,12,]),}
+_lr_goto_items = {'expression':([0,2,5,6,7,8,],[1,9,10,11,12,13,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,10 +27,14 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> expression","S'",1,None,None,None),
-  ('expression -> expression PLUS expression','expression',3,'p_sum','parser.py',6),
-  ('expression -> expression MINUS expression','expression',3,'p_subtract','parser.py',11),
-  ('expression -> expression MULTIPLY expression','expression',3,'p_multiply','parser.py',16),
-  ('expression -> expression DIVIDE expression','expression',3,'p_divide','parser.py',21),
-  ('expression -> LEFT_PARENTHESIS expression RIGHT_PARENTHESIS','expression',3,'p_expression_group','parser.py',30),
-  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',35),
+  ('expression -> expression PLUS expression','expression',3,'p_sum','parser.py',10),
+  ('expression -> expression MINUS expression','expression',3,'p_subtract','parser.py',15),
+  ('expression -> expression MULTIPLY expression','expression',3,'p_multiply','parser.py',20),
+  ('expression -> expression DIVIDE expression','expression',3,'p_divide','parser.py',25),
+  ('expression -> LEFT_PARENTHESIS expression RIGHT_PARENTHESIS','expression',3,'p_expression_group','parser.py',34),
+  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',39),
+  ('expression -> NAME','expression',1,'p_expression_name','parser.py',44),
+  ('statement -> expression','statement',1,'p_statement_expression','parser.py',56),
+  ('statement -> VAR_DEFINE NAME = expression','statement',4,'p_statement_var_define','parser.py',61),
+  ('statement -> LOG expression','statement',2,'p_statement_log','parser.py',66),
 ]

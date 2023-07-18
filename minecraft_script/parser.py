@@ -1,3 +1,7 @@
+# dictionary to store variables
+names = {}
+
+
 ######################################################
 #                  BINARY OPERATIONS                 #
 ######################################################
@@ -27,13 +31,40 @@ def p_divide(t):
 ######################################################
 
 def p_expression_group(t):
-    'expression : LEFT_PARENTHESIS expression RIGHT_PARENTHESIS'
+    "expression : LEFT_PARENTHESIS expression RIGHT_PARENTHESIS"
     t[0] = t[2]
 
 
 def p_expression_number(t):
-    'expression : NUMBER'
+    "expression : NUMBER"
     t[0] = t[1]
+
+
+def p_expression_name(t):
+    "expression : NAME"
+    t[0] = names.get(t[1])
+    if t[0] is None:
+        print(f'Undefined name {t[1]}')
+        t[0] = 0
+
+
+######################################################
+#                       VARIABLES                    #
+######################################################
+
+def p_statement_expression(t):
+    "statement : expression"
+    print(t[1])
+
+
+def p_statement_var_define(t):
+    "statement : VAR_DEFINE NAME '=' expression"
+    names[t[2]] = t[4]
+
+
+def p_statement_log(t):
+    "statement : LOG expression"
+    print(f'[ * ] {t[2]}')
 
 
 ######################################################
@@ -43,4 +74,4 @@ def p_expression_number(t):
 def p_error(t):
     if t is None:  # lexer error
         return
-    print(f"Syntax Error: {t.value!r}")
+    print(f"Syntax Error: {t.value !r} at line {t.lineno}, position {t.lexpos}")

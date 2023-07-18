@@ -2,12 +2,11 @@
 ### To do:
 - [ ] Make build function to parse to mcfunction
 - [ ] make args better
-	- [ ] build \[>\] \[filename\]:
-		- "build" : prints output
-		- "build >": outputs to out.mcfunction
-		- "build > filename" outputs to filename.mcfunction (auto adds .mcfunction if no extension)
+	- [ ] build
+
+	- [ ] help
 		
-	- [ ] run \*\[filename\]
+	- [x] run \*\[filename\]
 		- "run" : locates .mcs files and asks to run (prints to console)
 		- "run \*filename" : runs files added
 
