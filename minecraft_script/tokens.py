@@ -1,10 +1,12 @@
+import ply.lex as lex
+
 reserved = {
     "var": "VAR_DEFINE",
     "log": "LOG",
-    "if": "IF",
-    "else": "ELSE",
-    "while": "WHILE",
-    "for": "FOR",
+    # "if": "IF",
+    # "else": "ELSE",
+    # "while": "WHILE",
+    # "for": "FOR",
 }
 
 tokens = [
@@ -12,12 +14,11 @@ tokens = [
     'PLUS', 'MINUS',
     'MULTIPLY', 'DIVIDE',
     'LEFT_PARENTHESIS', 'RIGHT_PARENTHESIS',
-    'NAME',
+    'EQUALS', 'NAME',
 ]
 tokens += list(reserved.values())
 
-literals = ['=']
-
+t_EQUALS = r'='
 t_PLUS = r'\+'
 t_MINUS = r'\-'
 t_MULTIPLY = r'\*'

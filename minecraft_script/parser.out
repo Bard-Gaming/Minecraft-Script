@@ -1,12 +1,5 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    ELSE
-    FOR
-    IF
-    WHILE
-
 Grammar
 
 Rule 0     S' -> expression
@@ -17,27 +10,23 @@ Rule 4     expression -> expression DIVIDE expression
 Rule 5     expression -> LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
 Rule 6     expression -> NUMBER
 Rule 7     expression -> NAME
-Rule 8     statement -> expression
-Rule 9     statement -> VAR_DEFINE NAME = expression
-Rule 10    statement -> LOG expression
+Rule 8     statement -> VAR_DEFINE NAME EQUALS expression
+Rule 9     expression -> LOG expression
+Rule 10    statement -> expression
 
 Terminals, with rules where they appear
 
-=                    : 9
 DIVIDE               : 4
-ELSE                 : 
-FOR                  : 
-IF                   : 
+EQUALS               : 8
 LEFT_PARENTHESIS     : 5
-LOG                  : 10
+LOG                  : 9
 MINUS                : 2
 MULTIPLY             : 3
-NAME                 : 7 9
+NAME                 : 7 8
 NUMBER               : 6
 PLUS                 : 1
 RIGHT_PARENTHESIS    : 5
-VAR_DEFINE           : 9
-WHILE                : 
+VAR_DEFINE           : 8
 error                : 
 
 Nonterminals, with rules where they appear
@@ -57,10 +46,12 @@ state 0
     (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
     (6) expression -> . NUMBER
     (7) expression -> . NAME
+    (9) expression -> . LOG expression
 
     LEFT_PARENTHESIS shift and go to state 2
     NUMBER          shift and go to state 3
     NAME            shift and go to state 4
+    LOG             shift and go to state 5
 
     expression                     shift and go to state 1
 
@@ -72,10 +63,10 @@ state 1
     (3) expression -> expression . MULTIPLY expression
     (4) expression -> expression . DIVIDE expression
 
-    PLUS            shift and go to state 5
-    MINUS           shift and go to state 6
-    MULTIPLY        shift and go to state 7
-    DIVIDE          shift and go to state 8
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
 
 
 state 2
@@ -88,12 +79,14 @@ state 2
     (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
     (6) expression -> . NUMBER
     (7) expression -> . NAME
+    (9) expression -> . LOG expression
 
     LEFT_PARENTHESIS shift and go to state 2
     NUMBER          shift and go to state 3
     NAME            shift and go to state 4
+    LOG             shift and go to state 5
 
-    expression                     shift and go to state 9
+    expression                     shift and go to state 10
 
 state 3
 
@@ -121,6 +114,25 @@ state 4
 
 state 5
 
+    (9) expression -> LOG . expression
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression MULTIPLY expression
+    (4) expression -> . expression DIVIDE expression
+    (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
+    (6) expression -> . NUMBER
+    (7) expression -> . NAME
+    (9) expression -> . LOG expression
+
+    LEFT_PARENTHESIS shift and go to state 2
+    NUMBER          shift and go to state 3
+    NAME            shift and go to state 4
+    LOG             shift and go to state 5
+
+    expression                     shift and go to state 11
+
+state 6
+
     (1) expression -> expression PLUS . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
@@ -129,14 +141,16 @@ state 5
     (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
     (6) expression -> . NUMBER
     (7) expression -> . NAME
+    (9) expression -> . LOG expression
 
     LEFT_PARENTHESIS shift and go to state 2
     NUMBER          shift and go to state 3
     NAME            shift and go to state 4
+    LOG             shift and go to state 5
 
-    expression                     shift and go to state 10
+    expression                     shift and go to state 12
 
-state 6
+state 7
 
     (2) expression -> expression MINUS . expression
     (1) expression -> . expression PLUS expression
@@ -146,14 +160,16 @@ state 6
     (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
     (6) expression -> . NUMBER
     (7) expression -> . NAME
+    (9) expression -> . LOG expression
 
     LEFT_PARENTHESIS shift and go to state 2
     NUMBER          shift and go to state 3
     NAME            shift and go to state 4
+    LOG             shift and go to state 5
 
-    expression                     shift and go to state 11
+    expression                     shift and go to state 13
 
-state 7
+state 8
 
     (3) expression -> expression MULTIPLY . expression
     (1) expression -> . expression PLUS expression
@@ -163,14 +179,16 @@ state 7
     (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
     (6) expression -> . NUMBER
     (7) expression -> . NAME
+    (9) expression -> . LOG expression
 
     LEFT_PARENTHESIS shift and go to state 2
     NUMBER          shift and go to state 3
     NAME            shift and go to state 4
+    LOG             shift and go to state 5
 
-    expression                     shift and go to state 12
+    expression                     shift and go to state 14
 
-state 8
+state 9
 
     (4) expression -> expression DIVIDE . expression
     (1) expression -> . expression PLUS expression
@@ -180,14 +198,16 @@ state 8
     (5) expression -> . LEFT_PARENTHESIS expression RIGHT_PARENTHESIS
     (6) expression -> . NUMBER
     (7) expression -> . NAME
+    (9) expression -> . LOG expression
 
     LEFT_PARENTHESIS shift and go to state 2
     NUMBER          shift and go to state 3
     NAME            shift and go to state 4
+    LOG             shift and go to state 5
 
-    expression                     shift and go to state 13
+    expression                     shift and go to state 15
 
-state 9
+state 10
 
     (5) expression -> LEFT_PARENTHESIS expression . RIGHT_PARENTHESIS
     (1) expression -> expression . PLUS expression
@@ -195,14 +215,39 @@ state 9
     (3) expression -> expression . MULTIPLY expression
     (4) expression -> expression . DIVIDE expression
 
-    RIGHT_PARENTHESIS shift and go to state 14
-    PLUS            shift and go to state 5
-    MINUS           shift and go to state 6
-    MULTIPLY        shift and go to state 7
-    DIVIDE          shift and go to state 8
+    RIGHT_PARENTHESIS shift and go to state 16
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
 
 
-state 10
+state 11
+
+    (9) expression -> LOG expression .
+    (1) expression -> expression . PLUS expression
+    (2) expression -> expression . MINUS expression
+    (3) expression -> expression . MULTIPLY expression
+    (4) expression -> expression . DIVIDE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+    $end            reduce using rule 9 (expression -> LOG expression .)
+    RIGHT_PARENTHESIS reduce using rule 9 (expression -> LOG expression .)
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
+
+  ! PLUS            [ reduce using rule 9 (expression -> LOG expression .) ]
+  ! MINUS           [ reduce using rule 9 (expression -> LOG expression .) ]
+  ! MULTIPLY        [ reduce using rule 9 (expression -> LOG expression .) ]
+  ! DIVIDE          [ reduce using rule 9 (expression -> LOG expression .) ]
+
+
+state 12
 
     (1) expression -> expression PLUS expression .
     (1) expression -> expression . PLUS expression
@@ -216,10 +261,10 @@ state 10
   ! shift/reduce conflict for DIVIDE resolved as shift
     $end            reduce using rule 1 (expression -> expression PLUS expression .)
     RIGHT_PARENTHESIS reduce using rule 1 (expression -> expression PLUS expression .)
-    PLUS            shift and go to state 5
-    MINUS           shift and go to state 6
-    MULTIPLY        shift and go to state 7
-    DIVIDE          shift and go to state 8
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
 
   ! PLUS            [ reduce using rule 1 (expression -> expression PLUS expression .) ]
   ! MINUS           [ reduce using rule 1 (expression -> expression PLUS expression .) ]
@@ -227,7 +272,7 @@ state 10
   ! DIVIDE          [ reduce using rule 1 (expression -> expression PLUS expression .) ]
 
 
-state 11
+state 13
 
     (2) expression -> expression MINUS expression .
     (1) expression -> expression . PLUS expression
@@ -241,10 +286,10 @@ state 11
   ! shift/reduce conflict for DIVIDE resolved as shift
     $end            reduce using rule 2 (expression -> expression MINUS expression .)
     RIGHT_PARENTHESIS reduce using rule 2 (expression -> expression MINUS expression .)
-    PLUS            shift and go to state 5
-    MINUS           shift and go to state 6
-    MULTIPLY        shift and go to state 7
-    DIVIDE          shift and go to state 8
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
 
   ! PLUS            [ reduce using rule 2 (expression -> expression MINUS expression .) ]
   ! MINUS           [ reduce using rule 2 (expression -> expression MINUS expression .) ]
@@ -252,7 +297,7 @@ state 11
   ! DIVIDE          [ reduce using rule 2 (expression -> expression MINUS expression .) ]
 
 
-state 12
+state 14
 
     (3) expression -> expression MULTIPLY expression .
     (1) expression -> expression . PLUS expression
@@ -266,10 +311,10 @@ state 12
   ! shift/reduce conflict for DIVIDE resolved as shift
     $end            reduce using rule 3 (expression -> expression MULTIPLY expression .)
     RIGHT_PARENTHESIS reduce using rule 3 (expression -> expression MULTIPLY expression .)
-    PLUS            shift and go to state 5
-    MINUS           shift and go to state 6
-    MULTIPLY        shift and go to state 7
-    DIVIDE          shift and go to state 8
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
 
   ! PLUS            [ reduce using rule 3 (expression -> expression MULTIPLY expression .) ]
   ! MINUS           [ reduce using rule 3 (expression -> expression MULTIPLY expression .) ]
@@ -277,7 +322,7 @@ state 12
   ! DIVIDE          [ reduce using rule 3 (expression -> expression MULTIPLY expression .) ]
 
 
-state 13
+state 15
 
     (4) expression -> expression DIVIDE expression .
     (1) expression -> expression . PLUS expression
@@ -291,10 +336,10 @@ state 13
   ! shift/reduce conflict for DIVIDE resolved as shift
     $end            reduce using rule 4 (expression -> expression DIVIDE expression .)
     RIGHT_PARENTHESIS reduce using rule 4 (expression -> expression DIVIDE expression .)
-    PLUS            shift and go to state 5
-    MINUS           shift and go to state 6
-    MULTIPLY        shift and go to state 7
-    DIVIDE          shift and go to state 8
+    PLUS            shift and go to state 6
+    MINUS           shift and go to state 7
+    MULTIPLY        shift and go to state 8
+    DIVIDE          shift and go to state 9
 
   ! PLUS            [ reduce using rule 4 (expression -> expression DIVIDE expression .) ]
   ! MINUS           [ reduce using rule 4 (expression -> expression DIVIDE expression .) ]
@@ -302,7 +347,7 @@ state 13
   ! DIVIDE          [ reduce using rule 4 (expression -> expression DIVIDE expression .) ]
 
 
-state 14
+state 16
 
     (5) expression -> LEFT_PARENTHESIS expression RIGHT_PARENTHESIS .
 
@@ -316,10 +361,6 @@ state 14
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for PLUS in state 10 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 10 resolved as shift
-WARNING: shift/reduce conflict for MULTIPLY in state 10 resolved as shift
-WARNING: shift/reduce conflict for DIVIDE in state 10 resolved as shift
 WARNING: shift/reduce conflict for PLUS in state 11 resolved as shift
 WARNING: shift/reduce conflict for MINUS in state 11 resolved as shift
 WARNING: shift/reduce conflict for MULTIPLY in state 11 resolved as shift
@@ -332,3 +373,11 @@ WARNING: shift/reduce conflict for PLUS in state 13 resolved as shift
 WARNING: shift/reduce conflict for MINUS in state 13 resolved as shift
 WARNING: shift/reduce conflict for MULTIPLY in state 13 resolved as shift
 WARNING: shift/reduce conflict for DIVIDE in state 13 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 14 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 14 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 14 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 14 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 15 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 15 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 15 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 15 resolved as shift

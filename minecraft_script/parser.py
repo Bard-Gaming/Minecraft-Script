@@ -52,19 +52,20 @@ def p_expression_name(t):
 #                       VARIABLES                    #
 ######################################################
 
-def p_statement_expression(t):
-    "statement : expression"
-    print(t[1])
-
-
 def p_statement_var_define(t):
-    "statement : VAR_DEFINE NAME '=' expression"
+    "statement : VAR_DEFINE NAME EQUALS expression"
     names[t[2]] = t[4]
+    t[0] = t[4]
 
 
 def p_statement_log(t):
-    "statement : LOG expression"
+    "expression : LOG expression"
     print(f'[ * ] {t[2]}')
+
+
+def p_statement_expression(t):
+    "statement : expression"
+    t[0] = t[1]
 
 
 ######################################################
