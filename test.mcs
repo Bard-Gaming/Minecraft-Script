@@ -1,2 +1,2 @@
-log 5 + 5
-var hello = 5
+var x = 5
+log x * 2

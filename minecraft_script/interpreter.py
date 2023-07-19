@@ -1,10 +1,11 @@
-from ply import lex, yacc
+import ply.lex as lex
+import ply.yacc as yacc
 from .tokens import *
 from .parser import *
 
 lexer = lex.lex()
 parser = yacc.yacc()
 
-if __name__ == "__main__":
-    inp = '5 + 5\n+1'
-    print(parser.parse(inp))
+
+def parse_line(line: str):
+    yacc.parse(line)

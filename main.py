@@ -1,4 +1,3 @@
-from minecraft_script import parse
+from minecraft_script import parse_file
 
-with open('test.mcs', 'rt') as file:
-    parse(file.read())
+parse_file('test')
