@@ -1,10 +1,11 @@
-// Consts:
-const x = 5
-logtype x
-log x
+// Constants:
+const x = 5; const y = 7;
+logtype y;
+logtype x;
+log x;
 
 // Vars:
-var y = 10
-logtype y
-y = (10 * (2 + x))/2
-log y
+var y = 10;
+logtype y;
+y = (10 * (2 + x))/2;
+log y;

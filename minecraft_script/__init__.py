@@ -1,11 +1,6 @@
-from .interpreter import parse_line
+from .interpreter import parse_text
 
 version = "0.1.3"
-
-
-def parse_text(text: str):
-    for line in text.split('\n'):
-        parse_line(line)
 
 
 def parse_file(filename: str):
