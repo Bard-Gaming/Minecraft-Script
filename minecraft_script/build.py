@@ -1,5 +1,13 @@
 from random import randint
 
+"""
+variable dict structure:
+{
+    var_name: {"type": var_type, "value": var_value},
+    var2_name: {"type": var2_type, "value": var2_value},
+    ...
+}
+"""
 
 class BuildFile:
     def __init__(self, filename: str, variables: dict, *, debug_mode: bool = True):
@@ -24,16 +32,9 @@ class VariableScoreboard:
         self.parse_result += f'\n{content}'
 
     def parse_variables(self):
-        for variable, value in self.variables.items():
-            variable = f'{self.dm_char}{variable}'
-            command = f"scoreboard players set {variable} {self.scoreboard_id} {value}"
+        for variable_name, value in self.variables.items():
+            variable_name = f'{self.dm_char}{variable_name}'
+            value = value['value']
+            command = f"scoreboard players set {variable_name} {self.scoreboard_id} {value}"
             self.parse_add_line(command)
         return f'{self.parse_result}\n'
-
-if __name__ == '__main__':
-    test = {
-        "test": 42,
-        "x": 123
-    }
-
-    BuildFile('bob', test)
