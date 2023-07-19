@@ -31,6 +31,9 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
 
+def t_COMMENT(t):
+    r'\/\/.*'
+    pass
 
 def t_error(t):
     print(f"Illegal character {t.value[0]}")
