@@ -14,10 +14,9 @@ def parse_file(filename: str):
     for line in file_contents:
         parse_line(line)
 
-    print('\nProcess finished with exit code 0')
-
 
 def run_file_terminal(filename: str):
     print('\n#--------------------------------OUTPUT---------------------------------#\n')
     parse_file(filename)
+    print('\nEnd of process')
     print('\n#-----------------------------------------------------------------------#\n')

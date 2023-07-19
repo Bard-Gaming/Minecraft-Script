@@ -1,0 +1,10 @@
+// Consts:
+const x = 5
+logtype x
+log x
+
+// Vars:
+var y = 10
+logtype y
+y = (10 * (2 + x))/2
+log y

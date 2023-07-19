@@ -4,36 +4,42 @@ Grammar
 
 Rule 0     S' -> statement
 Rule 1     statement -> VAR_DEFINE NAME = expression
-Rule 2     statement -> VAR_DEFINE NAME
-Rule 3     statement -> NAME = expression
-Rule 4     statement -> LOG expression
-Rule 5     statement -> expression
-Rule 6     expression -> expression + expression
-Rule 7     expression -> expression - expression
-Rule 8     expression -> expression * expression
-Rule 9     expression -> expression / expression
-Rule 10    expression -> ( expression )
-Rule 11    expression -> NUMBER
-Rule 12    expression -> NAME
+Rule 2     statement -> CONST_DEFINE NAME = expression
+Rule 3     statement -> VAR_DEFINE NAME
+Rule 4     statement -> CONST_DEFINE NAME
+Rule 5     statement -> NAME = expression
+Rule 6     statement -> LOG expression
+Rule 7     statement -> LOGTYPE NAME
+Rule 8     statement -> LOGTYPE NUMBER
+Rule 9     statement -> expression
+Rule 10    expression -> expression + expression
+Rule 11    expression -> expression - expression
+Rule 12    expression -> expression * expression
+Rule 13    expression -> expression / expression
+Rule 14    expression -> ( expression )
+Rule 15    expression -> NUMBER
+Rule 16    expression -> NAME
 
 Terminals, with rules where they appear
 
-(                    : 10
-)                    : 10
-*                    : 8
-+                    : 6
--                    : 7
-/                    : 9
-=                    : 1 3
-LOG                  : 4
-NAME                 : 1 2 3 12
-NUMBER               : 11
-VAR_DEFINE           : 1 2
+(                    : 14
+)                    : 14
+*                    : 12
++                    : 10
+-                    : 11
+/                    : 13
+=                    : 1 2 5
+CONST_DEFINE         : 2 4
+LOG                  : 6
+LOGTYPE              : 7 8
+NAME                 : 1 2 3 4 5 7 16
+NUMBER               : 8 15
+VAR_DEFINE           : 1 3
 error                : 
 
 Nonterminals, with rules where they appear
 
-expression           : 1 3 4 5 6 6 7 7 8 8 9 9 10
+expression           : 1 2 5 6 9 10 10 11 11 12 12 13 13 14
 statement            : 0
 
 Parsing method: LALR
@@ -42,23 +48,29 @@ state 0
 
     (0) S' -> . statement
     (1) statement -> . VAR_DEFINE NAME = expression
-    (2) statement -> . VAR_DEFINE NAME
-    (3) statement -> . NAME = expression
-    (4) statement -> . LOG expression
-    (5) statement -> . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
+    (2) statement -> . CONST_DEFINE NAME = expression
+    (3) statement -> . VAR_DEFINE NAME
+    (4) statement -> . CONST_DEFINE NAME
+    (5) statement -> . NAME = expression
+    (6) statement -> . LOG expression
+    (7) statement -> . LOGTYPE NAME
+    (8) statement -> . LOGTYPE NUMBER
+    (9) statement -> . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
     VAR_DEFINE      shift and go to state 2
+    CONST_DEFINE    shift and go to state 5
     NAME            shift and go to state 3
-    LOG             shift and go to state 5
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
+    LOG             shift and go to state 6
+    LOGTYPE         shift and go to state 7
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
 
     statement                      shift and go to state 1
     expression                     shift and go to state 4
@@ -72,360 +84,432 @@ state 1
 state 2
 
     (1) statement -> VAR_DEFINE . NAME = expression
-    (2) statement -> VAR_DEFINE . NAME
+    (3) statement -> VAR_DEFINE . NAME
 
-    NAME            shift and go to state 8
+    NAME            shift and go to state 10
 
 
 state 3
 
-    (3) statement -> NAME . = expression
-    (12) expression -> NAME .
+    (5) statement -> NAME . = expression
+    (16) expression -> NAME .
 
-    =               shift and go to state 9
-    +               reduce using rule 12 (expression -> NAME .)
-    -               reduce using rule 12 (expression -> NAME .)
-    *               reduce using rule 12 (expression -> NAME .)
-    /               reduce using rule 12 (expression -> NAME .)
-    $end            reduce using rule 12 (expression -> NAME .)
+    =               shift and go to state 11
+    +               reduce using rule 16 (expression -> NAME .)
+    -               reduce using rule 16 (expression -> NAME .)
+    *               reduce using rule 16 (expression -> NAME .)
+    /               reduce using rule 16 (expression -> NAME .)
+    $end            reduce using rule 16 (expression -> NAME .)
 
 
 state 4
 
-    (5) statement -> expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (9) statement -> expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
 
-    $end            reduce using rule 5 (statement -> expression .)
-    +               shift and go to state 10
-    -               shift and go to state 11
-    *               shift and go to state 12
-    /               shift and go to state 13
+    $end            reduce using rule 9 (statement -> expression .)
+    +               shift and go to state 12
+    -               shift and go to state 13
+    *               shift and go to state 14
+    /               shift and go to state 15
 
 
 state 5
 
-    (4) statement -> LOG . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
+    (2) statement -> CONST_DEFINE . NAME = expression
+    (4) statement -> CONST_DEFINE . NAME
 
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
+    NAME            shift and go to state 16
 
-    expression                     shift and go to state 14
 
 state 6
 
-    (10) expression -> ( . expression )
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
+    (6) statement -> LOG . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
 
-    expression                     shift and go to state 16
+    expression                     shift and go to state 17
 
 state 7
 
-    (11) expression -> NUMBER .
+    (7) statement -> LOGTYPE . NAME
+    (8) statement -> LOGTYPE . NUMBER
 
-    +               reduce using rule 11 (expression -> NUMBER .)
-    -               reduce using rule 11 (expression -> NUMBER .)
-    *               reduce using rule 11 (expression -> NUMBER .)
-    /               reduce using rule 11 (expression -> NUMBER .)
-    $end            reduce using rule 11 (expression -> NUMBER .)
-    )               reduce using rule 11 (expression -> NUMBER .)
+    NAME            shift and go to state 19
+    NUMBER          shift and go to state 20
 
 
 state 8
 
-    (1) statement -> VAR_DEFINE NAME . = expression
-    (2) statement -> VAR_DEFINE NAME .
+    (15) expression -> NUMBER .
 
-    =               shift and go to state 17
-    $end            reduce using rule 2 (statement -> VAR_DEFINE NAME .)
+    +               reduce using rule 15 (expression -> NUMBER .)
+    -               reduce using rule 15 (expression -> NUMBER .)
+    *               reduce using rule 15 (expression -> NUMBER .)
+    /               reduce using rule 15 (expression -> NUMBER .)
+    $end            reduce using rule 15 (expression -> NUMBER .)
+    )               reduce using rule 15 (expression -> NUMBER .)
 
 
 state 9
 
-    (3) statement -> NAME = . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
+    (14) expression -> ( . expression )
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
-
-    expression                     shift and go to state 18
-
-state 10
-
-    (6) expression -> expression + . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
-
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
-
-    expression                     shift and go to state 19
-
-state 11
-
-    (7) expression -> expression - . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
-
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
-
-    expression                     shift and go to state 20
-
-state 12
-
-    (8) expression -> expression * . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
-
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
 
     expression                     shift and go to state 21
 
+state 10
+
+    (1) statement -> VAR_DEFINE NAME . = expression
+    (3) statement -> VAR_DEFINE NAME .
+
+    =               shift and go to state 22
+    $end            reduce using rule 3 (statement -> VAR_DEFINE NAME .)
+
+
+state 11
+
+    (5) statement -> NAME = . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
+
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
+
+    expression                     shift and go to state 23
+
+state 12
+
+    (10) expression -> expression + . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
+
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
+
+    expression                     shift and go to state 24
+
 state 13
 
-    (9) expression -> expression / . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
+    (11) expression -> expression - . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
 
-    expression                     shift and go to state 22
+    expression                     shift and go to state 25
 
 state 14
 
-    (4) statement -> LOG expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (12) expression -> expression * . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
-    $end            reduce using rule 4 (statement -> LOG expression .)
-    +               shift and go to state 10
-    -               shift and go to state 11
-    *               shift and go to state 12
-    /               shift and go to state 13
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
 
+    expression                     shift and go to state 26
 
 state 15
 
-    (12) expression -> NAME .
+    (13) expression -> expression / . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
-    +               reduce using rule 12 (expression -> NAME .)
-    -               reduce using rule 12 (expression -> NAME .)
-    *               reduce using rule 12 (expression -> NAME .)
-    /               reduce using rule 12 (expression -> NAME .)
-    $end            reduce using rule 12 (expression -> NAME .)
-    )               reduce using rule 12 (expression -> NAME .)
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
 
+    expression                     shift and go to state 27
 
 state 16
 
-    (10) expression -> ( expression . )
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (2) statement -> CONST_DEFINE NAME . = expression
+    (4) statement -> CONST_DEFINE NAME .
 
-    )               shift and go to state 23
-    +               shift and go to state 10
-    -               shift and go to state 11
-    *               shift and go to state 12
-    /               shift and go to state 13
+    =               shift and go to state 28
+    $end            reduce using rule 4 (statement -> CONST_DEFINE NAME .)
 
 
 state 17
 
-    (1) statement -> VAR_DEFINE NAME = . expression
-    (6) expression -> . expression + expression
-    (7) expression -> . expression - expression
-    (8) expression -> . expression * expression
-    (9) expression -> . expression / expression
-    (10) expression -> . ( expression )
-    (11) expression -> . NUMBER
-    (12) expression -> . NAME
+    (6) statement -> LOG expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
 
-    (               shift and go to state 6
-    NUMBER          shift and go to state 7
-    NAME            shift and go to state 15
+    $end            reduce using rule 6 (statement -> LOG expression .)
+    +               shift and go to state 12
+    -               shift and go to state 13
+    *               shift and go to state 14
+    /               shift and go to state 15
 
-    expression                     shift and go to state 24
 
 state 18
 
-    (3) statement -> NAME = expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (16) expression -> NAME .
 
-    $end            reduce using rule 3 (statement -> NAME = expression .)
-    +               shift and go to state 10
-    -               shift and go to state 11
-    *               shift and go to state 12
-    /               shift and go to state 13
+    +               reduce using rule 16 (expression -> NAME .)
+    -               reduce using rule 16 (expression -> NAME .)
+    *               reduce using rule 16 (expression -> NAME .)
+    /               reduce using rule 16 (expression -> NAME .)
+    $end            reduce using rule 16 (expression -> NAME .)
+    )               reduce using rule 16 (expression -> NAME .)
 
 
 state 19
 
-    (6) expression -> expression + expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (7) statement -> LOGTYPE NAME .
 
-    +               reduce using rule 6 (expression -> expression + expression .)
-    -               reduce using rule 6 (expression -> expression + expression .)
-    $end            reduce using rule 6 (expression -> expression + expression .)
-    )               reduce using rule 6 (expression -> expression + expression .)
-    *               shift and go to state 12
-    /               shift and go to state 13
-
-  ! *               [ reduce using rule 6 (expression -> expression + expression .) ]
-  ! /               [ reduce using rule 6 (expression -> expression + expression .) ]
-  ! +               [ shift and go to state 10 ]
-  ! -               [ shift and go to state 11 ]
+    $end            reduce using rule 7 (statement -> LOGTYPE NAME .)
 
 
 state 20
 
-    (7) expression -> expression - expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (8) statement -> LOGTYPE NUMBER .
 
-    +               reduce using rule 7 (expression -> expression - expression .)
-    -               reduce using rule 7 (expression -> expression - expression .)
-    $end            reduce using rule 7 (expression -> expression - expression .)
-    )               reduce using rule 7 (expression -> expression - expression .)
-    *               shift and go to state 12
-    /               shift and go to state 13
-
-  ! *               [ reduce using rule 7 (expression -> expression - expression .) ]
-  ! /               [ reduce using rule 7 (expression -> expression - expression .) ]
-  ! +               [ shift and go to state 10 ]
-  ! -               [ shift and go to state 11 ]
+    $end            reduce using rule 8 (statement -> LOGTYPE NUMBER .)
 
 
 state 21
 
-    (8) expression -> expression * expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (14) expression -> ( expression . )
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
 
-    +               reduce using rule 8 (expression -> expression * expression .)
-    -               reduce using rule 8 (expression -> expression * expression .)
-    *               reduce using rule 8 (expression -> expression * expression .)
-    /               reduce using rule 8 (expression -> expression * expression .)
-    $end            reduce using rule 8 (expression -> expression * expression .)
-    )               reduce using rule 8 (expression -> expression * expression .)
-
-  ! +               [ shift and go to state 10 ]
-  ! -               [ shift and go to state 11 ]
-  ! *               [ shift and go to state 12 ]
-  ! /               [ shift and go to state 13 ]
+    )               shift and go to state 29
+    +               shift and go to state 12
+    -               shift and go to state 13
+    *               shift and go to state 14
+    /               shift and go to state 15
 
 
 state 22
 
-    (9) expression -> expression / expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (1) statement -> VAR_DEFINE NAME = . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
 
-    +               reduce using rule 9 (expression -> expression / expression .)
-    -               reduce using rule 9 (expression -> expression / expression .)
-    *               reduce using rule 9 (expression -> expression / expression .)
-    /               reduce using rule 9 (expression -> expression / expression .)
-    $end            reduce using rule 9 (expression -> expression / expression .)
-    )               reduce using rule 9 (expression -> expression / expression .)
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
 
-  ! +               [ shift and go to state 10 ]
-  ! -               [ shift and go to state 11 ]
-  ! *               [ shift and go to state 12 ]
-  ! /               [ shift and go to state 13 ]
-
+    expression                     shift and go to state 30
 
 state 23
 
-    (10) expression -> ( expression ) .
+    (5) statement -> NAME = expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
 
-    +               reduce using rule 10 (expression -> ( expression ) .)
-    -               reduce using rule 10 (expression -> ( expression ) .)
-    *               reduce using rule 10 (expression -> ( expression ) .)
-    /               reduce using rule 10 (expression -> ( expression ) .)
-    $end            reduce using rule 10 (expression -> ( expression ) .)
-    )               reduce using rule 10 (expression -> ( expression ) .)
+    $end            reduce using rule 5 (statement -> NAME = expression .)
+    +               shift and go to state 12
+    -               shift and go to state 13
+    *               shift and go to state 14
+    /               shift and go to state 15
 
 
 state 24
 
+    (10) expression -> expression + expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
+
+    +               reduce using rule 10 (expression -> expression + expression .)
+    -               reduce using rule 10 (expression -> expression + expression .)
+    $end            reduce using rule 10 (expression -> expression + expression .)
+    )               reduce using rule 10 (expression -> expression + expression .)
+    *               shift and go to state 14
+    /               shift and go to state 15
+
+  ! *               [ reduce using rule 10 (expression -> expression + expression .) ]
+  ! /               [ reduce using rule 10 (expression -> expression + expression .) ]
+  ! +               [ shift and go to state 12 ]
+  ! -               [ shift and go to state 13 ]
+
+
+state 25
+
+    (11) expression -> expression - expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
+
+    +               reduce using rule 11 (expression -> expression - expression .)
+    -               reduce using rule 11 (expression -> expression - expression .)
+    $end            reduce using rule 11 (expression -> expression - expression .)
+    )               reduce using rule 11 (expression -> expression - expression .)
+    *               shift and go to state 14
+    /               shift and go to state 15
+
+  ! *               [ reduce using rule 11 (expression -> expression - expression .) ]
+  ! /               [ reduce using rule 11 (expression -> expression - expression .) ]
+  ! +               [ shift and go to state 12 ]
+  ! -               [ shift and go to state 13 ]
+
+
+state 26
+
+    (12) expression -> expression * expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
+
+    +               reduce using rule 12 (expression -> expression * expression .)
+    -               reduce using rule 12 (expression -> expression * expression .)
+    *               reduce using rule 12 (expression -> expression * expression .)
+    /               reduce using rule 12 (expression -> expression * expression .)
+    $end            reduce using rule 12 (expression -> expression * expression .)
+    )               reduce using rule 12 (expression -> expression * expression .)
+
+  ! +               [ shift and go to state 12 ]
+  ! -               [ shift and go to state 13 ]
+  ! *               [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 27
+
+    (13) expression -> expression / expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
+
+    +               reduce using rule 13 (expression -> expression / expression .)
+    -               reduce using rule 13 (expression -> expression / expression .)
+    *               reduce using rule 13 (expression -> expression / expression .)
+    /               reduce using rule 13 (expression -> expression / expression .)
+    $end            reduce using rule 13 (expression -> expression / expression .)
+    )               reduce using rule 13 (expression -> expression / expression .)
+
+  ! +               [ shift and go to state 12 ]
+  ! -               [ shift and go to state 13 ]
+  ! *               [ shift and go to state 14 ]
+  ! /               [ shift and go to state 15 ]
+
+
+state 28
+
+    (2) statement -> CONST_DEFINE NAME = . expression
+    (10) expression -> . expression + expression
+    (11) expression -> . expression - expression
+    (12) expression -> . expression * expression
+    (13) expression -> . expression / expression
+    (14) expression -> . ( expression )
+    (15) expression -> . NUMBER
+    (16) expression -> . NAME
+
+    (               shift and go to state 9
+    NUMBER          shift and go to state 8
+    NAME            shift and go to state 18
+
+    expression                     shift and go to state 31
+
+state 29
+
+    (14) expression -> ( expression ) .
+
+    +               reduce using rule 14 (expression -> ( expression ) .)
+    -               reduce using rule 14 (expression -> ( expression ) .)
+    *               reduce using rule 14 (expression -> ( expression ) .)
+    /               reduce using rule 14 (expression -> ( expression ) .)
+    $end            reduce using rule 14 (expression -> ( expression ) .)
+    )               reduce using rule 14 (expression -> ( expression ) .)
+
+
+state 30
+
     (1) statement -> VAR_DEFINE NAME = expression .
-    (6) expression -> expression . + expression
-    (7) expression -> expression . - expression
-    (8) expression -> expression . * expression
-    (9) expression -> expression . / expression
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
 
     $end            reduce using rule 1 (statement -> VAR_DEFINE NAME = expression .)
-    +               shift and go to state 10
-    -               shift and go to state 11
-    *               shift and go to state 12
-    /               shift and go to state 13
+    +               shift and go to state 12
+    -               shift and go to state 13
+    *               shift and go to state 14
+    /               shift and go to state 15
+
+
+state 31
+
+    (2) statement -> CONST_DEFINE NAME = expression .
+    (10) expression -> expression . + expression
+    (11) expression -> expression . - expression
+    (12) expression -> expression . * expression
+    (13) expression -> expression . / expression
+
+    $end            reduce using rule 2 (statement -> CONST_DEFINE NAME = expression .)
+    +               shift and go to state 12
+    -               shift and go to state 13
+    *               shift and go to state 14
+    /               shift and go to state 15
 

@@ -1,6 +1,8 @@
 reserved = {
     'var': 'VAR_DEFINE',
-    'log': 'LOG'
+    'const': 'CONST_DEFINE',
+    'log': 'LOG',
+    'logtype': 'LOGTYPE'
 }
 
 tokens = [
@@ -36,5 +38,5 @@ def t_COMMENT(t):
     pass
 
 def t_error(t):
-    print(f"Illegal character {t.value[0]}")
+    print(f"Lexer Error: Illegal character {t.value[0] !r}")
     t.lexer.skip(1)
