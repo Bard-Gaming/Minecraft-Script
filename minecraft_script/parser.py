@@ -121,3 +121,5 @@ def p_expression_name(p):
 def p_error(p):
     if p:
         print(f"Syntax error at {p.value}")
+    else:
+        pass

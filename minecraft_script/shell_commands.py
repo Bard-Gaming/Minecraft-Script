@@ -1,7 +1,10 @@
-from . import run_file_terminal
+from . import parse_file
 import os
 
-shell_function_names = ['sh_build', 'sh_run', 'sh_help']
+shell_function_names = [
+    'sh_help',
+    'sh_run', 'sh_build',
+]
 
 
 def sh_build(mcs_file: str, parent_folder: str = None, *args) -> None:
@@ -18,7 +21,7 @@ def sh_build(mcs_file: str, parent_folder: str = None, *args) -> None:
 def sh_run_file_iteration(filename: str, *args) -> None:
     parse_confirm = input(f'Do you wish to parse {filename}? [y/n]: ')
     if parse_confirm.lower() in ['y', 'yes']:
-        run_file_terminal(filename)
+        parse_file(filename)
 
     elif parse_confirm.lower() in ['n', 'no']:
         pass
@@ -33,10 +36,10 @@ def sh_run(*filenames) -> None:
             sh_run_file_iteration(file)
     else:
         for file in filenames:
-            run_file_terminal(file)
+            parse_file(file)
 
 
-def sh_help(*args):
+def sh_help(*args) -> None:
     help_message = """
 #-------------------------------HELP PAGE-------------------------------#
     

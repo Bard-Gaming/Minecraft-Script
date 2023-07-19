@@ -5,15 +5,15 @@ Minecraft Script is an interpreted programming language which goes through the P
 However, interpretation is not its main feature, and is rather more of a debugging tool, as its sole
 purpose is to allow you to validate your code before building it into a full datapack.
 
-## Commands
+# Commands
 ```cmd
 python -m minecraft_script help
 python -m minecraft_script run [files: optional, multiple allowed]
 python -m minecraft_script build [file]
 ```
 
-## Variables
-### The var keyword
+## Objects
+### Variables
 The var keyword can be used to initialize new variables.
 It can either be simply followed by a variable name, in which case it will default to 0,
 or you can directly assign a value to it.
@@ -29,7 +29,7 @@ logtype hello2 // logs "var" in the console
 log hello2  // logs "800" in the console
 ```
 
-### The const keyword
+### Constants
 The const keyword can be used to initialize and define new constants.
 Unlike vars, these cannot be reassigned new values. Trying to initialize
 a new constant without a value brings raises a Syntax Error.
