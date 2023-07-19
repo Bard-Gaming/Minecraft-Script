@@ -1,10 +1,11 @@
 from . import version
 from .shell_commands import *
 from sys import argv
+from os import getcwd
 
 arguments = argv[1:]
 if not arguments:
-    print(f"Minecraft Script version {version}\nType \"mcs help\" for more information.")
+    print(f"Minecraft Script version {version}; currently in {getcwd()}\nUse \"help\" for more information.")
     exit()
 
 function = f'sh_{arguments[0]}'

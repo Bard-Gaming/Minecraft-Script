@@ -1,6 +1,6 @@
 from .interpreter import parse_line
 
-version = "0.1.0"
+version = "0.1.3"
 
 
 def parse_file(filename: str):
