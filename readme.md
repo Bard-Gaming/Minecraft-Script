@@ -5,6 +5,13 @@ Minecraft Script is an interpreted programming language which goes through the P
 However, interpretation is not its main feature, and is rather more of a debugging tool, as its sole
 purpose is to allow you to validate your code before building it into a full datapack.
 
+## Commands
+```cmd
+python -m minecraft_script help
+python -m minecraft_script run [files: optional, multiple allowed]
+python -m minecraft_script build [file]
+```
+
 ## Variables
 ### The var keyword
 The var keyword can be used to initialize new variables.
