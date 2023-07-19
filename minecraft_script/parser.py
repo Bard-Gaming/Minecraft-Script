@@ -55,7 +55,7 @@ def p_statement_log_type(p):
     except ValueError: isNumber = False
     else: isNumber = True
 
-    if isNumber: print('NUMBER')
+    if isNumber: print('number')
     else:
         if names.get(p[2]) is None:
             print(f'KeyError: Undefined name {p[1]}')
