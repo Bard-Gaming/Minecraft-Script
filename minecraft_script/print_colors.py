@@ -19,7 +19,9 @@ colors = {
 }
 
 
-def print_warning(*text: str) -> None:
+def print_warning(*text: str, ignore_warnings: bool = False) -> None:
+    if ignore_warnings:
+        return
     print(f'{colors["warning"]}{" ".join(text)}{colors["endc"]}')
 
 

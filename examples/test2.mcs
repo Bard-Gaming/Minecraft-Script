@@ -1,0 +1,6 @@
+function bob = (well, damn) => {
+    log well
+    log damn
+}
+
+bob (5, 2)
