@@ -1,0 +1,11 @@
+{
+  "TT_IGNORE"   :   " \t",
+
+  "TT_BINARY_OPERATOR"  : "+-*/%",
+
+  "TT_LEFT_PARENTHESIS"  : "(",
+  "TT_RIGHT_PARENTHESIS" : ")",
+
+  "TT_NUMBER"   :   "0123456789",
+  "TT_NAME"     :   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+}
