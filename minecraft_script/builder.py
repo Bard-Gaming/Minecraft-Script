@@ -1,10 +1,10 @@
 from os import mkdir
-from common import module_folder
-from text_additions import text_error
+from .common import module_folder
+from .text_additions import text_error
 
 
 class Builder:
-    def __init__(self, datapack_name: str):
+    def __init__(self, ast, datapack_name: str):
         self.datapack_name = datapack_name
         self.datapack_id = datapack_name.lower().replace(' ', '_')
 
@@ -38,9 +38,3 @@ class Builder:
             template_content = template_file.read()
             tick_file.write(template_content.replace('NAME', self.datapack_id))
             load_file.write(template_content.replace('NAME', self.datapack_id))
-
-
-
-
-if __name__ == '__main__':
-    Builder('Bing Chilling').build()

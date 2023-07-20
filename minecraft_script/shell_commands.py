@@ -1,4 +1,4 @@
-from . import parse_file
+from .builder import Builder
 import os
 
 shell_function_names = [
@@ -7,15 +7,17 @@ shell_function_names = [
 ]
 
 
-def sh_build(mcs_file: str, parent_folder: str = None, *args) -> None:
-    parent_folder = parent_folder if parent_folder else os.getcwd()
+def sh_build(mcs_file: str, datapack_name: str = None, *args) -> None:
+    datapack_name = datapack_name if datapack_name else mcs_file.split('/')[-1].split('.')[0].replace('_', ' ').replace('-', ' ').title()
     mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
+
     try:
         build_file = open(mcs_file, 'rt')
     except FileNotFoundError:
         print(f'File {mcs_file} not found.')
         return
-    print(f'{build_file = }\n{parent_folder = }')  # placeholder; put build code here :)
+
+    Builder([], datapack_name).build()
 
 
 def sh_run_file_iteration(filename: str, *args) -> None:
@@ -50,9 +52,10 @@ def sh_help(*args) -> None:
 If filename is omitted, a prompt will ask you to choose between mcs
 files in work directory (if there are any).
     
-- build [file] [destination: optional]: build the mcs file
-into a functional datapack! 
-    
+- build [mcs file] [datapack name: optional]: build the mcs file
+into a functional datapack! If the datapack name is left empty,
+a matching name will be generated based on the file name.    
+Example: "example/test_file.mcs" turns to "Test File".
     
 #-----------------------------------------------------------------------#
     """
