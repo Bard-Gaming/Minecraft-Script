@@ -1,5 +1,5 @@
-from tokens import Token
-from operations import NumberNode, BinaryOperationNode, UnaryOperationNode
+from .tokens import Token
+from .operations import NumberNode, BinaryOperationNode, UnaryOperationNode
 
 
 class Parser:

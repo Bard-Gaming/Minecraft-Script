@@ -1,4 +1,4 @@
-from text_additions import text_error, text_underline
+from .text_additions import text_error, text_underline
 
 
 class MCSError:
@@ -22,6 +22,11 @@ class MCSError:
 class MCSSyntaxError(MCSError):
     def __init__(self, details: str, line_number: int = None):
         super().__init__(details, "Syntax Error", line_number)
+
+
+class MCSValueError(MCSError):
+    def __init__(self, details: str, line_number: int = None):
+        super().__init__(details, "Value Error", line_number)
 
 
 class MCSIllegalCharError(MCSError):

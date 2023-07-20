@@ -1,7 +1,7 @@
 from json import loads
-from tokens import Token
-from errors import MCSIllegalCharError
-from common import module_folder
+from .tokens import Token
+from .errors import MCSIllegalCharError
+from .common import module_folder
 
 with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
     LANG_TOKENS = loads(file.read())
@@ -79,10 +79,3 @@ class Lexer:
                 exit()
 
         return tokens
-
-
-if __name__ == '__main__':
-    a = "5 + 5 * (3 + -5)"
-
-    lexer = Lexer(a)
-    print(lexer.tokenize())

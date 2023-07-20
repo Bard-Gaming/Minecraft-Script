@@ -1,9 +1,18 @@
-from tokens import Token
+from .tokens import Token
+from .errors import MCSValueError
 
 
 class NumberNode:
     def __init__(self, number_token: Token):
         self.token = number_token
+
+    def get_value(self):
+        value = 0
+        try:
+            value = int(self.token.value)
+        except ValueError:
+            MCSValueError(f'Failed to parse {self.token.value !r} to number')
+        return value
 
     def __str__(self):
         return f'{self.token.tt_type}:{self.token.value}'
