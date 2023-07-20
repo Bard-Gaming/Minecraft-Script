@@ -50,7 +50,15 @@ class Lexer:
 
         while self.current_char is not None:
             if self.current_char in LANG_TOKENS['TT_IGNORE']:
-                lexer.advance()
+                self.advance()
+
+            elif self.current_char == LANG_TOKENS['TT_LEFT_PARENTHESIS']:
+                tokens.append(Token(self.current_char, 'TT_LEFT_PARENTHESIS'))
+                self.advance()
+
+            elif self.current_char == LANG_TOKENS['TT_RIGHT_PARENTHESIS']:
+                tokens.append(Token(self.current_char, 'TT_RIGHT_PARENTHESIS'))
+                self.advance()
 
             elif self.current_char in LANG_TOKENS['TT_NUMBER']:
                 number = self.make_number()
@@ -58,7 +66,7 @@ class Lexer:
 
             elif self.current_char in LANG_TOKENS['TT_BINARY_OPERATOR']:
                 tokens.append(Token(self.current_char, 'TT_BINARY_OPERATOR'))
-                lexer.advance()
+                self.advance()
 
             elif self.current_char in LANG_TOKENS['TT_NAME']:
                 name = self.make_name()
@@ -75,7 +83,7 @@ class Lexer:
 
 
 if __name__ == '__main__':
-    a = "5 + 5"
+    a = "5 + 5 * (3 + -5)"
 
     lexer = Lexer(a)
     print(lexer.tokenize())
