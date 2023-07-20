@@ -1,8 +1,7 @@
 from json import loads
 from tokens import Token
 from errors import MCSIllegalCharError
-
-module_folder = "/".join(__file__.split('\\')[:-1])
+from common import module_folder
 
 with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
     LANG_TOKENS = loads(file.read())
