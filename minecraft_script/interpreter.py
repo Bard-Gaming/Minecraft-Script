@@ -4,10 +4,10 @@ from .errors import MCSNameError
 
 
 class Context:
-    def __init__(self, display_name: str, symbol_table, parent: bool = None):
+    def __init__(self, display_name: str, symbol_table, parent = None):
         self.display_name = display_name
-        self.parent = parent
-        self.symbol_table: None | SymbolTable = symbol_table
+        self.parent: None | Context = parent
+        self.symbol_table: SymbolTable = symbol_table
 
     def display(self):
         return f'<{self.display_name}>'
