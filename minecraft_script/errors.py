@@ -38,9 +38,15 @@ class MCSTypeError(MCSError):
     def __init__(self, details: str, line_number: int = None):
         super().__init__(details, "Type Error", line_number)
 
+
 class MCSZeroDivisionError(MCSError):
     def __init__(self, details: str, line_number: int = None):
         super().__init__(details, "Zero Division Error", line_number)
+
+
+class MCSNameError(MCSError):
+    def __init__(self, details: str, line_number: int = None):
+        super().__init__(details, "Name Error", line_number)
 
 
 if __name__ == '__main__':

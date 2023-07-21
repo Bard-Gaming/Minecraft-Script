@@ -6,7 +6,7 @@ from .common import module_folder
 with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
     LANG_TOKENS = loads(file.read())
 
-with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
+with open(f'{module_folder}/grammar/LANG_KEYWORDS.json') as file:
     LANG_KEYWORDS = loads(file.read())
 
 
@@ -30,7 +30,7 @@ class Lexer:
     def make_name(self):
         name_str = ''
         # allow numbers after first character
-        while self.current_char and (self.current_char in LANG_TOKENS['TT_NAME'] or self.current_char in LANG_TOKENS['TT_NUMBERS']):
+        while self.current_char and (self.current_char in LANG_TOKENS['TT_NAME'] or self.current_char in LANG_TOKENS['TT_NUMBER']):
             name_str += self.current_char
             self.advance()
 
@@ -38,6 +38,7 @@ class Lexer:
 
     def make_number(self):
         number_str = ''
+
         while self.current_char and self.current_char in LANG_TOKENS['TT_NUMBER']:
             number_str += self.current_char
             self.advance()
@@ -59,6 +60,10 @@ class Lexer:
                 tokens.append(Token(self.current_char, 'TT_RIGHT_PARENTHESIS'))
                 self.advance()
 
+            elif self.current_char == LANG_TOKENS['TT_EQUALS']:
+                tokens.append(Token(self.current_char, 'TT_EQUALS'))
+                self.advance()
+
             elif self.current_char in LANG_TOKENS['TT_NUMBER']:
                 number = self.make_number()
                 tokens.append(Token(number, 'TT_NUMBER'))
@@ -69,7 +74,7 @@ class Lexer:
 
             elif self.current_char in LANG_TOKENS['TT_NAME']:
                 name = self.make_name()
-                if name in list(LANG_KEYWORDS.values()):
+                if LANG_KEYWORDS.get(name, False):
                     tokens.append(Token(name, LANG_KEYWORDS[name]))
                 else:
                     tokens.append(Token(name, "TT_NAME"))

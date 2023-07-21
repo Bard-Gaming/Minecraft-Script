@@ -1,5 +1,7 @@
 from .tokens import Token
-from .operations import NumberNode, BinaryOperationNode, UnaryOperationNode
+from .errors import MCSSyntaxError
+from .text_additions import text_underline
+from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode
 
 
 class Parser:
@@ -19,13 +21,17 @@ class Parser:
         result = self.expression()
         return result
 
-    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode:
+    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode:
         token = self.current_token
 
         if token.value in ['+', '-']:
             self.advance()
             factor = self.factor()
             return UnaryOperationNode(token, factor)
+
+        elif token.tt_type == 'TT_NAME':
+            self.advance()
+            return VariableAccessNode(token)
 
         elif token.tt_type == 'TT_LEFT_PARENTHESIS':
             self.advance()
@@ -41,7 +47,23 @@ class Parser:
     def term(self) -> BinaryOperationNode:
         return self.binary_operation(self.factor, ['*', '/', '%'])
 
-    def expression(self) -> BinaryOperationNode:
+    def expression(self) -> BinaryOperationNode | VariableAssignNode:
+        if self.current_token.tt_type == 'VAR_DEFINE':
+            self.advance()
+            if self.current_token.tt_type != 'TT_NAME':
+                MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead.')
+                exit()
+
+            var_name_token = self.current_token
+            self.advance()
+
+            if self.current_token.tt_type != 'TT_EQUALS':
+                MCSSyntaxError(f'Expected "=". Got {text_underline(f"{self.current_token.value !r}")} instead')
+                exit()
+
+            self.advance()
+            return VariableAssignNode(var_name_token, self.expression())
+
         return self.binary_operation(self.term, ['+', '-'])
 
     def binary_operation(self, function, operators) -> BinaryOperationNode:

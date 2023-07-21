@@ -1,11 +1,13 @@
 from .lexer import Lexer
 from .parser import Parser
-from .interpreter import Interpreter
+from .interpreter import Interpreter, Context, SymbolTable
 
 version = "0.1.401"
 
 
-def interpret_text(text: str):
+def run_string(text: str):
+    global_symbol_table = SymbolTable()
+
     lexer = Lexer(text)
     tokens = lexer.tokenize()
 
@@ -13,4 +15,5 @@ def interpret_text(text: str):
     ast = parser.parse()
 
     interpreter = Interpreter()
-    print(interpreter.visit(ast))
+    context = Context('main', global_symbol_table)
+    print(interpreter.visit(ast, context))

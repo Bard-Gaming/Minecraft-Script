@@ -6,6 +6,8 @@
   "TT_LEFT_PARENTHESIS"  : "(",
   "TT_RIGHT_PARENTHESIS" : ")",
 
+  "TT_EQUALS"   : "=",
+
   "TT_NUMBER"   :   "0123456789",
   "TT_NAME"     :   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
 }
