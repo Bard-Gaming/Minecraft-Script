@@ -5,15 +5,15 @@ from .interpreter import Interpreter, Context, SymbolTable
 version = "0.1.401"
 
 
-def run_string(text: str):
+def run(text: str):
     global_symbol_table = SymbolTable()
 
-    lexer = Lexer(text)
-    tokens = lexer.tokenize()
+    run_lexer = Lexer(text)
+    tokens = run_lexer.tokenize()
 
-    parser = Parser(tokens)
-    ast = parser.parse()
+    run_parser = Parser(tokens)
+    ast = run_parser.parse()
 
-    interpreter = Interpreter()
+    run_interpreter = Interpreter()
     context = Context('main', global_symbol_table)
-    print(interpreter.visit(ast, context))
+    print(run_interpreter.visit(ast, context))
