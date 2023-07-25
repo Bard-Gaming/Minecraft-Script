@@ -1,13 +1,15 @@
 {
-  "TT_IGNORE"   :   " \t",
+  "TT_IGNORE"            :   " \t",
 
-  "TT_BINARY_OPERATOR"  : "+-*/%",
+  "TT_BINARY_OPERATOR"   : "+-*/%",
 
   "TT_LEFT_PARENTHESIS"  : "(",
   "TT_RIGHT_PARENTHESIS" : ")",
+  "TT_COMMA"             : ",",
 
-  "TT_EQUALS"   : "=",
+  "TT_EQUALS"            : "=",
+  "TT_FUNCTION_ARROW"    : "=>",
 
-  "TT_NUMBER"   :   "0123456789",
-  "TT_NAME"     :   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+  "TT_NUMBER"            :   "0123456789",
+  "TT_NAME"              :   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
 }

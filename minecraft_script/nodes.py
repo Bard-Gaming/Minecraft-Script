@@ -16,6 +16,21 @@ class NumberNode:
         return f'NumberNode({self.token !r})'
 
 
+class VariableAssignNode:
+    def __init__(self, name_token: Token, value_node):
+        self.name_token = name_token
+        self.value_node = value_node
+
+    def get_name(self) -> str:
+        return self.name_token.value
+
+    def __str__(self):
+        return f'Var assign:{self.name_token.value !r} <- {self.value_node}'
+
+    def __repr__(self):
+        return f'VariableAssignNode({self.name_token !r}, {self.value_node !r})'
+
+
 class VariableAccessNode:
     def __init__(self, name_token: Token):
         self.name_token = name_token
@@ -30,19 +45,29 @@ class VariableAccessNode:
         return f'VariableAccessNode({self.name_token !r})'
 
 
-class VariableAssignNode:
-    def __init__(self, name_token: Token, value_node):
+class FunctionAssignNode:
+    def __init__(self, name_token: Token, parameter_name_tokens: list[Token], body_node):
         self.name_token = name_token
-        self.value_node = value_node
-
-    def get_name(self) -> str:
-        return self.name_token.value
+        self.parameter_name_tokens = parameter_name_tokens
+        self.body_node = body_node
 
     def __str__(self):
-        return f'Var assign:{self.name_token.value !r} <- {self.value_node}'
+        return f'Func assign:{self.name_token.value !r}'
 
     def __repr__(self):
-        return f'VariableAssignNode({self.name_token !r}, {self.value_node !r})'
+        return f'FunctionAssignNode({self.name_token !r}, {self.parameter_name_tokens !r}, {self.body_node !r})'
+
+
+class FunctionCallNode:
+    def __init__(self, name_token: Token, argument_nodes: list):
+        self.name_token = name_token
+        self.argument_nodes = argument_nodes
+
+    def __str__(self):
+        return f'Func call:{self.name_token.value !r}'
+
+    def __repr__(self):
+        return f'FunctionAssignNode({self.name_token !r}, {self.argument_nodes !r})'
 
 
 class BinaryOperationNode:

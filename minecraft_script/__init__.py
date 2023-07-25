@@ -17,3 +17,20 @@ def run(text: str):
     run_interpreter = Interpreter()
     context = Context('main', global_symbol_table)
     print(run_interpreter.visit(ast, context))
+
+
+def run_line_by_line():
+    global_symbol_table = SymbolTable()
+
+    while True:
+        text = input("> ")
+
+        run_lexer = Lexer(text)
+        tokens = run_lexer.tokenize()
+
+        run_parser = Parser(tokens)
+        ast = run_parser.parse()
+
+        run_interpreter = Interpreter()
+        context = Context('main', global_symbol_table)
+        print(run_interpreter.visit(ast, context))

@@ -45,9 +45,10 @@ log hello1;  // logs "500" in the console
 
 ## Functions
 
-```
+```js
 
-Nothing here yet! Sorry.
+function add = (a, b) => a + b  // define a simple add function
+add(2, 7)  // call the function; returns 9
 
 ```
 

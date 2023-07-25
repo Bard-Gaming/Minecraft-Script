@@ -1,4 +1,5 @@
 {
   "var" : "VAR_DEFINE",
-  "const" : "CONST_DEFINE"
+  "const" : "CONST_DEFINE",
+  "function" : "FUNC_DEFINE"
 }

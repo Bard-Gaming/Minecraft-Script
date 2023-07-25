@@ -45,6 +45,16 @@ class Lexer:
 
         return int(number_str)
 
+    def make_equals(self):
+        token_value = self.current_char
+        self.advance()
+        if f"{token_value}{self.current_char}" == LANG_TOKENS['TT_FUNCTION_ARROW']:
+            token_value = f"{token_value}{self.current_char}"
+            self.advance()
+            return token_value
+        else:
+            return token_value
+
     def tokenize(self) -> list[Token]:
         tokens = []
 
@@ -60,9 +70,19 @@ class Lexer:
                 tokens.append(Token(self.current_char, 'TT_RIGHT_PARENTHESIS'))
                 self.advance()
 
-            elif self.current_char == LANG_TOKENS['TT_EQUALS']:
-                tokens.append(Token(self.current_char, 'TT_EQUALS'))
+            elif self.current_char == LANG_TOKENS['TT_COMMA']:
+                tokens.append(Token(self.current_char, 'TT_COMMA'))
                 self.advance()
+
+            elif self.current_char == LANG_TOKENS['TT_EQUALS']:
+                token_value = self.make_equals()
+
+                if token_value == LANG_TOKENS['TT_FUNCTION_ARROW']:
+                    tokens.append(Token(token_value, 'TT_FUNCTION_ARROW'))
+                else:
+                    tokens.append(Token(token_value, 'TT_EQUALS'))
+
+                # don't self.advance() since that is already done in self.make_equals()
 
             elif self.current_char in LANG_TOKENS['TT_NUMBER']:
                 number = self.make_number()

@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number
+from .types import Number, Function
 from .errors import MCSNameError
 
 
@@ -13,13 +13,13 @@ class Context:
         return f'<{self.display_name}>'
 
     def __repr__(self):
-        return f'Context({self.display_name}, {self.parent})'
+        return f'Context({self.display_name}, {self.symbol_table}, {self.parent})'
 
 
 class SymbolTable:
-    def __init__(self):
+    def __init__(self, parent = None):
         self.symbols: dict = {}
-        self.parent: None | SymbolTable = None
+        self.parent = parent
 
     def get(self, variable_name):
         value = self.symbols.get(variable_name, None)
@@ -35,6 +35,11 @@ class SymbolTable:
     def remove(self, variable_name):
         del self.symbols[variable_name]
 
+    def __repr__(self):
+        return f'SymbolTable({self.parent})'
+
+    def __str__(self):
+        return f'{self.symbols}'
 
 class Interpreter:
     def visit(self, node, context: Context):
@@ -61,6 +66,27 @@ class Interpreter:
 
         context.symbol_table.set(var_name, var_new_value)
         return var_new_value
+
+    def visit_FunctionAssignNode(self, node, context: Context) -> Function:
+        func_name = node.name_token.value if node.name_token else None
+        parameter_names = [param_token.value for param_token in node.parameter_name_tokens]
+        body_node = node.body_node
+
+        function = Function(func_name, parameter_names, body_node, context)
+
+        if func_name:
+            context.symbol_table.set(func_name, function)
+
+        return function
+
+    def visit_FunctionCallNode(self, node, context: Context) -> any:
+        func_name = node.name_token.value
+        arguments = [self.visit(arg_token, context) for arg_token in node.argument_nodes]
+
+        function = context.symbol_table.get(func_name)
+        result = function.call(arguments)
+
+        return result
 
     def visit_BinaryOperationNode(self, node, context: Context) -> int:
         operator = node.operator.value

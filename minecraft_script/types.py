@@ -56,3 +56,31 @@ class Number:
 
     def __repr__(self):
         return f'Number({self.value})'
+
+
+class Function:
+    def __init__(self, name: str, parameter_names: list[str], body_node, context):
+        self.name = f'<function {name}>' if name else "<function anonymous>"
+        self.parameter_names = parameter_names
+        self.body_node = body_node
+        self.context = context
+
+    def call(self, arguments: list):
+        from .interpreter import Interpreter, Context, SymbolTable
+        local_interpreter = Interpreter()
+
+        local_symbol_table = SymbolTable(self.context.symbol_table)
+        local_context = Context(self.name, local_symbol_table)
+
+        for i in range(len(arguments)):
+            arg_name = self.parameter_names[i]
+            arg_value = arguments[i]
+            local_context.symbol_table.set(arg_name, arg_value)
+
+        return local_interpreter.visit(self.body_node, local_context)
+
+    def __repr__(self):
+        return f'Function({self.name !r}, {self.parameter_names !r}, {self.body_node !r}, {self.context !r})'
+
+    def __str__(self):
+        return f'{self.name}'
