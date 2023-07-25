@@ -25,7 +25,7 @@ def run_file(filepath: str):  # currently line-by-line
 
     global_symbol_table = SymbolTable()
 
-    for line in file_content.split('\n'):
+    for line in filter(lambda x: not (x.strip(' ') == ''), file_content.split('\n')):
         run_lexer = Lexer(line)
         tokens = run_lexer.tokenize()
 
