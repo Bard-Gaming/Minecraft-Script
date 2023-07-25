@@ -41,7 +41,9 @@ def run_shell():
     global_symbol_table = SymbolTable()
 
     while True:
-        text = input("> ")
+        text = input('> ')
+        while text.strip(' ') == '':
+            text = input('> ')
 
         run_lexer = Lexer(text)
         tokens = run_lexer.tokenize()
