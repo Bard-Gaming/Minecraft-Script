@@ -20,6 +20,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
+    package_data={'minecraft_script': ['grammar/LANG_TOKENS.json', 'grammar/LANG_KEYWORDS.json']},
     install_requires=[],
     keywords=['minecraft', 'mc', 'script', 'language'],
     classifiers=[

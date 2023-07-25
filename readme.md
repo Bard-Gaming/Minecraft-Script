@@ -44,8 +44,11 @@ log hello1;  // logs "500" in the console
 ```
 
 ## Functions
+Functions are defined with the "function" keyword. They can be anonymous,
+or be attributed a name. Parentheses around the arguments are required (currently, subject to change).
 
 ```js
+function = (a) => a * 3  // anonymous function
 
 function add = (a, b) => a + b  // define a simple add function
 add(2, 7)  // call the function; returns 9
