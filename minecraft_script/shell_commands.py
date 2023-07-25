@@ -1,3 +1,4 @@
+from . import run_file
 from .builder import Builder
 import os
 
@@ -23,7 +24,7 @@ def sh_build(mcs_file: str, datapack_name: str = None, *args) -> None:
 def sh_run_file_iteration(filename: str, *args) -> None:
     parse_confirm = input(f'Do you wish to parse {filename}? [y/n]: ')
     if parse_confirm.lower() in ['y', 'yes']:
-        parse_file(filename)
+        run_file(filename)
 
     elif parse_confirm.lower() in ['n', 'no']:
         pass
@@ -38,7 +39,7 @@ def sh_run(*filenames) -> None:
             sh_run_file_iteration(file)
     else:
         for file in filenames:
-            parse_file(file)
+            run_file(file)
 
 
 def sh_help(*args) -> None:
