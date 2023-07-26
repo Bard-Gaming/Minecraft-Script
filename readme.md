@@ -12,6 +12,15 @@ python -m minecraft_script run [files: optional, multiple allowed]
 python -m minecraft_script build [file]
 ```
 
+## Data Types
+Minecraft-script can only work with integers. This is due to the fact that strings aren't a thing in minecraft, and floating point numbers don't work in most cases, specifically scoreboards.
+This also means that the only division available is euclidean division.
+
+```js
+var number = 423  // number, has to be an integer
+var array = [1, 2, 3, 4, 5]  // array of numbers
+```
+
 ## Objects
 ### Variables
 The var keyword can be used to initialize new variables.
@@ -43,6 +52,28 @@ It is equivalent to JavaScript's console.log() or Python's print() function.
 ```js
 var hello1 = 500
 
-log(200 + 200)  // logs "400" in console
+log(400)  // logs "400" in console
 log(hello1, 300)  // logs "500, 300" in console
+```
+
+### append
+Append a value to a list. The first argument has to be a list.
+```js
+var test = [3, 5, 4]
+
+append(test, 2)  // append 2 to the list
+append(test, [3, 4])  // append [3, 4] to the list
+
+log(test)  // logs "[3, 5, 4, 2, [3, 4]]"
+```
+
+### extend
+Extend a list by another list. Both arguments need to be lists.
+```js
+var list_1 = [5, 2]
+var list_2 = [2, 3]
+
+extend(list_1, list_2)
+
+log(list_1)  // logs "[5, 2, 2, 3]"
 ```

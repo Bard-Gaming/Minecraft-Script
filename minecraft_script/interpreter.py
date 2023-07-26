@@ -1,6 +1,6 @@
 from .text_additions import text_error, text_underline
-from .types import Number, Function, BuiltinFunction
-from .errors import MCSNameError
+from .types import Number, List, Function, BuiltinFunction
+from .errors import MCSNameError, MCSTypeError, MCSIndexError
 
 
 class Context:
@@ -52,10 +52,32 @@ class Interpreter:
         method = getattr(self, method_name, self.no_visit_node)
         return method(node, context)
 
-    def visit_NumberNode(self, node, context: Context) -> int:
+    def visit_NumberNode(self, node, context) -> int:
         return node.get_value()
 
-    def visit_VariableAccessNode(self, node, context: Context) -> any:
+    def visit_ListNode(self, node, context):
+        value_array = [self.visit(element, context) for element in node.array]
+        return List(value_array)
+
+    def visit_ListGetNode(self, node, context):
+        name = node.name_token.value
+        index = self.visit(node.index, context)
+        variable = context.symbol_table.get(name)
+
+        if type(variable).__name__ == 'List':
+            value = variable.get_index(index)
+
+            if not value:
+                MCSIndexError(f'{index}')
+                exit()
+
+            return value
+
+        else:
+            MCSTypeError(f'{variable} is not a list')
+            exit()
+
+    def visit_VariableAccessNode(self, node, context) -> any:
         var_name: str = node.get_name()
         var_value = context.symbol_table.get(var_name)
 
@@ -65,14 +87,14 @@ class Interpreter:
 
         return var_value
 
-    def visit_VariableAssignNode(self, node, context: Context) -> any:
+    def visit_VariableAssignNode(self, node, context) -> any:
         var_name: str = node.get_name()
         var_new_value = self.visit(node.value_node, context)
 
         context.symbol_table.set(var_name, var_new_value)
         return var_new_value
 
-    def visit_FunctionAssignNode(self, node, context: Context) -> Function:
+    def visit_FunctionAssignNode(self, node, context) -> Function:
         func_name = node.name_token.value if node.name_token else None
         parameter_names = [param_token.value for param_token in node.parameter_name_tokens]
         body_node = node.body_node
@@ -84,7 +106,7 @@ class Interpreter:
 
         return function
 
-    def visit_FunctionCallNode(self, node, context: Context) -> any:
+    def visit_FunctionCallNode(self, node, context) -> any:
         func_name = node.name_token.value
         arguments = [self.visit(arg_token, context) for arg_token in node.argument_nodes]
 
@@ -93,7 +115,7 @@ class Interpreter:
 
         return result
 
-    def visit_BinaryOperationNode(self, node, context: Context) -> int:
+    def visit_BinaryOperationNode(self, node, context) -> int:
         operator = node.operator.value
         left_expression = Number(self.visit(node.left_node, context))
         right_expression = Number(self.visit(node.right_node, context))
@@ -112,7 +134,7 @@ class Interpreter:
 
         return result
 
-    def visit_UnaryOperationNode(self, node, context: Context) -> int:
+    def visit_UnaryOperationNode(self, node, context) -> int:
         operator = node.operator.value
         right_node = Number(self.visit(node.right_node, context))
         result = 0
@@ -127,7 +149,7 @@ class Interpreter:
     def visit_MultipleStatementsNode(self, node, context):
         return [self.visit(statement, context) for statement in node.statements]
 
-    def no_visit_node(self, node, context: Context):
+    def no_visit_node(self, node, context):
         print(text_error(f'No visit method defined for {text_underline(type(node).__name__)}'))
 
 

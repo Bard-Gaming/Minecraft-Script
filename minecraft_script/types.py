@@ -1,4 +1,5 @@
 from .errors import MCSTypeError, MCSZeroDivisionError, MCSValueError
+from .text_additions import text_underline
 
 
 class Number:
@@ -58,6 +59,27 @@ class Number:
         return f'Number({self.value})'
 
 
+class List:
+    def __init__(self, array: list):
+        self.array = array
+
+    def get_index(self, index: int, fallback: any = None):
+        output = None
+
+        try:
+            output = self.array[index]
+        except IndexError:
+            output = fallback
+
+        return output
+
+    def __str__(self):
+        return str([str(element) for element in self.array]).replace("'", "")
+
+    def __repr__(self):
+        return f'List({self.array})'
+
+
 class Function:
     def __init__(self, name: str, parameter_names: list[str], body_node, context):
         self.name = f'<function {name}>' if name else "<function anonymous>"
@@ -87,7 +109,7 @@ class Function:
 
 
 class BuiltinFunction:
-    names = ['log']
+    names = ['log', 'append', 'extend']
 
     def __init__(self, name):
         self.name = name
@@ -100,6 +122,40 @@ class BuiltinFunction:
     def call_log(arguments: list):
         print(', '.join([str(argument) for argument in arguments]))
         return Number(0)
+
+    @staticmethod
+    def call_append(arguments: list):
+        if len(arguments) > 2:
+            MCSTypeError('append() takes 2 arguments')
+            exit()
+        list: List = arguments[0]
+        value = arguments[1]
+
+        if type(list).__name__ != 'List':
+            MCSTypeError(f'{text_underline(f"{list}")} is not a list')
+            exit()
+
+        new_list = list.array.append(value)
+        return new_list
+
+    @staticmethod
+    def call_extend(arguments: list):
+        if len(arguments) > 2:
+            MCSTypeError('append() takes 2 arguments')
+            exit()
+        base_list: List = arguments[0]
+        extend_list: List = arguments[1]
+
+        if type(base_list).__name__ != 'List':
+            MCSTypeError(f'{text_underline(f"{base_list}")} is not a list')
+            exit()
+
+        if type(extend_list).__name__ != 'List':
+            MCSTypeError(f'{text_underline(f"{extend_list}")} is not a list')
+            exit()
+
+        new_list = base_list.array.extend(extend_list.array)
+        return new_list
 
     def unknown_name(self, arguments: list):
         print(f'Interpreter built-in error ({self.name !r})')

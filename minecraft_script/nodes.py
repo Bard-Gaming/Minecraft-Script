@@ -16,6 +16,32 @@ class NumberNode:
         return f'NumberNode({self.token !r})'
 
 
+class ListNode:
+    def __init__(self, array: list):
+        self.array = array
+
+    def get_index(self, index: int):
+        return self.array[index]
+
+    def __str__(self):
+        return f'array node: {self.array}'
+
+    def __repr__(self):
+        return f'ListNode({self.array !r})'
+
+
+class ListGetNode:
+    def __init__(self, name_token, index):
+        self.name_token = name_token
+        self.index = index
+
+    def __str__(self):
+        return f'array get: {self.name_token.value} {self.index}'
+
+    def __repr__(self):
+        return f'ListGetNode({self.name_token !r}, {self.index !r})'
+
+
 class VariableAssignNode:
     def __init__(self, name_token: Token, value_node):
         self.name_token = name_token

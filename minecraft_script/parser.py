@@ -2,7 +2,7 @@ from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
-    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode
 
 
 class Parser:
@@ -22,7 +22,7 @@ class Parser:
         result = self.statement()
         return result
 
-    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode | FunctionCallNode:
+    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode | FunctionCallNode | ListNode:
         token = self.current_token
 
         if token.value in ['+', '-']:
@@ -36,6 +36,9 @@ class Parser:
             if self.current_token.tt_type == 'TT_LEFT_PARENTHESIS':
                 return self.function_call(token)
 
+            elif self.current_token.tt_type == 'TT_LEFT_BRACKET':
+                return self.array_get(token)
+
             return VariableAccessNode(token)
 
         elif token.tt_type == 'TT_LEFT_PARENTHESIS':
@@ -44,6 +47,9 @@ class Parser:
             if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
                 self.advance()
                 return expression
+
+        elif token.tt_type == 'TT_LEFT_BRACKET':
+            return self.array()
 
         elif token.tt_type == 'TT_NUMBER':
             self.advance()
@@ -157,6 +163,51 @@ class Parser:
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
             self.advance()
             return FunctionCallNode(name_token, argument_tokens)
+
+    def array(self) -> ListNode:
+        if self.current_token.tt_type != 'TT_LEFT_BRACKET':
+            MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
+            exit()
+        self.advance()
+
+        array_contents = []
+
+        if self.current_token.tt_type != 'TT_RIGHT_BRACKET':
+            array_contents.append(self.expression())
+        else:
+            self.advance()
+            return ListNode(array_contents)
+
+        while self.current_token.tt_type == 'TT_COMMA':
+            self.advance()
+            if self.current_token.tt_type == 'TT_RIGHT_BRACKET':
+                self.advance()
+                return ListNode(array_contents)
+
+            array_contents.append(self.expression())
+
+        if self.current_token.tt_type == 'TT_RIGHT_BRACKET':
+            self.advance()
+            return ListNode(array_contents)
+
+        else:
+            MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
+            exit()
+
+    def array_get(self, name_token) -> ListGetNode:
+        if self.current_token.tt_type != 'TT_LEFT_BRACKET':
+            MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
+            exit()
+        self.advance()
+
+        index = self.term()
+
+        if self.current_token.tt_type == 'TT_RIGHT_BRACKET':
+            self.advance()
+            return ListGetNode(name_token, index)
+
+
+
 
 
 if __name__ == '__main__':

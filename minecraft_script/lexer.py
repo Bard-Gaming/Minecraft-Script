@@ -71,6 +71,14 @@ class Lexer:
                 tokens.append(Token(self.current_char, 'TT_RIGHT_PARENTHESIS'))
                 self.advance()
 
+            elif self.current_char == LANG_TOKENS['TT_LEFT_BRACKET']:
+                tokens.append(Token(self.current_char, 'TT_LEFT_BRACKET'))
+                self.advance()
+
+            elif self.current_char == LANG_TOKENS['TT_RIGHT_BRACKET']:
+                tokens.append(Token(self.current_char, 'TT_RIGHT_BRACKET'))
+                self.advance()
+
             elif self.current_char == LANG_TOKENS['TT_COMMA']:
                 tokens.append(Token(self.current_char, 'TT_COMMA'))
                 self.advance()
@@ -80,13 +88,13 @@ class Lexer:
                     tokens.append(Token(self.current_char, 'TT_NEWLINE'))
                 self.advance()
 
-            elif self.current_char == LANG_TOKENS['TT_LEFT_BRACKET']:
-                tokens.append(Token(self.current_char, 'TT_LEFT_BRACKET'))
+            elif self.current_char == LANG_TOKENS['TT_LEFT_BRACE']:
+                tokens.append(Token(self.current_char, 'TT_LEFT_BRACE'))
                 self.bracket_depth += 1
                 self.advance()
 
-            elif self.current_char == LANG_TOKENS['TT_RIGHT_BRACKET']:
-                tokens.append(Token(self.current_char, 'TT_RIGHT_BRACKET'))
+            elif self.current_char == LANG_TOKENS['TT_RIGHT_BRACE']:
+                tokens.append(Token(self.current_char, 'TT_RIGHT_BRACE'))
                 self.bracket_depth -= 1
                 self.advance()
 
