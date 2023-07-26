@@ -43,6 +43,6 @@ It is equivalent to JavaScript's console.log() or Python's print() function.
 ```js
 var hello1 = 500
 
-log(200 + 200)  // logs 400 in console
-log(hello1)  // logs 500 in console
+log(200 + 200)  // logs "400" in console
+log(hello1, 300)  // logs "500, 300" in console
 ```

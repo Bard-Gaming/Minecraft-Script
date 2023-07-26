@@ -79,11 +79,11 @@ class Function:
 
         return local_interpreter.visit(self.body_node, local_context)
 
-    def __repr__(self):
-        return f'Function({self.name !r}, {self.parameter_names !r}, {self.body_node !r}, {self.context !r})'
-
     def __str__(self):
         return f'{self.name}'
+
+    def __repr__(self):
+        return f'Function({self.name !r}, {self.parameter_names !r}, {self.body_node !r}, {self.context !r})'
 
 
 class BuiltinFunction:
@@ -102,3 +102,9 @@ class BuiltinFunction:
     def unknown_name(self, arguments: list):
         print(f'Interpreter built-in error ({self.name !r})')
         exit()
+
+    def __str__(self):
+        return f'<builtin function {self.name}>'
+
+    def __repr__(self):
+        return f'BuiltinFunction({self.name})'
