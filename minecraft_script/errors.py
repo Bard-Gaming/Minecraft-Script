@@ -11,9 +11,9 @@ class MCSError:
 
     def __str__(self):
         if self.line_number:
-            return text_error(f'{self.error_type}: {text_underline(f"{self.details !r}")} at line {self.line_number}')
+            return text_error(f'{self.error_type}: {self.details} at line {self.line_number}')
         else:
-            return text_error(f'{self.error_type}: {text_underline(f"{self.details !r}")}')
+            return text_error(f'{self.error_type}: {self.details}')
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.error_type !r}, {self.details !r}, {self.line_number !r})'
@@ -46,6 +46,7 @@ class MCSZeroDivisionError(MCSError):
 
 class MCSNameError(MCSError):
     def __init__(self, details: str, line_number: int = None):
+        details = f'Name {text_underline(f"{details !r}")} is not defined'
         super().__init__(details, "Name Error", line_number)
 
 

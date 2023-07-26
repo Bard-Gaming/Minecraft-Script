@@ -55,7 +55,7 @@ class Interpreter:
         var_value = context.symbol_table.get(var_name)
 
         if var_value is None:
-            MCSNameError(f'Name {text_underline(f"{var_name !r}")} is not defined')
+            MCSNameError(var_name)
             exit()
 
         return var_value
