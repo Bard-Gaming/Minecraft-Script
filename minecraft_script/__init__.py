@@ -54,4 +54,4 @@ def run_shell():
 
         run_interpreter = Interpreter()
         context = Context('main', global_symbol_table)
-        print(run_interpreter.visit(ast, context))
+        print(run_interpreter.visit(ast, context)[0])
