@@ -1,7 +1,8 @@
 from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
-from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, FunctionAssignNode, FunctionCallNode
+from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode
 
 
 class Parser:
@@ -18,7 +19,7 @@ class Parser:
             self.current_token = self.token_list[self.current_index]
 
     def parse(self):
-        result = self.expression()
+        result = self.statement()
         return result
 
     def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode | FunctionCallNode:
@@ -84,6 +85,19 @@ class Parser:
             left_node = BinaryOperationNode(left_node, operator, right_node)
         return left_node
 
+    def statement(self) -> MultipleStatementsNode:
+        statements = []
+        while self.current_token.tt_type == 'TT_NEWLINE':
+            self.advance()
+        statements.append(self.expression())
+
+        while self.current_token.tt_type == 'TT_NEWLINE':
+            while self.current_token.tt_type == 'TT_NEWLINE':
+                self.advance()
+            statements.append(self.expression())
+
+        return MultipleStatementsNode(statements)
+
     def function_define(self) -> FunctionAssignNode:
         self.advance()
 
@@ -143,6 +157,10 @@ class Parser:
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
             return FunctionCallNode(name_token, argument_tokens)
 
+
 if __name__ == '__main__':
-    tokens = [Token(5, 'TT_NUMBER'), Token('+', 'TT_BINARY_OPERATOR'), Token(5, 'TT_NUMBER'), Token('*', 'TT_BINARY_OPERATOR'), Token('(', 'TT_LEFT_PARENTHESIS'), Token(3, 'TT_NUMBER'), Token('+', 'TT_BINARY_OPERATOR'), Token('-', 'TT_BINARY_OPERATOR'), Token(5, 'TT_NUMBER'), Token(')', 'TT_RIGHT_PARENTHESIS')]
+    tokens = [Token(5, 'TT_NUMBER'), Token('+', 'TT_BINARY_OPERATOR'), Token(5, 'TT_NUMBER'),
+              Token('*', 'TT_BINARY_OPERATOR'), Token('(', 'TT_LEFT_PARENTHESIS'), Token(3, 'TT_NUMBER'),
+              Token('+', 'TT_BINARY_OPERATOR'), Token('-', 'TT_BINARY_OPERATOR'), Token(5, 'TT_NUMBER'),
+              Token(')', 'TT_RIGHT_PARENTHESIS')]
     print(Parser(tokens).parse())

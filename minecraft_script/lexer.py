@@ -27,7 +27,6 @@ class Lexer:
 
         if self.current_char == '\n':
             self.current_line += 1
-            self.advance()
 
     def make_name(self):
         name_str = ''

@@ -93,3 +93,14 @@ class UnaryOperationNode:
 
     def __repr__(self):
         return f'UnaryOperationNode({self.operator !r}, {self.right_node !r})'
+
+
+class MultipleStatementsNode:
+    def __init__(self, statements: list):
+        self.statements = statements
+
+    def __str__(self):
+        return f'statements: {self.statements}'
+
+    def __repr__(self):
+        return f'MultipleStatementsNode({self.statements})'

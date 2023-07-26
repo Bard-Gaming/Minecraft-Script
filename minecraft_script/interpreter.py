@@ -119,6 +119,9 @@ class Interpreter:
 
         return result
 
+    def visit_MultipleStatementsNode(self, node, context):
+        return [self.visit(statement, context) for statement in node.statements]
+
     def no_visit_node(self, node, context: Context):
         print(text_error(f'No visit method defined for {text_underline(type(node).__name__)}'))
 
