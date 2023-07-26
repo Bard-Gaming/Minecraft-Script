@@ -1,10 +1,10 @@
 from .text_additions import text_error, text_underline
-from .types import Number, Function
+from .types import Number, Function, BuiltinFunction
 from .errors import MCSNameError
 
 
 class Context:
-    def __init__(self, display_name: str, symbol_table, parent = None):
+    def __init__(self, display_name: str, symbol_table, parent=None):
         self.display_name = display_name
         self.parent: None | Context = parent
         self.symbol_table: SymbolTable = symbol_table
@@ -17,9 +17,12 @@ class Context:
 
 
 class SymbolTable:
-    def __init__(self, parent = None):
+    def __init__(self, parent=None, *, load_builtins=True):
         self.symbols: dict = {}
         self.parent = parent
+
+        if load_builtins:
+            self.set('log', BuiltinFunction('log'))
 
     def get(self, variable_name):
         value = self.symbols.get(variable_name, None)
@@ -40,6 +43,7 @@ class SymbolTable:
 
     def __str__(self):
         return f'{self.symbols}'
+
 
 class Interpreter:
     def visit(self, node, context: Context):

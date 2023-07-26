@@ -69,7 +69,7 @@ class Function:
         from .interpreter import Interpreter, Context, SymbolTable
         local_interpreter = Interpreter()
 
-        local_symbol_table = SymbolTable(self.context.symbol_table)
+        local_symbol_table = SymbolTable(self.context.symbol_table, load_builtins=False)
         local_context = Context(self.name, local_symbol_table)
 
         for i in range(len(arguments)):
@@ -84,3 +84,21 @@ class Function:
 
     def __str__(self):
         return f'{self.name}'
+
+
+class BuiltinFunction:
+    def __init__(self, name):
+        self.name = name
+
+    def call(self, arguments: list):
+        method = getattr(self, f'call_{self.name}', 'unknown_name')
+        method(arguments)
+
+    @staticmethod
+    def call_log(arguments: list):
+        print(', '.join([str(argument) for argument in arguments]))
+        return Number(0)
+
+    def unknown_name(self, arguments: list):
+        print(f'Interpreter built-in error ({self.name !r})')
+        exit()

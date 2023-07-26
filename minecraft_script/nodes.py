@@ -67,7 +67,7 @@ class FunctionCallNode:
         return f'Func call:{self.name_token.value !r}'
 
     def __repr__(self):
-        return f'FunctionAssignNode({self.name_token !r}, {self.argument_nodes !r})'
+        return f'FunctionCallNode({self.name_token !r}, {self.argument_nodes !r})'
 
 
 class BinaryOperationNode:
