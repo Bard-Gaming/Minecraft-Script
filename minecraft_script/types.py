@@ -87,6 +87,8 @@ class Function:
 
 
 class BuiltinFunction:
+    names = ['log']
+
     def __init__(self, name):
         self.name = name
 

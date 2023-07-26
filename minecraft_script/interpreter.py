@@ -22,7 +22,8 @@ class SymbolTable:
         self.parent = parent
 
         if load_builtins:
-            self.set('log', BuiltinFunction('log'))
+            for name in BuiltinFunction.names:
+                self.set(name, BuiltinFunction(name))
 
     def get(self, variable_name):
         value = self.symbols.get(variable_name, None)
