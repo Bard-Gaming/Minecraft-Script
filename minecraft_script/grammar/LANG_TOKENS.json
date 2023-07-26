@@ -1,11 +1,15 @@
 {
-  "TT_IGNORE"            :   " \t",
+  "TT_IGNORE"            : " \t",
+  "TT_NEWLINE"           : ";\n",
 
   "TT_BINARY_OPERATOR"   : "+-*/%",
 
   "TT_LEFT_PARENTHESIS"  : "(",
   "TT_RIGHT_PARENTHESIS" : ")",
   "TT_COMMA"             : ",",
+
+  "TT_LEFT_BRACKET"      : "{",
+  "TT_RIGHT_BRACKET"     : "}",
 
   "TT_EQUALS"            : "=",
   "TT_FUNCTION_ARROW"    : "=>",
