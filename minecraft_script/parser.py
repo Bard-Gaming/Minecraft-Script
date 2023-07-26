@@ -155,6 +155,7 @@ class Parser:
             argument_tokens.append(self.factor())
 
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
+            self.advance()
             return FunctionCallNode(name_token, argument_tokens)
 
 

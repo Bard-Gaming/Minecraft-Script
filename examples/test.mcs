@@ -1,4 +1,9 @@
 var num = 25
 
 function bob = (e) => e + 1
+function bob2 = (e2) => e2 + 2
+
+bob2(3)
+
 log(bob(num))
+log(num)
