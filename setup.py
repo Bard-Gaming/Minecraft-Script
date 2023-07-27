@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from minecraft_script.common import version
 import codecs
 import os
 
@@ -7,13 +8,12 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.1.406'
 DESCRIPTION = 'Minecraft Script Programming language'
 
 # Setting up
 setup(
     name="minecraft_script",
-    version=VERSION,
+    version=version,
     author="Joyful-Bard",
     author_email="<thisis@notarealemail.com>",
     description=DESCRIPTION,
