@@ -14,8 +14,8 @@ class Parser:
         self.advance()
 
     def advance(self):
-        self.current_index += 1
-        if self.current_index < len(self.token_list):
+        if self.current_index < len(self.token_list) - 1:
+            self.current_index += 1
             self.current_token = self.token_list[self.current_index]
 
     def parse(self):
@@ -104,10 +104,16 @@ class Parser:
             self.advance()
         statements.append(self.expression())
 
-        while self.current_token.tt_type == 'TT_NEWLINE':
-            while self.current_token.tt_type == 'TT_NEWLINE':
+        more_statements = True
+        while self.current_token.tt_type == 'TT_NEWLINE' and more_statements:
+            while self.current_token.tt_type == 'TT_NEWLINE' and more_statements:
+                index = self.current_index
                 self.advance()
-            statements.append(self.expression())
+                if index == self.current_index:
+                    more_statements = False
+
+            if more_statements:
+                statements.append(self.expression())
 
         return MultipleStatementsNode(statements)
 
