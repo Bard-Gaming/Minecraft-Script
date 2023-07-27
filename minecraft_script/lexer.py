@@ -113,8 +113,15 @@ class Lexer:
                 tokens.append(Token(number, 'TT_NUMBER'))
 
             elif self.current_char in LANG_TOKENS['TT_BINARY_OPERATOR']:
-                tokens.append(Token(self.current_char, 'TT_BINARY_OPERATOR'))
+                current_char = self.current_char
                 self.advance()
+
+                if f'{current_char}{self.current_char}' == LANG_TOKENS['TT_COMMENT']:
+                    while self.current_char not in LANG_TOKENS['TT_NEWLINE']:
+                        self.advance()
+
+                else:
+                    tokens.append(Token(current_char, 'TT_BINARY_OPERATOR'))
 
             elif self.current_char in LANG_TOKENS['TT_NAME']:
                 name = self.make_name()

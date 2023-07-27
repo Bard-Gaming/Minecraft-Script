@@ -1,6 +1,7 @@
 {
   "TT_IGNORE"            : " \t",
   "TT_NEWLINE"           : ";\n",
+  "TT_COMMENT"           : "//",
 
   "TT_BINARY_OPERATOR"   : "+-*/%",
 
