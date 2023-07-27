@@ -3,4 +3,4 @@ function bob = (num) => {
     log(num)
 }
 
-log(bob(3))
+bob(3)

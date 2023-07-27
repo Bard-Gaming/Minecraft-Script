@@ -1,0 +1,8 @@
+function extend_builtins = (list) => {
+    var builtin_list = [log, append, extend]
+    extend(list, builtin_list)
+
+    log(list)
+}
+
+extend_builtins([1, 2, 3])

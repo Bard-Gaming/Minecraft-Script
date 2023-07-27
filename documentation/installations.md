@@ -25,11 +25,11 @@ This can be done by first opening the System Properties video
 (You can either search for "Environment Variables" or go to ``Settings > System > About > Advanced System Settings``).
 Once you've reached this point, click on ``Environment Variables`` (shown in image below).
 
-![img](../resources/environ_vars.png)
+![img](resources/environ_vars.png)
 
 In the new window, under ``System variables``, click on ``Path``, and then the edit button.
 
-![img](../resources/environ_vars_2.png)
+![img](resources/environ_vars_2.png)
 
 In the edit window, click on ``New`` and put the full path of the parent folder of the ``.cmd`` file you made.
 For instance, if your mcs file is located in ``D:/shell_commands/mcs.cmd``, you should write ``D:/shell_commands/``.
@@ -58,9 +58,9 @@ or by using Sublime Text and clicking on ``Tools > Build System > New Build Syst
     "file_patterns": ["*.mcs"]
 }
 ```
-![img](../resources/sublime_text_build_system.png)
+![img](resources/sublime_text_build_system.png)
 
 _Note: Don't forget to save the file after pasting the code into it!_
 
-Hitting ``Ctrl + B`` when inside a .mcs folder should now automatically interpret the code and output the result to
+Hitting ``Ctrl + B`` when inside a .mcs file should now automatically interpret the code and output the result to
 Sublime's console.

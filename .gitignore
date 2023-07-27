@@ -1,6 +1,3 @@
 .idea/
 test_file.py
 minecraft_script/__pycache__/
-build/
-dist/
-minecraft_script.egg-info/
