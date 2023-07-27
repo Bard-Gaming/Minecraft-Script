@@ -58,6 +58,8 @@ or by using Sublime Text and clicking on ``Tools > Build System > New Build Syst
     "file_patterns": ["*.mcs"]
 }
 ```
+![img](../resources/sublime_text_build_system.png)
+_Note: Don't forget to save the file after pasting the code into it!_
 
 Hitting ``Ctrl + B`` when inside a .mcs folder should now automatically interpret the code and output the result to
 Sublime's console.

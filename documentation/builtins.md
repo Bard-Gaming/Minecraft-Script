@@ -1,4 +1,4 @@
-# Builtin Functions
+# Built-in Functions
 ## Logging / Printing outputs
 The ``log()`` functions allows you to keep track of values in the console.
 It is equivalent to **JavaScript**'s ``console.log()`` or **Python**'s ``print()`` function.
