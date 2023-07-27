@@ -2,7 +2,7 @@ from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
-    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode
 
 
 class Parser:
@@ -58,7 +58,7 @@ class Parser:
     def term(self) -> BinaryOperationNode:
         return self.binary_operation(self.factor, ['*', '/', '%'])
 
-    def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode:
+    def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode | CodeBlockNode:
         if self.current_token.tt_type == 'VAR_DEFINE':
             self.advance()
             if self.current_token.tt_type != 'TT_NAME':
@@ -77,6 +77,9 @@ class Parser:
 
         elif self.current_token.tt_type == 'FUNC_DEFINE':
             return self.function_define()
+
+        elif self.current_token.tt_type == 'TT_LEFT_BRACE':
+            return self.code_block()
 
         return self.binary_operation(self.term, ['+', '-'])
 
@@ -206,7 +209,40 @@ class Parser:
             self.advance()
             return ListGetNode(name_token, index)
 
+    def code_block(self):
+        if self.current_token.tt_type != 'TT_LEFT_BRACE':
+            MCSSyntaxError('Expected "{". Got "%s" instead' % self.current_token.value)
+            exit()
+        self.advance()
 
+        statements = []
+
+        if self.current_token.tt_type == 'TT_RIGHT_BRACE':
+            self.advance()
+            return CodeBlockNode(statements)
+
+        while self.current_token.tt_type == 'TT_NEWLINE':
+            self.advance()
+
+        statements.append(self.expression())
+
+        while self.current_token.tt_type == 'TT_NEWLINE':
+            self.advance()
+            while self.current_token.tt_type == 'TT_NEWLINE':
+                self.advance()
+
+            if self.current_token.tt_type == 'TT_RIGHT_BRACE':
+                self.advance()
+                return CodeBlockNode(statements)
+
+            statements.append(self.expression())
+
+        if self.current_token.tt_type == 'TT_RIGHT_BRACE':
+            self.advance()
+            return CodeBlockNode(statements)
+        else:
+            MCSSyntaxError('Expected "}". Got "%s" instead.' % self.current_token.value)
+            exit()
 
 
 

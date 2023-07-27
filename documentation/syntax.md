@@ -19,6 +19,24 @@ log(5);
 log(5);
 ```
 
+### Code Blocks
+MCS supports code blocks. These blocks are independent of any other code, and have their own context.
+This is especially useful when using functions (example in the Function section).
+Code blocks are simply defined as being the instructions inside of **braces** ('``{}``').
+Example as follows:
+```js
+var hello = 10
+var hello2 = 15
+
+{
+    var hello = 5
+    log(hello)  // logs "5"
+    log(hello2)  // logs "15"
+}
+
+log(hello)  // logs "10"
+```
+
 ### Variables
 The ``var`` keyword can be used to initialize new variables.
 Use it by following it by the variable's name, then an equals sign and a value.
@@ -42,6 +60,17 @@ function log_5 = () => log(5)  // function without parameters
 
 add(2, 7)  // call the function; returns 9
 log_5()  // prints "5"
+```
+
+Functions also work with code blocks. This allows you to have functions with multiple instructions.
+Example as follows:
+```js
+function increment_log = (num) => {
+    var num = num + 1
+    log(num)
+}
+
+increment_log(6)  // prints "7"
 ```
 
 

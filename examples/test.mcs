@@ -1,3 +1,6 @@
-function a = (b) => log(b)
+function bob = (num) => {
+    var num = num + 1
+    log(num)
+}
 
-a(3)
+bob(2)

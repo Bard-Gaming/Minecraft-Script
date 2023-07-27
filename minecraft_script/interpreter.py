@@ -149,6 +149,12 @@ class Interpreter:
     def visit_MultipleStatementsNode(self, node, context):
         return [self.visit(statement, context) for statement in node.statements]
 
+    def visit_CodeBlockNode(self, node, context):
+        local_symbol_table = SymbolTable(context.symbol_table, load_builtins=False)
+        local_context = Context(f'code_block at {id(node)}', local_symbol_table)
+
+        return [self.visit(statement, local_context) for statement in node.statements]
+
     def no_visit_node(self, node, context):
         print(text_error(f'No visit method defined for {text_underline(type(node).__name__)}'))
 

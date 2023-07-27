@@ -130,3 +130,14 @@ class MultipleStatementsNode:
 
     def __repr__(self):
         return f'MultipleStatementsNode({self.statements})'
+
+
+class CodeBlockNode:
+    def __init__(self, statements: list):
+        self.statements = statements
+
+    def __str__(self):
+        return f'Code Block: {self.statements}'
+
+    def __repr__(self):
+        return f'CodeBlockNode({self.statements})'

@@ -17,8 +17,6 @@ class Lexer:
         self.current_char = None
         self.current_line = 0
 
-        self.bracket_depth = 0
-
         self.advance()
 
     def advance(self) -> None:
@@ -84,18 +82,15 @@ class Lexer:
                 self.advance()
 
             elif self.current_char in LANG_TOKENS['TT_NEWLINE']:
-                if self.bracket_depth == 0:
-                    tokens.append(Token(self.current_char, 'TT_NEWLINE'))
+                tokens.append(Token(self.current_char, 'TT_NEWLINE'))
                 self.advance()
 
             elif self.current_char == LANG_TOKENS['TT_LEFT_BRACE']:
                 tokens.append(Token(self.current_char, 'TT_LEFT_BRACE'))
-                self.bracket_depth += 1
                 self.advance()
 
             elif self.current_char == LANG_TOKENS['TT_RIGHT_BRACE']:
                 tokens.append(Token(self.current_char, 'TT_RIGHT_BRACE'))
-                self.bracket_depth -= 1
                 self.advance()
 
             elif self.current_char == LANG_TOKENS['TT_EQUALS']:
