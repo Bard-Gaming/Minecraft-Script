@@ -146,11 +146,11 @@ class BuiltinFunction:
         base_list: List = arguments[0]
         extend_list: List = arguments[1]
 
-        if type(base_list).__name__ != 'List':
+        if not isinstance(base_list, List):
             MCSTypeError(f'{text_underline(f"{base_list}")} is not a list')
             exit()
 
-        if type(extend_list).__name__ != 'List':
+        if not isinstance(extend_list, List):
             MCSTypeError(f'{text_underline(f"{extend_list}")} is not a list')
             exit()
 
