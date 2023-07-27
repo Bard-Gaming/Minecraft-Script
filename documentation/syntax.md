@@ -4,6 +4,8 @@ MCS inherits its syntax from both Python and JavaScript.
 Instructions are separated by newlines ('``\n``') and/or semicolons ('``;``').
 Both newlines and semicolons are treated exactly the same on the lexer level,
 so feel free to use whatever you prefer.
+
+Comments are made using two forward-slashes ('``//``') and go up to the end of the line.
 ```js
 // this
 log(5);log(5);

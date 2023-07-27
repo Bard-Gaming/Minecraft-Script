@@ -117,7 +117,7 @@ class Lexer:
                 self.advance()
 
                 if f'{current_char}{self.current_char}' == LANG_TOKENS['TT_COMMENT']:
-                    while self.current_char not in LANG_TOKENS['TT_NEWLINE']:
+                    while self.current_char != '\n':
                         self.advance()
 
                 else:
