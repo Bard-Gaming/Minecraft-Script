@@ -48,9 +48,62 @@ var hello2 = 300  // assigned new value 300 to variable hello2
 var hello2 = hello2 + 500  // adds 500 to hello2
 ```
 
+
+## Operations
+Operations in MCS follow PEMDAS and not plain left-to-right computations.
+Current operations are:
+- ``+`` Summation
+- ``-`` Subtraction
+- ``*`` Multiplication
+- ``/`` Euclidean Division
+- ``%`` Modulus Operations
+
+Example as follows:
+```js
+var sum = 5 + 5  // normal sum. 5+5 = 10
+var substraction = 5 - -5  // normal substraction. Unary operators work, so 5 - -5 = 10
+var multiplication = 2 * 2  // normal multiplication. 2*2=4
+var division = 5 / 2  // Euclidean divison. 5/2 = 2 (no support for floating point numbers)
+var modulus = 5 % 2  // Modulus operation. 5%2 = 1
+
+var expression = 3 + 5*2 + -4  // in a more "complex" operation, PEMDAS is applied.
+log(expression)  // output is "9"
+```
+
+## Data Types
+Minecraft-script can only work with integers.
+This is due to the fact that strings aren't a thing in minecraft,
+and floating point numbers don't work in most cases, specifically scoreboards.
+
+### Numbers / Integers
+Numbers are integers. They are the building blocks of many functionalities.
+They can be manipulated in operations, as seen above.
+```js
+var number = 423  // number, has to be an integer
+```
+
+### Lists / Arrays
+Lists are groups storing all kinds of data.
+```js
+var list = [1, 2, 3]  // list
+extend(list, [4, false, 6])
+
+log(list)  // prints "[1, 2, 3, 4, false, 6]"
+```
+
+### Booleans
+Booleans are used for logical expressions. They are unique in that they only
+have 2 values: ``true`` and ``false``.
+```js
+var bool = false  // boolean "false"
+
+log(bool)  // logs "false"
+```
+
 ### Functions
 Functions are defined with the ``function`` keyword. They can be anonymous,
 or be attributed to a name. Parentheses around the parameters are required, even if there are none.
+By default, functions will return the boolean ``false``.
 
 ```js
 function = (a) => a * 3  // anonymous function
@@ -72,45 +125,3 @@ function increment_log = (num) => {
 
 increment_log(6)  // prints "7"
 ```
-
-
-## Operations
-Operations in MCS follow PEMDAS and not plain left-to-right computations.
-Current operations are:
-- ``+`` Summation
-- ``-`` Substraction
-- ``*`` Multiplication
-- ``/`` Euclidean Division
-- ``%`` Modulus Operations
-
-Example as follows:
-```js
-var sum = 5 + 5  // normal sum. 5+5 = 10
-var substraction = 5 - -5  // normal substraction. Unary operators work, so 5 - -5 = 10
-var multiplication = 2 * 2  // normal multiplication. 2*2=4
-var division = 5 / 2  // Euclidean divison. 5/2 = 2 (no support for floating point numbers)
-var modulus = 5 % 2  // Modulus operation. 5%2 = 1
-
-var expression = 3 + 5*2 + -4  // in a more "complex" operation, PEMDAS is applied.
-log(expression)  // output is "9"
-```
-
-## Data Types
-Minecraft-script can only work with integers.
-This is due to the fact that strings aren't a thing in minecraft,
-and floating point numbers don't work in most cases, specifically scoreboards.
-Current Data Types are:
-- Numbers (integers)
-- Lists
-- Functions
-
-```js
-var number = 423  // number, has to be an integer
-
-var array = [1, 2, 3, 4, 5]  // array of numbers
-
-function func = () => log(80085)  // function
-
-var diverse_list = [1, function = () => log(2), [3, 4]]  // list containing all data types
-```
-

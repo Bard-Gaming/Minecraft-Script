@@ -143,7 +143,7 @@ class BuiltinFunction:
     @staticmethod
     def call_log(arguments: list):
         print(', '.join([str(argument) for argument in arguments]))
-        return Number(0)
+        return Boolean(False)
 
     @staticmethod
     def call_append(arguments: list):
