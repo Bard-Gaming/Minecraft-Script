@@ -2,8 +2,6 @@ from .lexer import Lexer
 from .parser import Parser
 from .interpreter import Interpreter, Context, SymbolTable
 
-version = "0.1.403"
-
 
 def run(text: str):
     global_symbol_table = SymbolTable()

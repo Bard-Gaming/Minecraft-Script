@@ -1,4 +1,4 @@
-from . import version
+from .common import version
 from .shell_commands import *
 from sys import argv
 from os import getcwd
