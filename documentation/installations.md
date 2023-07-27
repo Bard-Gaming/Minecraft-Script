@@ -18,7 +18,7 @@ the file's name should be ``mcs.cmd``. Inside this file, paste the following cod
 python -m minecraft_script %*
 @echo on
 ```
-The ``%`` here represents the arguments that follow the keyword.
+_Note: The ``%*`` here represents the arguments that follow the keyword._
 
 Now, all that's left to do is to add the file to the ``path`` environment variable.
 This can be done by first opening the System Properties video
@@ -59,6 +59,7 @@ or by using Sublime Text and clicking on ``Tools > Build System > New Build Syst
 }
 ```
 ![img](../resources/sublime_text_build_system.png)
+
 _Note: Don't forget to save the file after pasting the code into it!_
 
 Hitting ``Ctrl + B`` when inside a .mcs folder should now automatically interpret the code and output the result to
