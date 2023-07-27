@@ -128,14 +128,14 @@ class BuiltinFunction:
         if len(arguments) > 2:
             MCSTypeError('append() takes 2 arguments')
             exit()
-        list: List = arguments[0]
+        base_list: List = arguments[0]
         value = arguments[1]
 
-        if type(list).__name__ != 'List':
-            MCSTypeError(f'{text_underline(f"{list}")} is not a list')
+        if isinstance(base_list, List):
+            MCSTypeError(f'{text_underline(f"{base_list}")} is not a list')
             exit()
 
-        new_list = list.array.append(value)
+        new_list = base_list.array.append(value)
         return new_list
 
     @staticmethod
