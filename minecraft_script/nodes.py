@@ -42,6 +42,17 @@ class ListGetNode:
         return f'ListGetNode({self.name_token !r}, {self.index !r})'
 
 
+class BooleanNode:
+    def __init__(self, value: str):
+        self.value = True if value == 'true' else False
+
+    def __str__(self):
+        return f'boolean: {str(self.value).lower()}'
+
+    def __repr__(self):
+        return f'BooleanNode({str(self.value).lower()})'
+
+
 class VariableAssignNode:
     def __init__(self, name_token: Token, value_node):
         self.name_token = name_token

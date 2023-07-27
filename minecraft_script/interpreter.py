@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number, List, Function, BuiltinFunction
+from .types import Number, List, Boolean, Function, BuiltinFunction
 from .errors import MCSNameError, MCSTypeError, MCSIndexError
 
 
@@ -58,6 +58,9 @@ class Interpreter:
     def visit_ListNode(self, node, context):
         value_array = [self.visit(element, context) for element in node.array]
         return List(value_array)
+
+    def visit_BooleanNode(self, node, context):
+        return Boolean(node.value)
 
     def visit_ListGetNode(self, node, context):
         name = node.name_token.value

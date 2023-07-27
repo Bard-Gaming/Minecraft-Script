@@ -2,7 +2,7 @@ from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
-    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode, BooleanNode
 
 
 class Parser:
@@ -22,7 +22,7 @@ class Parser:
         result = self.statement()
         return result
 
-    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode | FunctionCallNode | ListNode:
+    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode | FunctionCallNode | ListNode | ListGetNode | BooleanNode:
         token = self.current_token
 
         if token.value in ['+', '-']:
@@ -47,6 +47,10 @@ class Parser:
             if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
                 self.advance()
                 return expression
+
+        elif token.tt_type == 'TT_BOOLEAN':
+            self.advance()
+            return BooleanNode(token.value)
 
         elif token.tt_type == 'TT_LEFT_BRACKET':
             return self.array()

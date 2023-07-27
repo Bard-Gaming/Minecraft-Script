@@ -1,5 +1,8 @@
 {
-  "var" : "VAR_DEFINE",
-  "const" : "CONST_DEFINE",
-  "function" : "FUNC_DEFINE"
+  "var"      : "VAR_DEFINE",
+  "const"    : "CONST_DEFINE",
+  "function" : "FUNC_DEFINE",
+
+  "true"     : "TT_BOOLEAN",
+  "false"    : "TT_BOOLEAN"
 }

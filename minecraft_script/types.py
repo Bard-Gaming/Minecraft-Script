@@ -80,6 +80,26 @@ class List:
         return f'List({self.array})'
 
 
+class Boolean:
+    def __init__(self, value):
+        self.value = value
+
+    def logical_invert(self):
+        return not self.value
+
+    def logical_and(self, other):
+        return self.value and other
+
+    def logical_or(self, other):
+        return self.value or other
+
+    def __str__(self):
+        return str(self.value).lower()
+
+    def __repr__(self):
+        return f'Boolean({self.value})'
+
+
 class Function:
     def __init__(self, name: str, parameter_names: list[str], body_node, context):
         self.name = f'<function {name}>' if name else "<function anonymous>"
@@ -99,7 +119,9 @@ class Function:
             arg_value = arguments[i]
             local_context.symbol_table.set(arg_name, arg_value)
 
-        return local_interpreter.visit(self.body_node, local_context)
+        local_interpreter.visit(self.body_node, local_context)
+
+        return Boolean(False)
 
     def __str__(self):
         return f'{self.name}'
@@ -116,7 +138,7 @@ class BuiltinFunction:
 
     def call(self, arguments: list):
         method = getattr(self, f'call_{self.name}', 'unknown_name')
-        method(arguments)
+        return method(arguments)
 
     @staticmethod
     def call_log(arguments: list):
@@ -135,8 +157,9 @@ class BuiltinFunction:
             MCSTypeError(f'{text_underline(f"{base_list}")} is not a list')
             exit()
 
-        new_list = base_list.array.append(value)
-        return new_list
+        base_list.array.append(value)
+
+        return base_list
 
     @staticmethod
     def call_extend(arguments: list):
@@ -154,8 +177,9 @@ class BuiltinFunction:
             MCSTypeError(f'{text_underline(f"{extend_list}")} is not a list')
             exit()
 
-        new_list = base_list.array.extend(extend_list.array)
-        return new_list
+        base_list.array.extend(extend_list.array)
+
+        return base_list
 
     def unknown_name(self, arguments: list):
         print(f'Interpreter built-in error ({self.name !r})')
