@@ -175,11 +175,11 @@ class Parser:
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
             return FunctionCallNode(name_token, argument_tokens)
 
-        argument_tokens.append(self.factor())
+        argument_tokens.append(self.expression())
 
         while self.current_token.tt_type == 'TT_COMMA':
             self.advance()
-            argument_tokens.append(self.factor())
+            argument_tokens.append(self.expression())
 
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
             self.advance()

@@ -1,6 +1,6 @@
-function extend_builtins = (list) => {
-    var builtin_list = [log, append, extend]
-    return extend(list, builtin_list)
+function test = (num) => {
+    var num = 10*num
+    return num + 12
 }
 
-log(extend_builtins([]))
+log(test(5 + 1 + 1))
