@@ -2,7 +2,8 @@ from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
-    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode, BooleanNode
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode, BooleanNode, \
+    ReturnNode
 
 
 class Parser:
@@ -62,7 +63,7 @@ class Parser:
     def term(self) -> BinaryOperationNode:
         return self.binary_operation(self.factor, ['*', '/', '%'])
 
-    def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode | CodeBlockNode:
+    def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode | CodeBlockNode | ReturnNode:
         if self.current_token.tt_type == 'VAR_DEFINE':
             self.advance()
             if self.current_token.tt_type != 'TT_NAME':
@@ -84,6 +85,13 @@ class Parser:
 
         elif self.current_token.tt_type == 'TT_LEFT_BRACE':
             return self.code_block()
+
+        elif self.current_token.tt_type == 'TT_RETURN':
+            self.advance()
+            if self.current_token.tt_type in ['TT_NEWLINE', 'TT_RIGHT_BRACE']:
+                return ReturnNode()
+
+            return ReturnNode(self.expression())
 
         return self.binary_operation(self.term, ['+', '-'])
 

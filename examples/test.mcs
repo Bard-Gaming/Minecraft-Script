@@ -1,6 +1,6 @@
-function bob = (num) => {
-    var num = num + 1
-    log(num)
+function extend_builtins = (list) => {
+    var builtin_list = [log, append, extend]
+    return extend(list, builtin_list)
 }
 
-bob(3)
+log(extend_builtins([]))

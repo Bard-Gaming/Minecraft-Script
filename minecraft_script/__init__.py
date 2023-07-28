@@ -25,7 +25,7 @@ def run_file(filepath: str):  # currently line-by-line
 
     global_symbol_table = SymbolTable()
 
-    run_lexer = Lexer(file_content)
+    run_lexer = Lexer(file_content + "\n")
     tokens = run_lexer.tokenize()
 
     run_parser = Parser(tokens)

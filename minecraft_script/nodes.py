@@ -1,5 +1,5 @@
 from .tokens import Token
-from .errors import MCSValueError
+from .errors import MCSValueError, MCSSyntaxError
 
 
 class NumberNode:
@@ -135,6 +135,9 @@ class UnaryOperationNode:
 class MultipleStatementsNode:
     def __init__(self, statements: list):
         self.statements = statements
+        if any(isinstance(element, ReturnNode) for element in self.statements):
+            MCSSyntaxError('Illegal return statement')
+            exit()
 
     def __str__(self):
         return f'statements: {self.statements}'
@@ -152,3 +155,14 @@ class CodeBlockNode:
 
     def __repr__(self):
         return f'CodeBlockNode({self.statements})'
+
+
+class ReturnNode:
+    def __init__(self, value=None):
+        self.value = value
+
+    def __str__(self):
+        return f'return: {self.value}'
+
+    def __repr__(self):
+        return f'ReturnNode({self.value})'

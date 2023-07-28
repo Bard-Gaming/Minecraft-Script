@@ -103,12 +103,13 @@ log(bool)  // logs "false"
 ### Functions
 Functions are defined with the ``function`` keyword. They can be anonymous,
 or be attributed to a name. Parentheses around the parameters are required, even if there are none.
-By default, functions will return the boolean ``false``.
+For simple, single-line functions, the expression is returned.
+For more complex, multi-line functions using code blocks, the ``return`` statement is needed.
 
 ```js
 function = (a) => a * 3  // anonymous function
 
-function add = (a, b) => a + b  // define a simple add function
+function add = (a, b) => a + b  // define a simple add function; implicit return
 function log_5 = () => log(5)  // function without parameters
 
 add(2, 7)  // call the function; returns 9
@@ -122,6 +123,12 @@ function increment_log = (num) => {
     var num = num + 1
     log(num)
 }
+log(increment_log(5))  // prints "false" (since no return)
 
-increment_log(6)  // prints "7"
+
+function increment = (num) => {
+    var num = num + 1
+    return num  // return statement
+}
+log(increment(7))  // prints "8"
 ```

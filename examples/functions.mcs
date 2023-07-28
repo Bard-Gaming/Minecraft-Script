@@ -1,8 +1,6 @@
 function extend_builtins = (list) => {
     var builtin_list = [log, append, extend]
-    extend(list, builtin_list)
-
-    log(list)
+    return extend(list, builtin_list)
 }
 
-extend_builtins([1, 2, 3])
+recursive_function()

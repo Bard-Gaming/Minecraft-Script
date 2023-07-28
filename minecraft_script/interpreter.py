@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number, List, Boolean, Function, BuiltinFunction
+from .types import Number, List, Boolean, Function, BuiltinFunction, Return
 from .errors import MCSNameError, MCSTypeError, MCSIndexError
 
 
@@ -156,7 +156,18 @@ class Interpreter:
         local_symbol_table = SymbolTable(context.symbol_table, load_builtins=False)
         local_context = Context(f'code_block at {id(node)}', local_symbol_table)
 
-        return [self.visit(statement, local_context) for statement in node.statements]
+        visit_list = []
+        for statement in node.statements:
+            if type(statement).__name__ == 'ReturnNode':
+                visit_list.append(self.visit(statement, local_context))
+                break
+            visit_list.append(self.visit(statement, local_context))
+
+        return visit_list
+
+    def visit_ReturnNode(self, node, context):
+        if node.value:
+            return Return(self.visit(node.value, context))
 
     def no_visit_node(self, node, context):
         print(text_error(f'No visit method defined for {text_underline(type(node).__name__)}'))

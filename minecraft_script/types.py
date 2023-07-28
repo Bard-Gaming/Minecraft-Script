@@ -119,9 +119,15 @@ class Function:
             arg_value = arguments[i]
             local_context.symbol_table.set(arg_name, arg_value)
 
-        local_interpreter.visit(self.body_node, local_context)
+        output = local_interpreter.visit(self.body_node, local_context)
+        if isinstance(output, list):
+            try:
+                return next(element for element in output if isinstance(element, Return)).value
+            except StopIteration:
+                return Boolean(False)
 
-        return Boolean(False)
+        else:
+            return output
 
     def __str__(self):
         return f'{self.name}'
@@ -189,4 +195,14 @@ class BuiltinFunction:
         return f'<builtin function {self.name}>'
 
     def __repr__(self):
-        return f'BuiltinFunction({self.name})'
+        return f'BuiltinFunction({self.name !r})'
+
+class Return:
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return f'{self.value}'
+
+    def __repr__(self):
+        return f'Return({self.value !r})'
