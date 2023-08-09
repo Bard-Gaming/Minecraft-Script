@@ -7,6 +7,6 @@ function call_index = (list, index, argument) => {
     return (list[index])(argument)
 }
 
-var a = extend_builtins([1, 2, 3])
-var b = call_index(a, 6, 3)
-log(b)
+var a = extend_builtins([1, 2, 3])  // a is list [1, 2, 3, log, append, extend, range]
+var b = call_index(a, 6, 3)  // call range(3) (a[6] = range, arg = 3)
+log(b)  // logs "[0, 1, 2]" (i.e. range(3))
