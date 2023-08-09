@@ -4,6 +4,7 @@ The ``log()`` functions allows you to keep track of values in the console.
 It is equivalent to **JavaScript**'s ``console.log()`` or **Python**'s ``print()`` function.
 An indefinite amount of arguments is allowed, to which the arguments' values will be separated by a comma ('``,``').
 
+Parameters: ``*any``<br>
 Returns: ``false``
 
 Example as follows:
@@ -18,6 +19,7 @@ log(hello1, 300)  // logs "500, 300" in console
 The ``append()`` appends any value to a list.
 It takes a **list** as its first argument, and any other data type as its second.
 
+Parameters: ``list``, ``any`` <br>
 Returns: ``list`` (list with appended values)
 
 Example as follows:
@@ -35,6 +37,7 @@ log(list2)  // logs "[3, 5, 4, 2, [3, 4]]"
 The ``extend()`` function extends a list by another list.
 As such, both the first and second arguments have to be lists.
 
+Parameters: ``list``, ``list`` <br>
 Returns: ``list`` (fully extended list)
 
 Example as follows:
@@ -47,4 +50,20 @@ var list_3 = extend(list_1, list_2)
 
 log(list_1)  // logs "[5, 2, 2, 3]"
 log(list_3)  // logs "[5, 2, 2, 3]"
+```
+
+## Number Ranges
+The ``range()`` function creates a list of numbers starting at 0
+and going up to, but not including, the input value.
+
+Parameters: ``number`` <br>
+Returns: ``list``
+
+Example as follows:
+```js
+var num_range = range(2)
+var num_range_1 = range(10)
+
+log(num_range)  // logs "[0, 1, 2]"
+log(num_range_1)  // logs "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 ```

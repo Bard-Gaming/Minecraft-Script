@@ -1,7 +1,8 @@
 function extend_builtins = (list) => {
-    var builtin_list = [log, append, extend]
+    var builtin_list = [log, append, extend, range]
     return extend(list, builtin_list)
 }
 
 var a = extend_builtins([1, 2, 3])
 log(a)
+log(range(5))
