@@ -53,15 +53,17 @@ class Parser:
                 self.advance()
                 return expression
 
-    def factor(self) -> UnaryOperationNode | BinaryOperationNode | FunctionCallNode | ListGetNode:
-        atom = self.atom()
+    def factor(self, atom=None) -> UnaryOperationNode | BinaryOperationNode | FunctionCallNode | ListGetNode:
+        atom = atom if atom else self.atom()
         token = self.current_token
 
         if token.tt_type == 'TT_LEFT_PARENTHESIS':
-            return self.function_call(atom)
+            atom = self.function_call(atom)
+            return self.factor(atom)
 
         elif token.tt_type == 'TT_LEFT_BRACKET':
-            return self.array_get(atom)
+            atom = self.array_get(atom)
+            return self.factor(atom)
 
         else:
             return atom
