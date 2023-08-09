@@ -3,4 +3,5 @@ function extend_builtins = (list) => {
     return extend(list, builtin_list)
 }
 
-recursive_function()
+var a = extend_builtins([1, 2, 3])
+log(a)

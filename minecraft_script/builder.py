@@ -1,6 +1,7 @@
 from os import mkdir
 from .common import module_folder
 from .text_additions import text_error
+from shutil import copyfile
 
 
 class Builder:
@@ -14,6 +15,7 @@ class Builder:
         except FileExistsError:
             print(text_error(f"Can't build file: {self.datapack_name !r} folder exists already!"))
             exit()
+
         mkdir(f'{self.datapack_name}/data')
         # minecraft folders:
         mkdir(f'{self.datapack_name}/data/minecraft')
@@ -24,13 +26,15 @@ class Builder:
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}')
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions')
 
-        # minecraft function tags
-
+        # default stuff
         with (
             open(f'{module_folder}/build_templates/pack.mcmeta', 'rt') as template_file,
             open(f'{self.datapack_name}/pack.mcmeta', 'xt') as output_file
         ):
             output_file.write(template_file.read())
+        copyfile(f'{module_folder}/build_templates/pack.png', f'{self.datapack_name}/pack.png')
+
+        # minecraft function tags
 
         with (
             open(f'{module_folder}/build_templates/function_tags.json', 'rt') as template_file,

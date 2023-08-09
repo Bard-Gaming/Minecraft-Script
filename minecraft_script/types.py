@@ -137,7 +137,7 @@ class Function:
 
 
 class BuiltinFunction:
-    names = ['log', 'append', 'extend']
+    names = ['log', 'append', 'extend', 'range']
 
     def __init__(self, name):
         self.name = name
@@ -187,6 +187,14 @@ class BuiltinFunction:
 
         return base_list
 
+    @staticmethod
+    def call_range(arguments: list):
+        if len(arguments) > 3:
+            MCSTypeError('append() takes 2 arguments')
+            exit()
+
+        return List(list(range(*arguments)))
+
     def unknown_name(self, arguments: list):
         print(f'Interpreter built-in error ({self.name !r})')
         exit()
@@ -196,6 +204,7 @@ class BuiltinFunction:
 
     def __repr__(self):
         return f'BuiltinFunction({self.name !r})'
+
 
 class Return:
     def __init__(self, value):

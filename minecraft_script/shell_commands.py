@@ -13,7 +13,7 @@ def sh_build(mcs_file: str, datapack_name: str = None, *args) -> None:
     mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
 
     try:
-        build_file = open(mcs_file, 'rt')
+        build_file = open(mcs_file, 'rt', encoding='utf-8')
     except FileNotFoundError:
         print(f'File {mcs_file} not found.')
         return

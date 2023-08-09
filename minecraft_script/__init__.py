@@ -20,7 +20,7 @@ def run(text: str):
 
 
 def run_file(filepath: str):  # currently line-by-line
-    with open(filepath, 'rt') as file:
+    with open(filepath, 'rt', encoding='utf-8') as file:
         file_content = file.read()
 
     global_symbol_table = SymbolTable()
