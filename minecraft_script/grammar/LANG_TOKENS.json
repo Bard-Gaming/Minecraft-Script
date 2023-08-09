@@ -17,6 +17,9 @@
   "TT_EQUALS"            : "=",
   "TT_FUNCTION_ARROW"    : "=>",
 
+  "TT_LOGICAL_NOT"       : "!",
+
   "TT_NUMBER"            : "0123456789",
-  "TT_NAME"              : "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+  "TT_NAME"              : "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
+  "TT_NAME__extend"      : "0123456789-"
 }

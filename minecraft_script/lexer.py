@@ -29,7 +29,8 @@ class Lexer:
     def make_name(self):
         name_str = ''
         # allow numbers after first character
-        while self.current_char and (self.current_char in LANG_TOKENS['TT_NAME'] or self.current_char in LANG_TOKENS['TT_NUMBER']):
+        while (self.current_char and
+               (self.current_char in LANG_TOKENS['TT_NAME'] or self.current_char in LANG_TOKENS['TT_NAME__extend'])):
             name_str += self.current_char
             self.advance()
 
@@ -102,6 +103,9 @@ class Lexer:
                     tokens.append(Token(token_value, 'TT_EQUALS'))
 
                 # don't self.advance() since that is already done in self.make_equals()
+
+            elif self.current_char == LANG_TOKENS['TT_LOGICAL_NOT']:
+                tokens.append(Token(self.current_char, 'TT_LOGICAL_NOT'))
 
             elif self.current_char in LANG_TOKENS['TT_NUMBER']:
                 number = self.make_number()
