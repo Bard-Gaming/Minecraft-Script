@@ -23,24 +23,28 @@ class Parser:
         result = self.statement()
         return result
 
-    def factor(self) -> NumberNode | UnaryOperationNode | BinaryOperationNode | VariableAccessNode | FunctionCallNode | ListNode | ListGetNode | BooleanNode:
+    def atom(self) -> NumberNode | UnaryOperationNode | VariableAccessNode | ListNode | BooleanNode:
         token = self.current_token
 
-        if token.value in ['+', '-']:
+        if token.tt_type == 'TT_NAME':
             self.advance()
-            factor = self.factor()
-            return UnaryOperationNode(token, factor)
-
-        elif token.tt_type == 'TT_NAME':
-            self.advance()
-
-            if self.current_token.tt_type == 'TT_LEFT_PARENTHESIS':
-                return self.function_call(token)
-
-            elif self.current_token.tt_type == 'TT_LEFT_BRACKET':
-                return self.array_get(token)
-
             return VariableAccessNode(token)
+
+        elif token.tt_type == 'TT_NUMBER':
+            self.advance()
+            return NumberNode(token)
+
+        elif token.value in ['+', '-']:
+            self.advance()
+            atom = self.atom()
+            return UnaryOperationNode(token, atom)
+
+        elif token.tt_type == 'TT_BOOLEAN':
+            self.advance()
+            return BooleanNode(token)
+
+        elif token.tt_type == 'TT_LEFT_BRACKET':
+            return self.array()
 
         elif token.tt_type == 'TT_LEFT_PARENTHESIS':
             self.advance()
@@ -49,16 +53,18 @@ class Parser:
                 self.advance()
                 return expression
 
-        elif token.tt_type == 'TT_BOOLEAN':
-            self.advance()
-            return BooleanNode(token.value)
+    def factor(self) -> UnaryOperationNode | BinaryOperationNode | FunctionCallNode | ListGetNode:
+        atom = self.atom()
+        token = self.current_token
+
+        if token.tt_type == 'TT_LEFT_PARENTHESIS':
+            return self.function_call(atom)
 
         elif token.tt_type == 'TT_LEFT_BRACKET':
-            return self.array()
+            return self.array_get(atom)
 
-        elif token.tt_type == 'TT_NUMBER':
-            self.advance()
-            return NumberNode(token)
+        else:
+            return atom
 
     def term(self) -> BinaryOperationNode:
         return self.binary_operation(self.factor, ['*', '/', '%'])
@@ -167,13 +173,13 @@ class Parser:
 
         return FunctionAssignNode(function_name_token, function_parameters, function_body)
 
-    def function_call(self, name_token: Token) -> FunctionCallNode:
+    def function_call(self, atom) -> FunctionCallNode:
         self.advance()
 
         argument_tokens = []
 
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
-            return FunctionCallNode(name_token, argument_tokens)
+            return FunctionCallNode(atom, argument_tokens)
 
         argument_tokens.append(self.expression())
 
@@ -183,7 +189,7 @@ class Parser:
 
         if self.current_token.tt_type == 'TT_RIGHT_PARENTHESIS':
             self.advance()
-            return FunctionCallNode(name_token, argument_tokens)
+            return FunctionCallNode(atom, argument_tokens)
 
     def array(self) -> ListNode:
         if self.current_token.tt_type != 'TT_LEFT_BRACKET':
@@ -215,7 +221,7 @@ class Parser:
             MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
             exit()
 
-    def array_get(self, name_token) -> ListGetNode:
+    def array_get(self, atom) -> ListGetNode:
         if self.current_token.tt_type != 'TT_LEFT_BRACKET':
             MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
             exit()
@@ -225,7 +231,11 @@ class Parser:
 
         if self.current_token.tt_type == 'TT_RIGHT_BRACKET':
             self.advance()
-            return ListGetNode(name_token, index)
+            return ListGetNode(atom, index)
+
+        else:
+            MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
+            exit()
 
     def code_block(self):
         if self.current_token.tt_type != 'TT_LEFT_BRACE':
@@ -261,7 +271,6 @@ class Parser:
         else:
             MCSSyntaxError('Expected "}". Got "%s" instead.' % self.current_token.value)
             exit()
-
 
 
 if __name__ == '__main__':

@@ -3,6 +3,10 @@ function extend_builtins = (list) => {
     return extend(list, builtin_list)
 }
 
+function call_index = (list, index, argument) => {
+    return (list[index])(argument)
+}
+
 var a = extend_builtins([1, 2, 3])
-log(a)
-log(range(5))
+var b = call_index(a, 6, 3)
+log(b)

@@ -31,20 +31,20 @@ class ListNode:
 
 
 class ListGetNode:
-    def __init__(self, name_token, index):
-        self.name_token = name_token
+    def __init__(self, atom, index):
+        self.atom = atom
         self.index = index
 
     def __str__(self):
-        return f'array get: {self.name_token.value} {self.index}'
+        return f'array get: {self.atom} {self.index}'
 
     def __repr__(self):
-        return f'ListGetNode({self.name_token !r}, {self.index !r})'
+        return f'ListGetNode({self.atom !r}, {self.index !r})'
 
 
 class BooleanNode:
-    def __init__(self, value: str):
-        self.value = True if value == 'true' else False
+    def __init__(self, token: Token):
+        self.value = True if token.value == 'true' else False
 
     def __str__(self):
         return f'boolean: {str(self.value).lower()}'
@@ -96,15 +96,15 @@ class FunctionAssignNode:
 
 
 class FunctionCallNode:
-    def __init__(self, name_token: Token, argument_nodes: list):
-        self.name_token = name_token
+    def __init__(self, atom, argument_nodes: list):
+        self.atom = atom
         self.argument_nodes = argument_nodes
 
     def __str__(self):
-        return f'Func call:{self.name_token.value !r}'
+        return f'Func call:{self.atom.value !r}'
 
     def __repr__(self):
-        return f'FunctionCallNode({self.name_token !r}, {self.argument_nodes !r})'
+        return f'FunctionCallNode({self.atom !r}, {self.argument_nodes !r})'
 
 
 class BinaryOperationNode:

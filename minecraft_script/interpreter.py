@@ -63,21 +63,19 @@ class Interpreter:
         return Boolean(node.value)
 
     def visit_ListGetNode(self, node, context):
-        name = node.name_token.value
+        current_list = self.visit(node.atom, context)
         index = self.visit(node.index, context)
-        variable = context.symbol_table.get(name)
 
-        if type(variable).__name__ == 'List':
-            value = variable.get_index(index)
+        if isinstance(current_list, List):
+            value = current_list.get_index(index)
 
             if not value:
                 MCSIndexError(f'{index}')
                 exit()
 
             return value
-
         else:
-            MCSTypeError(f'{variable} is not a list')
+            MCSTypeError(f'{current_list} is not a list')
             exit()
 
     def visit_VariableAccessNode(self, node, context) -> any:
@@ -110,13 +108,15 @@ class Interpreter:
         return function
 
     def visit_FunctionCallNode(self, node, context) -> any:
-        func_name = node.name_token.value
+        function = self.visit(node.atom, context)
         arguments = [self.visit(arg_token, context) for arg_token in node.argument_nodes]
 
-        function = context.symbol_table.get(func_name)
-        result = function.call(arguments)
-
-        return result
+        if isinstance(function, (Function, BuiltinFunction)):
+            result = function.call(arguments)
+            return result
+        else:
+            MCSTypeError(f'"{function}" is not a function')
+            exit()
 
     def visit_BinaryOperationNode(self, node, context) -> Number:
         operator = node.operator.value
