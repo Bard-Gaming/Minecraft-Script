@@ -3,43 +3,55 @@ from .text_additions import text_underline
 
 
 class Number:
-    def __init__(self, value: str | int):
-        try:
-            self.value = int(value)
-        except ValueError:
-            MCSValueError(f'{value !r} is not a number')
-            exit()
+    def __init__(self, value: str | int | object):
+        match value:
+            case int():
+                self.value = value
 
-    def add(self, number) -> int:
+            case str():
+                try:
+                    self.value = int(value)
+                except ValueError:
+                    MCSValueError(f'{value !r} is not a number')
+                    exit()
+
+            case Number():
+                self.value = value.value
+
+            case _:
+                MCSValueError(f'{value !r} is not a number')
+                exit()
+
+    def add(self, number):
         if isinstance(number, Number):
             self.value = self.value + number.value
-            return self.value
+            return Number(self.value)
         else:
             MCSTypeError(f'{number !s} is not a number')
             exit()
 
-    def subtract(self, number) -> int:
+    def subtract(self, number):
         if isinstance(number, Number):
             self.value = self.value - number.value
-            return self.value
+            return Number(self.value)
         else:
             MCSTypeError(f'{number !s} is not a number')
             exit()
 
-    def multiply(self, number) -> int:
+    def multiply(self, number):
         if isinstance(number, Number):
             self.value = self.value * number.value
-            return self.value
+            return Number(self.value)
         else:
             MCSTypeError(f'{number !s} is not a number')
             exit()
 
-    def divide(self, number) -> int:
+    def divide(self, number):
         if isinstance(number, Number):
             if number.value == 0:
                 MCSZeroDivisionError(f"Can't divide by zero")
             self.value = self.value // number.value
-            return self.value
+            return Number(self.value)
         else:
             MCSTypeError(f'{number !s} is not a number')
             exit()

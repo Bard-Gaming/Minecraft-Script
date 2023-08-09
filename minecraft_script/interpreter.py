@@ -118,7 +118,7 @@ class Interpreter:
 
         return result
 
-    def visit_BinaryOperationNode(self, node, context) -> int:
+    def visit_BinaryOperationNode(self, node, context) -> Number:
         operator = node.operator.value
         left_expression = Number(self.visit(node.left_node, context))
         right_expression = Number(self.visit(node.right_node, context))
@@ -137,15 +137,15 @@ class Interpreter:
 
         return result
 
-    def visit_UnaryOperationNode(self, node, context) -> int:
+    def visit_UnaryOperationNode(self, node, context) -> Number:
         operator = node.operator.value
         right_node = Number(self.visit(node.right_node, context))
-        result = 0
+        result = Number(0)
 
         if operator == '+':
-            result = Number(0).add(right_node)
+            result = result.add(right_node)
         elif operator == '-':
-            result = Number(0).subtract(right_node)
+            result = result.subtract(right_node)
 
         return result
 
