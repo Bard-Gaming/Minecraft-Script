@@ -5,6 +5,8 @@ Minecraft Script is an interpreted programming language which goes through the P
 However, interpretation is not its main feature, and is rather more of a debugging tool, as its sole
 purpose is to allow you to validate your code before building it into a full datapack.
 
+Be sure to check out the [documentation](https://github.com/Bard-Gaming/Minecraft-Script/tree/main/documentation) and the provided [examples](https://github.com/Bard-Gaming/Minecraft-Script/tree/main/examples)!
+
 ## Installation
 MCS can be installed using [Python's pip module](https://pip.pypa.io/en/stable/installation/).
 
@@ -24,9 +26,9 @@ For a list of all shell commands, you can use the following command:
 ```cmd
 python -m minecraft_script help
 ```
-If you want to simplify the usage of shell commands, you can check out [the documentation](https://github.com/Bard-Gaming/Minecraft-Script/blob/main/documentation/installations.md).
+If you want to simplify the usage of shell commands, you can check out [the installations page in the documentation](https://github.com/Bard-Gaming/Minecraft-Script/blob/main/documentation/installations.md).
 
 ## GitHub
 [**Link to GitHub Repository**](https://github.com/Bard-Gaming/Minecraft-Script)
 
-Documentation, examples, and source code can all be found on the GitHub.
+Source code, documentation, and examples, can all be found on the GitHub.
