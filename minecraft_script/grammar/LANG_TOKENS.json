@@ -18,6 +18,8 @@
   "TT_FUNCTION_ARROW"    : "=>",
 
   "TT_LOGICAL_NOT"       : "!",
+  "TT_LOGICAL_AND"       : "&&",
+  "TT_LOGICAL_OR"        : "||",
 
   "TT_NUMBER"            : "0123456789",
   "TT_NAME"              : "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",

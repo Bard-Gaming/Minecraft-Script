@@ -52,8 +52,8 @@ class Interpreter:
         method = getattr(self, method_name, self.no_visit_node)
         return method(node, context)
 
-    def visit_NumberNode(self, node, context) -> int:
-        return node.get_value()
+    def visit_NumberNode(self, node, context) -> Number:
+        return Number(node.get_value())
 
     def visit_ListNode(self, node, context):
         value_array = [self.visit(element, context) for element in node.array]
@@ -129,22 +129,39 @@ class Interpreter:
             MCSTypeError(f'"{function}" is not a function')
             exit()
 
-    def visit_BinaryOperationNode(self, node, context) -> Number:
+    def visit_BinaryOperationNode(self, node, context) -> Number | Boolean:
         operator = node.operator.value
-        left_expression = Number(self.visit(node.left_node, context))
-        right_expression = Number(self.visit(node.right_node, context))
+        left_expression: Number | Boolean = self.visit(node.left_node, context)
+        right_expression: Number | Boolean = self.visit(node.right_node, context)
         result = 0
 
         if operator == '+':
-            result = left_expression.add(right_expression)
+            right_expression = Number(right_expression)
+            result = Number(left_expression).add(right_expression)
+
         elif operator == '-':
-            result = left_expression.subtract(right_expression)
+            right_expression = Number(right_expression)
+            result = Number(left_expression).subtract(right_expression)
+
         elif operator == '*':
-            result = left_expression.multiply(right_expression)
+            right_expression = Number(right_expression)
+            result = Number(left_expression).multiply(right_expression)
+
         elif operator == '/':
-            result = left_expression.divide(right_expression)
+            right_expression = Number(right_expression)
+            result = Number(left_expression).divide(right_expression)
+
         elif operator == '%':
-            result = left_expression.modulus(right_expression)
+            right_expression = Number(right_expression)
+            result = Number(left_expression).modulus(right_expression)
+
+        elif operator == '&&':
+            right_expression = Boolean(right_expression)
+            result = Boolean(left_expression).logical_and(right_expression)
+
+        elif operator == '||':
+            right_expression = Boolean(right_expression)
+            result = Boolean(left_expression).logical_or(right_expression)
 
         return result
 

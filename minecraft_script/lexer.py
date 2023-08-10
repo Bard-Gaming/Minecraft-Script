@@ -55,6 +55,26 @@ class Lexer:
         else:
             return token_value
 
+    def make_logical_and(self):
+        token_value = self.current_char
+        self.advance()
+        if self.current_char == LANG_TOKENS['TT_LOGICAL_AND'][1]:
+            token_value += self.current_char
+            self.advance()
+            return token_value
+        else:
+            return token_value
+
+    def make_logical_or(self):
+        token_value = self.current_char
+        self.advance()
+        if self.current_char == LANG_TOKENS['TT_LOGICAL_OR'][1]:
+            token_value += self.current_char
+            self.advance()
+            return token_value
+        else:
+            return token_value
+
     def tokenize(self) -> list[Token]:
         tokens = []
 
@@ -107,6 +127,14 @@ class Lexer:
             elif self.current_char == LANG_TOKENS['TT_LOGICAL_NOT']:
                 tokens.append(Token(self.current_char, 'TT_LOGICAL_NOT'))
                 self.advance()
+
+            elif self.current_char == LANG_TOKENS['TT_LOGICAL_AND'][0]:
+                token_value = self.make_logical_and()
+                tokens.append(Token(token_value, 'TT_LOGICAL_AND'))
+
+            elif self.current_char == LANG_TOKENS['TT_LOGICAL_OR'][0]:
+                token_value = self.make_logical_or()
+                tokens.append(Token(token_value, 'TT_LOGICAL_OR'))
 
             elif self.current_char in LANG_TOKENS['TT_NUMBER']:
                 number = self.make_number()

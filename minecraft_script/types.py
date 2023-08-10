@@ -16,52 +16,58 @@ class Number:
                     exit()
 
             case Number():
-                self.value = value.value
+                self.value = value.get_value()
+
+            case Boolean():
+                self.value = value.get_value()
 
             case _:
-                MCSValueError(f'{value !r} is not a number')
+                MCSValueError(f'"{value !s}" is not a number')
                 exit()
+
+    def get_value(self):
+        return self.value
 
     def add(self, number):
         if isinstance(number, Number):
-            self.value = self.value + number.value
-            return Number(self.value)
+            self.value = self.get_value() + number.get_value()
+            return Number(self.get_value())
         else:
-            MCSTypeError(f'{number !s} is not a number')
+            MCSTypeError(f'"{number !s}" is not a number')
             exit()
 
     def subtract(self, number):
         if isinstance(number, Number):
-            self.value = self.value - number.value
-            return Number(self.value)
+            self.value = self.get_value() - number.value
+            return Number(self.get_value())
         else:
-            MCSTypeError(f'{number !s} is not a number')
+            MCSTypeError(f'"{number !s}" is not a number')
             exit()
 
     def multiply(self, number):
         if isinstance(number, Number):
-            self.value = self.value * number.value
-            return Number(self.value)
+            self.value = self.get_value() * number.value
+            return Number(self.get_value())
         else:
-            MCSTypeError(f'{number !s} is not a number')
+            MCSTypeError(f'"{number !s}" is not a number')
             exit()
 
     def divide(self, number):
         if isinstance(number, Number):
             if number.value == 0:
                 MCSZeroDivisionError(f"Can't divide by zero")
-            self.value = self.value // number.value
-            return Number(self.value)
+            self.value = self.get_value() // number.value
+            return Number(self.get_value())
         else:
-            MCSTypeError(f'{number !s} is not a number')
+            MCSTypeError(f'"{number !s}" is not a number')
             exit()
 
-    def modulus(self, number) -> int:
+    def modulus(self, number):
         if isinstance(number, Number):
-            self.value = self.value % number.value
-            return self.value
+            self.value = self.get_value() % number.value
+            return Number(self.get_value())
         else:
-            MCSTypeError(f'{number !s} is not a number')
+            MCSTypeError(f'"{number !s}" is not a number')
             exit()
 
     def __str__(self):
@@ -75,8 +81,12 @@ class List:
     def __init__(self, array: list):
         self.array = array
 
-    def get_index(self, index: int, fallback: any = None):
+    def get_value(self):
+        return self.array
+
+    def get_index(self, index: Number, fallback: any = None):
         output = None
+        index: int = index.get_value()
 
         try:
             output = self.array[index]
@@ -94,16 +104,31 @@ class List:
 
 class Boolean:
     def __init__(self, value):
-        self.value = value
+        match value:
+            case bool():
+                self.value = value
+
+            case Boolean():
+                self.value = value.get_value()
+
+            case Number():
+                self.value = bool(value.get_value())
+
+            case _:
+                MCSValueError(f'{value !r} could not be parsed to boolean')
+                exit()
+
+    def get_value(self) -> bool:
+        return self.value
 
     def logical_not(self):
-        return Boolean(not self.value)
+        return Boolean(not self.get_value())
 
     def logical_and(self, other):
-        return Boolean(self.value and other)
+        return Boolean(self.get_value() and other)
 
     def logical_or(self, other):
-        return Boolean(self.value or other)
+        return Boolean(self.get_value() or other)
 
     def __str__(self):
         return str(self.value).lower()

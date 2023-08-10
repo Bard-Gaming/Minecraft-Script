@@ -76,6 +76,9 @@ class Parser:
     def term(self) -> BinaryOperationNode:
         return self.binary_operation(self.factor, ['*', '/', '%'])
 
+    def boolean_operation(self) -> BinaryOperationNode:
+        return self.binary_operation(self.term, ['+', '-'])
+
     def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode | CodeBlockNode | ReturnNode:
         if self.current_token.tt_type == 'VAR_DEFINE':
             self.advance()
@@ -106,7 +109,7 @@ class Parser:
 
             return ReturnNode(self.expression())
 
-        return self.binary_operation(self.term, ['+', '-'])
+        return self.binary_operation(self.boolean_operation, ['&&', '||'])
 
     def binary_operation(self, function, operators) -> BinaryOperationNode:
         left_node = function()

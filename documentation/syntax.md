@@ -50,7 +50,7 @@ var hello2 = hello2 + 500  // adds 500 to hello2
 
 
 ## Operations
-Operations in MCS follow PEMDAS and not plain left-to-right computations.
+Operations in MCS follow PEMDAS and **not** plain left-to-right computations.
 Current operations are:
 - ``+`` Summation
 - ``-`` Subtraction
@@ -100,6 +100,26 @@ var bool = false  // boolean "false"
 log(bool)  // logs "false"
 ```
 
+Booleans also possess unique operations that accept any truthy or faulty values. These are the following:
+- ``!`` Logical not (goes before the bool)
+- ``&&`` Logical and
+- ``||`` Logical or
+
+Example as follows:
+```js
+var and_operation = !true && true
+var or_operation = false || true
+
+log(and_operation)  // logs "false" since !true is false
+log(or_operation)  // logs "true" since either one of "false or true" is true
+```
+However, these operations don't only accept true or false values per se.
+For instance, the number 0 counts as being faulty, meaning that ``0 && true`` results in ``false``.
+Any number value above 0 is considered truthy.<br>
+Expanding on this, booleans can also be used in number operations,
+in which case ``true`` will be interpreted as ``1``,
+and ``false`` will be interpreted as ``0``.
+
 ### Functions
 Functions are defined with the ``function`` keyword. They can be anonymous,
 or be attributed to a name. Parentheses around the parameters are required, even if there are none.
@@ -108,6 +128,7 @@ For more complex, multi-line functions using code blocks, the ``return`` stateme
 
 ```js
 function = (a) => a * 3  // anonymous function
+[function = () => log(5), 2][0]()  // an anonymous function in a list being called
 
 function add = (a, b) => a + b  // define a simple add function; implicit return
 function log_5 = () => log(5)  // function without parameters
@@ -123,6 +144,7 @@ function increment_log = (num) => {
     var num = num + 1
     log(num)
 }
+
 log(increment_log(5))  // prints "false" (since no return)
 
 
@@ -130,5 +152,6 @@ function increment = (num) => {
     var num = num + 1
     return num  // return statement
 }
+
 log(increment(7))  // prints "8"
 ```
