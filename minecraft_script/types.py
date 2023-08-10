@@ -149,7 +149,7 @@ class Function:
 
 
 class BuiltinFunction:
-    names = ['log', 'append', 'extend', 'range']
+    names = ['log', 'append', 'extend', 'range', 'any']
 
     def __init__(self, name):
         self.name = name
@@ -166,7 +166,7 @@ class BuiltinFunction:
     @staticmethod
     def call_append(arguments: list):
         if len(arguments) > 2:
-            MCSTypeError('append() takes 2 arguments')
+            MCSTypeError(f'append() takes 2 arguments ({len(arguments)} given)')
             exit()
         base_list: List = arguments[0]
         value = arguments[1]
@@ -182,7 +182,7 @@ class BuiltinFunction:
     @staticmethod
     def call_extend(arguments: list):
         if len(arguments) > 2:
-            MCSTypeError('append() takes 2 arguments')
+            MCSTypeError(f'extend() takes 2 arguments ({len(arguments)} given)')
             exit()
         base_list: List = arguments[0]
         extend_list: List = arguments[1]
@@ -201,11 +201,28 @@ class BuiltinFunction:
 
     @staticmethod
     def call_range(arguments: list):
-        if len(arguments) > 3:
-            MCSTypeError('append() takes 2 arguments')
+        if len(arguments) > 1:
+            MCSTypeError(f'range() only takes 1 argument ({len(arguments)} given)')
             exit()
 
         return List(list(range(*arguments)))
+
+    @staticmethod
+    def call_any(arguments: list):
+        if len(arguments) > 1:
+            MCSTypeError(f'any() only takes 1 argument ({len(arguments)} given)')
+            exit()
+
+        list_arg: List = arguments[0]
+
+        if isinstance(list_arg, List):
+            value_list: map[bool] = map(lambda element: bool(element.get_value()), list_arg.get_value())
+            return Boolean(any(value_list))
+
+        else:
+            return MCSTypeError(f'')
+
+
 
     def unknown_name(self, arguments: list):
         print(f'Interpreter built-in error ({self.name !r})')

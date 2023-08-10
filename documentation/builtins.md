@@ -4,8 +4,8 @@ The ``log()`` functions allows you to keep track of values in the console.
 It is equivalent to **JavaScript**'s ``console.log()`` or **Python**'s ``print()`` function.
 An indefinite amount of arguments is allowed, to which the arguments' values will be separated by a comma ('``,``').
 
-Parameters: ``*any``<br>
-Returns: ``false``
+Parameters: ``*any`` <br>
+Returns: ``boolean (false)``
 
 Example as follows:
 ```js
@@ -38,7 +38,7 @@ The ``extend()`` function extends a list by another list.
 As such, both the first and second arguments have to be lists.
 
 Parameters: ``list``, ``list`` <br>
-Returns: ``list`` (fully extended list)
+Returns: ``list`` (extended list)
 
 Example as follows:
 ```js
@@ -66,4 +66,22 @@ var num_range_1 = range(10)
 
 log(num_range)  // logs "[0, 1, 2]"
 log(num_range_1)  // logs "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+## Any of List
+The ``any()`` function checks a list of elements and tries to find a single truthy value.
+If it succeeds, true is returned, else false.
+
+Parameters: ``list`` <br>
+Returns: ``boolean``
+
+Example as follows:
+```js
+var false_list = [0, false, 0]
+var normal_list = [false, 52, 0]
+var contains_truthy = any([0, 0, 0, 1, 0])
+
+log(any(false_list))  // logs "false", since 0 and false are considered faulty
+log(any(normal_list))  // logs "true", since 52 is truthy
+log(contains_truthy)  // logs "true", since 1 is truthy
 ```
