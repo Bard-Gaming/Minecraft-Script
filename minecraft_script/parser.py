@@ -3,7 +3,7 @@ from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
     FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode, BooleanNode, \
-    ReturnNode
+    ReturnNode, UnaryBooleanNode
 
 
 class Parser:
@@ -23,7 +23,7 @@ class Parser:
         result = self.statement()
         return result
 
-    def atom(self) -> NumberNode | UnaryOperationNode | VariableAccessNode | ListNode | BooleanNode:
+    def atom(self) -> NumberNode | UnaryOperationNode | VariableAccessNode | ListNode | BooleanNode | UnaryBooleanNode:
         token = self.current_token
 
         if token.tt_type == 'TT_NAME':
@@ -42,6 +42,11 @@ class Parser:
         elif token.tt_type == 'TT_BOOLEAN':
             self.advance()
             return BooleanNode(token)
+
+        elif token.tt_type == 'TT_LOGICAL_NOT':
+            self.advance()
+            atom = self.atom()
+            return UnaryBooleanNode(token, atom)
 
         elif token.tt_type == 'TT_LEFT_BRACKET':
             return self.array()
@@ -274,10 +279,3 @@ class Parser:
             MCSSyntaxError('Expected "}". Got "%s" instead.' % self.current_token.value)
             exit()
 
-
-if __name__ == '__main__':
-    tokens = [Token(5, 'TT_NUMBER'), Token('+', 'TT_BINARY_OPERATOR'), Token(5, 'TT_NUMBER'),
-              Token('*', 'TT_BINARY_OPERATOR'), Token('(', 'TT_LEFT_PARENTHESIS'), Token(3, 'TT_NUMBER'),
-              Token('+', 'TT_BINARY_OPERATOR'), Token('-', 'TT_BINARY_OPERATOR'), Token(5, 'TT_NUMBER'),
-              Token(')', 'TT_RIGHT_PARENTHESIS')]
-    print(Parser(tokens).parse())

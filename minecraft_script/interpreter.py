@@ -1,6 +1,6 @@
 from .text_additions import text_error, text_underline
 from .types import Number, List, Boolean, Function, BuiltinFunction, Return
-from .errors import MCSNameError, MCSTypeError, MCSIndexError
+from .errors import MCSNameError, MCSTypeError, MCSIndexError, MCSSyntaxError
 
 
 class Context:
@@ -61,6 +61,17 @@ class Interpreter:
 
     def visit_BooleanNode(self, node, context):
         return Boolean(node.value)
+
+    def visit_UnaryBooleanNode(self, node, context):
+        operator_type = node.get_unary_type()
+        boolean = self.visit(node.get_atom(), context)
+
+        if operator_type == 'TT_LOGICAL_NOT':
+            return boolean.logical_not()
+
+        else:
+            MCSSyntaxError(node.get_unary_value())
+            exit()
 
     def visit_ListGetNode(self, node, context):
         current_list = self.visit(node.atom, context)

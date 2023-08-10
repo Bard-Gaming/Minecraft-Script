@@ -96,14 +96,14 @@ class Boolean:
     def __init__(self, value):
         self.value = value
 
-    def logical_invert(self):
-        return not self.value
+    def logical_not(self):
+        return Boolean(not self.value)
 
     def logical_and(self, other):
-        return self.value and other
+        return Boolean(self.value and other)
 
     def logical_or(self, other):
-        return self.value or other
+        return Boolean(self.value or other)
 
     def __str__(self):
         return str(self.value).lower()

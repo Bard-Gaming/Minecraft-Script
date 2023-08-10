@@ -53,6 +53,27 @@ class BooleanNode:
         return f'BooleanNode({str(self.value).lower()})'
 
 
+class UnaryBooleanNode:
+    def __init__(self, unary_token, atom):
+        self.unary_token = unary_token
+        self.atom = atom
+
+    def get_unary_value(self):
+        return self.unary_token.value
+
+    def get_unary_type(self):
+        return self.unary_token.tt_type
+
+    def get_atom(self):
+        return self.atom
+
+    def __str__(self):
+        return f'Unary Bool Node: {self.unary_token}, {self.atom}'
+
+    def __repr__(self):
+        return f'UnaryBooleanNode({self.unary_token !r}, {self.atom !r})'
+
+
 class VariableAssignNode:
     def __init__(self, name_token: Token, value_node):
         self.name_token = name_token

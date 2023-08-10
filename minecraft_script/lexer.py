@@ -106,6 +106,7 @@ class Lexer:
 
             elif self.current_char == LANG_TOKENS['TT_LOGICAL_NOT']:
                 tokens.append(Token(self.current_char, 'TT_LOGICAL_NOT'))
+                self.advance()
 
             elif self.current_char in LANG_TOKENS['TT_NUMBER']:
                 number = self.make_number()
