@@ -201,6 +201,10 @@ class Parser:
             self.advance()
             return FunctionCallNode(atom, argument_tokens)
 
+        else:
+            MCSSyntaxError(f'Expected ")". Got {self.current_token.value !r} instead.')
+            exit()
+
     def array(self) -> ListNode:
         if self.current_token.tt_type != 'TT_LEFT_BRACKET':
             MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
