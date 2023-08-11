@@ -25,7 +25,7 @@ class Number:
                 MCSValueError(f'"{value !s}" is not a number')
                 exit()
 
-    def get_value(self):
+    def get_value(self) -> int:
         return self.value
 
     def add(self, number):
@@ -81,7 +81,7 @@ class List:
     def __init__(self, array: list):
         self.array = array
 
-    def get_value(self):
+    def get_value(self) -> list:
         return self.array
 
     def get_index(self, index: Number, fallback: any = None):
@@ -226,9 +226,11 @@ class BuiltinFunction:
 
     @staticmethod
     def call_range(arguments: list):
-        if len(arguments) > 1:
-            MCSTypeError(f'range() only takes 1 argument ({len(arguments)} given)')
+        if len(arguments) > 3:
+            MCSTypeError(f'range() takes a maximum of 3 arguments ({len(arguments)} given)')
             exit()
+
+        arguments = map(lambda element: element.get_value(), arguments)
 
         return List(list(range(*arguments)))
 
