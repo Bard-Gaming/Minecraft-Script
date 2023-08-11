@@ -19,7 +19,7 @@ def run(text: str):
     print(run_interpreter.visit(ast, context))
 
 
-def run_file(filepath: str):  # currently line-by-line
+def run_file(filepath: str):
     with open(filepath, 'rt', encoding='utf-8') as file:
         file_content = file.read()
 
@@ -53,3 +53,16 @@ def run_shell():
         run_interpreter = Interpreter()
         context = Context('main', global_symbol_table)
         print(run_interpreter.visit(ast, context)[0])
+
+
+def get_ast_from_file(filepath: str):
+    with open(filepath, 'rt', encoding='utf-8') as file:
+        file_content = file.read()
+
+    run_lexer = Lexer(file_content + "\n")
+    tokens = run_lexer.tokenize()
+
+    run_parser = Parser(tokens)
+    ast = run_parser.parse()
+
+    return ast

@@ -1,6 +1,2 @@
-function test = (num) => {
-    var num = 10*num
-    return [num + 12, num - 12]
-}
-
-log(test(5 + 1 + 1)[0])
+var e = [1, 2, 3, 4, 5, [6, 7, 8]]
+var a = e[2]

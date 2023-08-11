@@ -1,12 +1,14 @@
 from os import mkdir
 from time import time
+from shutil import copyfile
 from .common import module_folder
 from .text_additions import text_error
-from shutil import copyfile
+from .build_interpreter import build
 
 
 class Builder:
-    def __init__(self, ast, datapack_name: str):
+    def __init__(self, ast: list, datapack_name: str):
+        self.ast = ast
         self.datapack_name = datapack_name
         self.datapack_id = datapack_name.lower().replace(' ', '_')
 
@@ -63,10 +65,18 @@ class Builder:
 
         with (
             open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file,
-            open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file
+            open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file,
+            open(f'{self.datapack_name}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file
         ):
-            main_file.write('# main file. This mcfunction file is run every tick.')
-            init_file.write('# init file. This mcfunction file is run when the game loads.')
+            main_file.write('# main file. This mcfunction file is run every tick.\n')
+
+            init_file.write('# init file. This mcfunction file is run when the game loads.\n')
+            init_file.write('scoreboard objectives add mcs_math dummy {"text":"MCS Math"}\n')
+
+            kill_file.write('# kill file. This mcfunction file is used to disable the datapack.\n')
+            kill_file.write(f'scoreboard objectives remove mcs_math\ndatapack disable "file/{self.datapack_name}"')
+
+        build(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/')
 
         elapsed_time = time() - start_time
 
