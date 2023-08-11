@@ -1,5 +1,6 @@
-from . import run_file
+from . import run_file, get_ast_from_file
 from .builder import Builder
+from .text_additions import text_error
 import os
 
 shell_function_names = [
@@ -16,12 +17,12 @@ def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = Tru
     mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
 
     try:
-        build_file = open(mcs_file, 'rt', encoding='utf-8')
+        ast = get_ast_from_file(mcs_file)
     except FileNotFoundError:
-        print(f'File {mcs_file} not found.')
+        print(text_error(f'Error: File "{mcs_file}" not found.'))
         return
 
-    Builder([], datapack_name).build(verbose)
+    Builder(ast, datapack_name).build(verbose)
 
 
 def sh_run_file_iteration(filename: str, *args) -> None:
