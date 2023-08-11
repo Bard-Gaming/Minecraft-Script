@@ -1,4 +1,5 @@
 from os import mkdir
+from time import time
 from .common import module_folder
 from .text_additions import text_error
 from shutil import copyfile
@@ -9,7 +10,10 @@ class Builder:
         self.datapack_name = datapack_name
         self.datapack_id = datapack_name.lower().replace(' ', '_')
 
-    def build(self):
+    def build(self, verbose: bool = True):
+        start_time = time()
+        if verbose: print(f'Building with name "{self.datapack_name}" (id: "{self.datapack_id}")')
+
         try:
             mkdir(self.datapack_name)  # main folder
         except FileExistsError:
@@ -17,7 +21,11 @@ class Builder:
             exit()
 
         mkdir(f'{self.datapack_name}/data')
+
         # minecraft folders:
+        if verbose:
+            print('Creating Folders...', end=" ")
+
         mkdir(f'{self.datapack_name}/data/minecraft')
         mkdir(f'{self.datapack_name}/data/minecraft/tags')
         mkdir(f'{self.datapack_name}/data/minecraft/tags/functions')
@@ -27,6 +35,10 @@ class Builder:
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions')
 
         # default stuff
+        if verbose:
+            print('Done!')
+            print('Building Templates...', end=" ")
+
         with (
             open(f'{module_folder}/build_templates/pack.mcmeta', 'rt') as template_file,
             open(f'{self.datapack_name}/pack.mcmeta', 'xt') as output_file
@@ -45,9 +57,19 @@ class Builder:
             tick_file.write(template_content.replace('NAME', self.datapack_id).replace('FILETYPE', 'main'))
             load_file.write(template_content.replace('NAME', self.datapack_id).replace('FILETYPE', 'init'))
 
+        if verbose:
+            print('Done!')
+            print('Building Functions...', end=" ")
+
         with (
             open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file,
             open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file
         ):
             main_file.write('# main file. This mcfunction file is run every tick.')
             init_file.write('# init file. This mcfunction file is run when the game loads.')
+
+        elapsed_time = time() - start_time
+
+        if verbose:
+            print('Done!')
+            print(f'Finished Building {self.datapack_name}! Time Elapsed:{elapsed_time: 0.3f}s')

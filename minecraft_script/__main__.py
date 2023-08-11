@@ -11,3 +11,5 @@ if not arguments:
 function = f'sh_{arguments[0]}'
 if function in shell_function_names:
     eval(function)(*arguments[1:])
+else:
+    print(f'Unknown MCS command: "{arguments[0]}"')

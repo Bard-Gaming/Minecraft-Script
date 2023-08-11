@@ -8,7 +8,10 @@ shell_function_names = [
 ]
 
 
-def sh_build(mcs_file: str, datapack_name: str = None, *args) -> None:
+def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = True, *args) -> None:
+    if isinstance(verbose, str):
+        verbose = eval(verbose.capitalize())  # "true" or "True" --> True (bool)
+
     datapack_name = datapack_name if datapack_name else mcs_file.split('/')[-1].split('.')[0].replace('_', ' ').replace('-', ' ').title()
     mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
 
@@ -18,7 +21,7 @@ def sh_build(mcs_file: str, datapack_name: str = None, *args) -> None:
         print(f'File {mcs_file} not found.')
         return
 
-    Builder([], datapack_name).build()
+    Builder([], datapack_name).build(verbose)
 
 
 def sh_run_file_iteration(filename: str, *args) -> None:
@@ -53,7 +56,7 @@ def sh_help(*args) -> None:
 If filename is omitted, a prompt will ask you to choose between mcs
 files in work directory (if there are any).
     
-- build [mcs file] [datapack name: optional]: build the mcs file
+- build [mcs file] [datapack name: optional] [verbose: optional]: build the mcs file
 into a functional datapack! If the datapack name is left empty,
 a matching name will be generated based on the file name.    
 Example: "example/test_file.mcs" turns to "Test File".
