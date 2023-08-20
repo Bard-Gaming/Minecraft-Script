@@ -21,6 +21,8 @@
   "TT_LOGICAL_AND"       : "&&",
   "TT_LOGICAL_OR"        : "||",
 
+  "TT_QUOTE"             : "\"'`",
+
   "TT_NUMBER"            : "0123456789",
   "TT_NAME"              : "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
   "TT_NAME__extend"      : "0123456789-"

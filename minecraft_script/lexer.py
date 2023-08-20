@@ -1,6 +1,6 @@
 from json import loads
 from .tokens import Token
-from .errors import MCSIllegalCharError
+from .errors import MCSIllegalCharError, MCSSyntaxError
 from .common import module_folder
 
 with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
@@ -15,7 +15,7 @@ class Lexer:
         self.text = text
         self.current_index = -1
         self.current_char = None
-        self.current_line = 0
+        self.current_line = 1
 
         self.advance()
 
@@ -35,6 +35,22 @@ class Lexer:
             self.advance()
 
         return name_str
+
+    def make_string(self):
+        quote_char = self.current_char
+        full_text = ''
+        self.advance()
+
+        while self.current_char not in (quote_char, '\n', None):
+            full_text += self.current_char
+            self.advance()
+
+        if self.current_char in ('\n', None):
+            MCSSyntaxError(f'Unmatched string {quote_char}{full_text} at line {self.current_line}')
+            exit()
+
+        self.advance()  # skip quote at the end
+        return full_text
 
     def make_number(self):
         number_str = ''
@@ -113,6 +129,11 @@ class Lexer:
             elif self.current_char == LANG_TOKENS['TT_RIGHT_BRACE']:
                 tokens.append(Token(self.current_char, 'TT_RIGHT_BRACE'))
                 self.advance()
+
+            elif self.current_char in LANG_TOKENS['TT_QUOTE']:
+                text = self.make_string()
+                tokens.append(Token(text, 'TT_TEXT_STRING'))
+                # already advanced in .make_string()
 
             elif self.current_char == LANG_TOKENS['TT_EQUALS']:
                 token_value = self.make_equals()

@@ -92,3 +92,26 @@ log(any(false_list))  // logs "false", since 0 and false are considered faulty
 log(any(normal_list))  // logs "true", since 52 is truthy
 log(contains_truthy)  // logs "true", since 1 is truthy
 ```
+
+## Parsing
+The ``parseNumber()`` and ``parseString()`` functions allow you to convert value types
+to different forms. They both take 1 argument and return the parsed value.
+
+### parseNumber
+The ``parseNumber()`` function converts a String to a Number.
+
+**Parameters:** &nbsp; _value:_ ``string`` <br>
+**Returns:** &nbsp; _value:_ ``number``
+
+Example as follows:
+```js
+var e = '12345'
+log(e)  // logs: " '12345' " (String)
+log(parseNumber(e))  // logs: " 12345 " (Number)
+```
+
+### parseString
+The ``parseString()`` function converts any type to a String.
+
+**Parameters:** &nbsp; _value:_ ``any`` <br>
+**Returns:** &nbsp; _value:_ ``string``

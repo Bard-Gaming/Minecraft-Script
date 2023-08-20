@@ -16,6 +16,20 @@ class NumberNode:
         return f'NumberNode({self.token !r})'
 
 
+class StringNode:
+    def __init__(self, token):
+        self.token = token
+
+    def get_value(self):
+        return self.token.value
+
+    def __str__(self):
+        return f'String: {self.get_value()}'
+
+    def __repr__(self):
+        return f'StringNode({self.token !r})'
+
+
 class ListNode:
     def __init__(self, array: list):
         self.array = array

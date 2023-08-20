@@ -3,7 +3,7 @@ from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
     FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode, BooleanNode, \
-    ReturnNode, UnaryBooleanNode
+    ReturnNode, UnaryBooleanNode, StringNode
 
 
 class Parser:
@@ -23,12 +23,16 @@ class Parser:
         result = self.statement()
         return result
 
-    def atom(self) -> NumberNode | UnaryOperationNode | VariableAccessNode | ListNode | BooleanNode | UnaryBooleanNode:
+    def atom(self):
         token = self.current_token
 
         if token.tt_type == 'TT_NAME':
             self.advance()
             return VariableAccessNode(token)
+
+        elif token.tt_type == 'TT_TEXT_STRING':
+            self.advance()
+            return StringNode(token)
 
         elif token.tt_type == 'TT_NUMBER':
             self.advance()
@@ -58,7 +62,7 @@ class Parser:
                 self.advance()
                 return expression
 
-    def factor(self, atom=None) -> UnaryOperationNode | BinaryOperationNode | FunctionCallNode | ListGetNode:
+    def factor(self, atom=None):
         atom = atom if atom else self.atom()
         token = self.current_token
 

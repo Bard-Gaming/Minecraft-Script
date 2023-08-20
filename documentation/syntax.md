@@ -71,15 +71,34 @@ log(expression)  // output is "9"
 ```
 
 ## Data Types
-Minecraft-script can only work with integers.
-This is due to the fact that strings aren't a thing in minecraft,
-and floating point numbers don't work in most cases, specifically scoreboards.
+Minecraft-script doesn't currently support floating point numbers,
+although this will probably change in the future.
+This is because it can cause issues with operations
+(scoreboards don't support floating-point numbers).
+
 
 ### Numbers / Integers
 Numbers are integers. They are the building blocks of many functionalities.
 They can be manipulated in operations, as seen above.
 ```js
 var number = 423  // number, has to be an integer
+```
+
+### Character Strings
+Strings are a data type used for storing characters or chains of characters.
+The following symbols are used to indicate the presence of a variable:
+- ``'`` (Apostrophe)
+- ``"`` (Quotation mark)
+- `` ` `` (Grave Accent)
+
+*Note: Strings are broken up by newlines,
+and not matching a starting quote with an end quote will result in a Syntax Error.*
+```js
+var string1 = 'this'
+var string2 = "is a"
+var string3 = `string`
+
+log(string1, string2, string3)  // logs "'this', 'is a', 'string'"
 ```
 
 ### Lists / Arrays

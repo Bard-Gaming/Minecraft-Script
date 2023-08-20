@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number, List, Boolean, Function, BuiltinFunction, Return
+from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return
 from .errors import MCSNameError, MCSTypeError, MCSIndexError, MCSSyntaxError
 
 
@@ -54,6 +54,9 @@ class Interpreter:
 
     def visit_NumberNode(self, node, context) -> Number:
         return Number(node.get_value())
+
+    def visit_StringNode(self, node, context) -> String:
+        return String(node.get_value())
 
     def visit_ListNode(self, node, context):
         value_array = [self.visit(element, context) for element in node.array]

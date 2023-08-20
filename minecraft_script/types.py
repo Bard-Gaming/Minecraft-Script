@@ -15,6 +15,14 @@ class Number:
                     MCSValueError(f'{value !r} is not a number')
                     exit()
 
+            case String():
+                MCSTypeError(f'Expected Number, got String: "{value.get_value()}"')
+                exit()
+
+            case List():
+                MCSTypeError(f'Expected Number, got List: "{value}"')
+                exit()
+
             case Number():
                 self.value = value.get_value()
 
@@ -71,10 +79,51 @@ class Number:
             exit()
 
     def __str__(self):
-        return f'{self.value}'
+        return str(self.get_value())
 
     def __repr__(self):
-        return f'Number({self.value})'
+        return f'Number({self.get_value()})'
+
+
+class String:
+    def __init__(self, value):
+        match value:
+            case str():
+                self.value = value
+
+            case int():
+                self.value = str(value)
+
+            case list():
+                self.value = str(value)
+
+            case bool():
+                self.value = str(value)
+
+            case Number():
+                self.value = str(value.get_value())
+
+            case String():
+                self.value = value.get_value()
+
+            case List():
+                self.value = str(value.get_value())
+
+            case Boolean():
+                self.value = str(value.get_value())
+
+            case _:
+                MCSValueError(f'"{value}" could not be parsed to String.')
+                exit()
+
+    def get_value(self) -> str:
+        return self.value
+
+    def __str__(self):
+        return repr(self.get_value())
+
+    def __repr__(self):
+        return f'String({self.get_value() !r})'
 
 
 class List:
@@ -174,7 +223,7 @@ class Function:
 
 
 class BuiltinFunction:
-    names = ['log', 'append', 'extend', 'range', 'any']
+    names = ['log', 'append', 'extend', 'range', 'any', 'parseNumber', 'parseString']
 
     def __init__(self, name):
         self.name = name
@@ -249,6 +298,31 @@ class BuiltinFunction:
         else:
             return MCSTypeError(f'')
 
+    @staticmethod
+    def call_parseNumber(arguments: list):
+        if len(arguments) > 1:
+            MCSTypeError(f'parseNumber() only takes 1 argument ({len(arguments)} given)')
+            exit()
+
+        value = arguments[0]
+        try:
+            value = int(value.get_value())
+        except TypeError:
+            MCSTypeError(f'Expected String or Boolean, got {type(value).__name__} instead.')
+            exit()
+        except ValueError:
+            MCSValueError(f'Couldn\'t parse "{value.get_value()}" to a valid Number.')
+            exit()
+
+        return Number(value)
+
+    @staticmethod
+    def call_parseString(arguments: list):
+        if len(arguments) > 1:
+            MCSTypeError(f'parseString() only takes 1 argument ({len(arguments)} given)')
+            exit()
+
+        return String(arguments[0].get_value())
 
 
     def unknown_name(self, arguments: list):

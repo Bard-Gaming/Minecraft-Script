@@ -49,6 +49,7 @@ class MCSNameError(MCSError):
         details = f'Name {text_underline(f"{details !r}")} is not defined'
         super().__init__(details, "Name Error", line_number)
 
+
 class MCSIndexError(MCSError):
     def __init__(self, details: str, line_number: int = None):
         details = f'Index {text_underline(f"{details}")} out of range'
