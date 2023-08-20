@@ -51,8 +51,11 @@ class MCSNameError(MCSError):
 
 
 class MCSIndexError(MCSError):
-    def __init__(self, details: str, line_number: int = None):
-        details = f'Index {text_underline(f"{details}")} out of range'
+    def __init__(self, details: str, *, type = None, line_number: int = None):
+        if type:
+            details = f'{type} index {text_underline(f"{details}")} out of range'
+        else:
+            details = f'Index {text_underline(f"{details}")} out of range'
         super().__init__(details, "Index Error", line_number)
 
 

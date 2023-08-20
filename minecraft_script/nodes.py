@@ -44,16 +44,16 @@ class ListNode:
         return f'ListNode({self.array !r})'
 
 
-class ListGetNode:
+class IterableGetNode:
     def __init__(self, atom, index):
         self.atom = atom
         self.index = index
 
     def __str__(self):
-        return f'array get: {self.atom} {self.index}'
+        return f'iterable "{self.atom}" get "{self.index}"'
 
     def __repr__(self):
-        return f'ListGetNode({self.atom !r}, {self.index !r})'
+        return f'IterableGetNode({self.atom !r}, {self.index !r})'
 
 
 class BooleanNode:

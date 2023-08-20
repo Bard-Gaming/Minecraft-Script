@@ -1,6 +1,39 @@
-from .errors import MCSTypeError, MCSZeroDivisionError, MCSValueError
+from .errors import MCSTypeError, MCSZeroDivisionError, MCSValueError, MCSIndexError
 from .text_additions import text_underline
 
+
+# -------- Abstract Types --------
+
+class Iterable:
+    def get_index(self, index):
+        index: int = index.get_value()
+        output = None
+
+        try:
+            output = self.get_value()[index]
+        except IndexError:
+            MCSIndexError(str(index), type=self.__class__.__name__)
+            exit()
+
+        return output
+
+    @classmethod
+    def types(cls):
+        return tuple(cls.__subclasses__())
+
+
+class Return:
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return f'{self.value}'
+
+    def __repr__(self):
+        return f'Return({self.value !r})'
+
+
+# -------- Data Types --------
 
 class Number:
     def __init__(self, value: str | int | object):
@@ -85,7 +118,7 @@ class Number:
         return f'Number({self.get_value()})'
 
 
-class String:
+class String(Iterable):
     def __init__(self, value):
         match value:
             case str():
@@ -119,6 +152,10 @@ class String:
     def get_value(self) -> str:
         return self.value
 
+    def get_index(self, index):
+        value = super().get_index(index)
+        return String(value)
+
     def __str__(self):
         return repr(self.get_value())
 
@@ -126,23 +163,12 @@ class String:
         return f'String({self.get_value() !r})'
 
 
-class List:
+class List(Iterable):
     def __init__(self, array: list):
         self.array = array
 
     def get_value(self) -> list:
         return self.array
-
-    def get_index(self, index: Number, fallback: any = None):
-        output = None
-        index: int = index.get_value()
-
-        try:
-            output = self.array[index]
-        except IndexError:
-            output = fallback
-
-        return output
 
     def __str__(self):
         return str([str(element) for element in self.array]).replace("'", "")
@@ -324,7 +350,6 @@ class BuiltinFunction:
 
         return String(arguments[0].get_value())
 
-
     def unknown_name(self, arguments: list):
         print(f'Interpreter built-in error ({self.name !r})')
         exit()
@@ -334,14 +359,3 @@ class BuiltinFunction:
 
     def __repr__(self):
         return f'BuiltinFunction({self.name !r})'
-
-
-class Return:
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return f'{self.value}'
-
-    def __repr__(self):
-        return f'Return({self.value !r})'

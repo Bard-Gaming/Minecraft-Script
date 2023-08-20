@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return
+from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return, Iterable
 from .errors import MCSNameError, MCSTypeError, MCSIndexError, MCSSyntaxError
 
 
@@ -76,20 +76,15 @@ class Interpreter:
             MCSSyntaxError(node.get_unary_value())
             exit()
 
-    def visit_ListGetNode(self, node, context):
-        current_list = self.visit(node.atom, context)
+    def visit_IterableGetNode(self, node, context):
+        current_iterable = self.visit(node.atom, context)
         index = self.visit(node.index, context)
 
-        if isinstance(current_list, List):
-            value = current_list.get_index(index)
+        if isinstance(current_iterable, Iterable.types()):
+            return current_iterable.get_index(index)
 
-            if not value:
-                MCSIndexError(f'{index}')
-                exit()
-
-            return value
         else:
-            MCSTypeError(f'{current_list} is not a list')
+            MCSTypeError(f'{type(current_iterable).__name__} {current_iterable} is not iterable')
             exit()
 
     def visit_VariableAccessNode(self, node, context) -> any:

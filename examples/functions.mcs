@@ -1,5 +1,5 @@
 function extend_builtins = (list) => {
-    var builtin_list = [log, append, extend, range, any]
+    var builtin_list = [log, append, extend, range, any, parseNumber, parseString]
     return extend(list, builtin_list)
 }
 

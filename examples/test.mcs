@@ -1,8 +1,8 @@
-var e = ['5298746598752', '']
+var string = 'well damn bro'
+var list = [1, 2, 3]
 
-function parseFirstOf = (list) => {
-    return parseNumber(list[0])
-}
-
-log(e[0])
-log(parseFirstOf(e))
+log(string)
+log(string[2][0][0])
+log([][0])
+log(list)
+log(list[1])

@@ -2,7 +2,7 @@ from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
-    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, ListGetNode, CodeBlockNode, BooleanNode, \
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, IterableGetNode, CodeBlockNode, BooleanNode, \
     ReturnNode, UnaryBooleanNode, StringNode
 
 
@@ -71,7 +71,7 @@ class Parser:
             return self.factor(atom)
 
         elif token.tt_type == 'TT_LEFT_BRACKET':
-            atom = self.array_get(atom)
+            atom = self.iterable_get(atom)
             return self.factor(atom)
 
         else:
@@ -239,7 +239,7 @@ class Parser:
             MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
             exit()
 
-    def array_get(self, atom) -> ListGetNode:
+    def iterable_get(self, atom) -> IterableGetNode:
         if self.current_token.tt_type != 'TT_LEFT_BRACKET':
             MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
             exit()
@@ -249,7 +249,7 @@ class Parser:
 
         if self.current_token.tt_type == 'TT_RIGHT_BRACKET':
             self.advance()
-            return ListGetNode(atom, index)
+            return IterableGetNode(atom, index)
 
         else:
             MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
