@@ -1,12 +1,6 @@
-var list = [1, 2, 3]
+(function a = () => {
+    var bob = 3
+    log(bob)
+})()
 
-set list[0] = 3
-set list[1] = function = () => log('hello')
-
-log(list)
-
-var string = "hello"
-set string = "bob"
-log(string)
-
-set bob = "aef"
+log(bob)

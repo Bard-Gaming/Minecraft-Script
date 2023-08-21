@@ -15,6 +15,31 @@ log(test(5)  // ")" missing -> results in Syntax Error
 ```
 <br>
 
+## Name Error
+<span style="color: red; background-color: #00000040; padding: 5px 10px; border-radius: 4px;">
+Name Error: Name 'e' is not defined
+</span>
+
+Name Errors originate in the parser. This type of error is raised when the attempt
+to access or modify an unassigned variable is made. The error is also raised
+if the variable is assigned in a lower context.
+
+
+Example:
+```js
+var hello2 = "hello!"
+log(hello)  // "hello" wasn't defined prior to this call -> results in Name Error
+
+
+(function a = () => {
+    var bob = 3  // assign variable "bob" in lower context
+    log(bob)  // logs "3"
+})()
+
+log(bob)  // "bob" only assigned in lower context -> results in Name Error
+```
+<br>
+
 ## Unhandled Errors
 ### No visit method defined
 <span style="color: red; background-color: #00000040; padding: 5px 10px; border-radius: 4px;">
@@ -30,7 +55,7 @@ Example:
 ```js
 // Unaccounted "," followed by ")":
 log(any([1, 0]),)
-// not detected by parser, thus "No visit method" error
+// not (yet) detected by parser, thus "No visit method" error
 // still runs; logs "true, None" (Note that 'None' should not exist in mcs)
 ```
 <br>

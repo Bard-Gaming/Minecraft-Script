@@ -42,12 +42,28 @@ The ``var`` keyword can be used to initialize new variables.
 Use it by following it by the variable's name, then an equals sign and a value.
 
 ```js
-var hello2 = 500  // initialized variable "hello2" with value 500
+var hello2 = 500  // Assigned variable "hello2" with value 500
 
-var hello2 = 300  // assigned new value 300 to variable hello2
-var hello2 = hello2 + 500  // adds 500 to hello2
+var hello2 = 300  // Reassign variable "hello2" to have the value 300
+var hello2 = hello2 + 500  // Reassign variable "hello2" to 300 + 500
 ```
+_Note: reassigning variables to new values works,
+but it isn't the "main" way of changing a variable's value._
 
+
+### Modifying variables
+The ``set`` keyword can be used to change a variable's value. This is particularly
+useful for debugging, since it raises a NameError when used with a name that wasn't defined
+previously, as well as having more features.
+
+```js
+var variable = "hello"  // String variable
+set variable = [1, 2, 3, 4]  // "variable" is now a List
+log(variable)  // logs "[1, 2, 3, 4]"
+
+set variable[2] = "hello again"  // change value at index 2 of variable
+log(variable)  // logs '[1, 2, "hello again", 4]'
+```
 
 ## Operations
 Operations in MCS follow PEMDAS and **not** plain left-to-right computations.
