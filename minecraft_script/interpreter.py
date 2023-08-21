@@ -87,6 +87,14 @@ class Interpreter:
             MCSTypeError(f'{type(current_iterable).__name__} {current_iterable} is not iterable')
             exit()
 
+    def visit_IterableSetNode(self, node, context):
+        variable: Iterable = self.visit(node.variable_node, context)
+        index: Number | None = self.visit(node.index, context)
+        new_value = self.visit(node.value_expression, context)
+
+        variable.set_index(index, new_value)
+
+
     def visit_VariableAccessNode(self, node, context) -> any:
         var_name: str = node.get_name()
         var_value = context.symbol_table.get(var_name)
@@ -96,6 +104,18 @@ class Interpreter:
             exit()
 
         return var_value
+
+    def visit_VariableSetNode(self, node, context):
+        var_name: str = node.get_name()
+        var_new_value = self.visit(node.value_node, context)
+        var_current_value = context.symbol_table.get(var_name)
+
+        if var_current_value is None:
+            MCSNameError(var_name)
+            exit()
+
+        context.symbol_table.set(var_name, var_new_value)
+        return var_new_value
 
     def visit_VariableAssignNode(self, node, context) -> any:
         var_name: str = node.get_name()

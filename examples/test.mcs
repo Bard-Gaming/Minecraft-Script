@@ -1,8 +1,12 @@
-var string = 'well damn bro'
 var list = [1, 2, 3]
 
-log(string)
-log(string[2][0][0])
-log([][0])
+set list[0] = 3
+set list[1] = function = () => log('hello')
+
 log(list)
-log(list[1])
+
+var string = "hello"
+set string = "bob"
+log(string)
+
+set bob = "aef"

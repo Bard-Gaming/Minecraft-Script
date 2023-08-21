@@ -17,6 +17,14 @@ class Iterable:
 
         return output
 
+    def set_index(self, index, value: any):
+        index = index.get_value()
+        try:
+            self.get_value()[index] = value
+        except IndexError:
+            MCSIndexError(str(index), type=self.__class__.__name__)
+            exit()
+
     @classmethod
     def types(cls):
         return tuple(cls.__subclasses__())
@@ -155,6 +163,10 @@ class String(Iterable):
     def get_index(self, index):
         value = super().get_index(index)
         return String(value)
+
+    def set_index(self, index, value: any):
+        MCSTypeError('String does not support item assignment')
+        exit()
 
     def __str__(self):
         return repr(self.get_value())

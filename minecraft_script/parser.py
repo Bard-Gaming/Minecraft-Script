@@ -3,7 +3,7 @@ from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
     FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, IterableGetNode, CodeBlockNode, BooleanNode, \
-    ReturnNode, UnaryBooleanNode, StringNode
+    ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode
 
 
 class Parser:
@@ -99,6 +99,9 @@ class Parser:
 
             self.advance()
             return VariableAssignNode(var_name_token, self.expression())
+
+        elif self.current_token.tt_type == 'SET_DEFINE':
+            return self.set_define()
 
         elif self.current_token.tt_type == 'FUNC_DEFINE':
             return self.function_define()
@@ -254,6 +257,36 @@ class Parser:
         else:
             MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
             exit()
+
+    def set_define(self) -> IterableSetNode:
+        self.advance()  # skip "set" keyword
+
+        if self.current_token.tt_type != 'TT_NAME':
+            MCSSyntaxError(f'Expected Variable Name. Got "{self.current_token.value}" instead.')
+            exit()
+
+        set_name_token = self.current_token
+        self.advance()
+
+        index = None
+        if self.current_token.tt_type == 'TT_LEFT_BRACKET':
+            self.advance()
+
+            index = self.term()
+
+            if self.current_token.tt_type != 'TT_RIGHT_BRACKET':
+                MCSSyntaxError(f'Expected "]". Got "{self.current_token.value}" instead.')
+                exit()
+            self.advance()
+
+        if self.current_token.tt_type != 'TT_EQUALS':
+            MCSSyntaxError(f'Expected "=". Got "{self.current_token.value}" instead.')
+            exit()
+        self.advance()
+
+        set_value_expression = self.expression()
+
+        return IterableSetNode(set_name_token, index, set_value_expression)
 
     def code_block(self):
         if self.current_token.tt_type != 'TT_LEFT_BRACE':

@@ -56,6 +56,26 @@ class IterableGetNode:
         return f'IterableGetNode({self.atom !r}, {self.index !r})'
 
 
+class IterableSetNode:
+    def __new__(cls, name_token, index, value_expression):
+        if index:
+            return object.__new__(cls)
+        else:
+            return VariableSetNode(name_token, value_expression)
+
+    def __init__(self, name_token, index, value_expression):
+        self.name_token = name_token
+        self.variable_node = VariableAccessNode(name_token)
+        self.index = index
+        self.value_expression = value_expression
+
+    def __str__(self):
+        return f'set {self.name_token}[{self.index}] to {self.value_expression}'
+
+    def __repr__(self):
+        return f'IterableSetNode({self.name_token !r}, {self.index !r}, {self.value_expression !r})'
+
+
 class BooleanNode:
     def __init__(self, token: Token):
         self.value = True if token.value == 'true' else False
@@ -101,6 +121,14 @@ class VariableAssignNode:
 
     def __repr__(self):
         return f'VariableAssignNode({self.name_token !r}, {self.value_node !r})'
+
+
+class VariableSetNode(VariableAssignNode):
+    def __str__(self):
+        return f'Var set:{self.name_token.value !r} <- {self.value_node}'
+
+    def __repr__(self):
+        return f'VariableSetNode({self.name_token !r}, {self.value_node !r})'
 
 
 class VariableAccessNode:
