@@ -21,10 +21,10 @@
 
 
 - [ ] Add conditions
-  - [ ] Add truth checks
-    - [ ] ``==``
-    - [ ] ``<`` & ``>``
-    - [ ] ``<=`` & ``>=``
+  - [x] Add truth checks
+    - [x] ``==``
+    - [x] ``<`` & ``>``
+    - [x] ``<=`` & ``>=``
   - [ ] ``if`` condition
   - [ ] ``else`` condition
     - [ ] ``else if`` support

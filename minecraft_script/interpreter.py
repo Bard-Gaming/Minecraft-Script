@@ -176,6 +176,21 @@ class Interpreter:
             right_expression = Boolean(right_expression)
             result = Boolean(left_expression).logical_or(right_expression)
 
+        elif operator == '==':
+            result = left_expression.compare_equals(right_expression)
+
+        elif operator == '<':
+            result = left_expression.compare_lesser(right_expression)
+
+        elif operator == '>':
+            result = left_expression.compare_greater(right_expression)
+
+        elif operator == '<=':
+            result = left_expression.compare_lesser_equals(right_expression)
+
+        elif operator == '>=':
+            result = left_expression.compare_greater_equals(right_expression)
+
         return result
 
     def visit_UnaryOperationNode(self, node, context) -> Number:

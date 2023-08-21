@@ -68,8 +68,37 @@ class Lexer:
             token_value = f"{token_value}{self.current_char}"
             self.advance()
             return token_value
+
+        elif f"{token_value}{self.current_char}" == LANG_TOKENS['TT_COMPARE_EQUALS']:
+            token_value = f"{token_value}{self.current_char}"
+            self.advance()
+            return token_value
+
         else:
             return token_value
+
+    def make_comparator(self):
+        comparator_char = self.current_char
+        if comparator_char == LANG_TOKENS['TT_COMPARE_LESSER']:
+            self.advance()
+
+            if self.current_char == LANG_TOKENS['TT_EQUALS']:
+                comparator_char += self.current_char
+                self.advance()
+                return comparator_char, 'TT_COMPARE_LESSER_EQUALS'
+
+            return comparator_char, 'TT_COMPARE_LESSER'
+
+        elif comparator_char == LANG_TOKENS['TT_COMPARE_GREATER']:
+            self.advance()
+
+            if self.current_char == LANG_TOKENS['TT_EQUALS']:
+                comparator_char += self.current_char
+                self.advance()
+                return comparator_char, 'TT_COMPARE_GREATER_EQUALS'
+
+            return comparator_char, 'TT_COMPARE_GREATER'
+
 
     def make_logical_and(self):
         token_value = self.current_char
@@ -140,10 +169,18 @@ class Lexer:
 
                 if token_value == LANG_TOKENS['TT_FUNCTION_ARROW']:
                     tokens.append(Token(token_value, 'TT_FUNCTION_ARROW'))
+
+                elif token_value == LANG_TOKENS['TT_COMPARE_EQUALS']:
+                    tokens.append(Token(token_value, 'TT_COMPARE_EQUALS'))
+
                 else:
                     tokens.append(Token(token_value, 'TT_EQUALS'))
 
                 # don't self.advance() since that is already done in self.make_equals()
+
+            elif self.current_char in (LANG_TOKENS['TT_COMPARE_LESSER'], LANG_TOKENS['TT_COMPARE_GREATER']):
+                value, type = self.make_comparator()
+                tokens.append(Token(value, type))
 
             elif self.current_char == LANG_TOKENS['TT_LOGICAL_NOT']:
                 tokens.append(Token(self.current_char, 'TT_LOGICAL_NOT'))

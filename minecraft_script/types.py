@@ -11,7 +11,7 @@ class MCSObject:
         return self.value
 
     def raise_operation_error(self, value: any, operator: str):
-        MCSTypeError(f'Unsupported operand type(s) for {operator}: "{self.__class__.__name__}" and "{value.__class__.__name__}"')
+        MCSTypeError(f'Unsupported operand type(s) for "{operator}": "{self.__class__.__name__}" and "{value.__class__.__name__}"')
         exit()
 
     def add(self, value):
@@ -28,6 +28,22 @@ class MCSObject:
 
     def modulus(self, value):
         self.raise_operation_error(value, '%')
+
+    # ------- Compare Operations ------- :
+    def compare_equals(self, value):
+        return Boolean(self.get_value() == value.get_value())
+
+    def compare_lesser(self, value):
+        self.raise_operation_error(value, '<')
+
+    def compare_greater(self, value):
+        self.raise_operation_error(value, '>')
+
+    def compare_lesser_equals(self, value):
+        self.raise_operation_error(value, '<=')
+
+    def compare_greater_equals(self, value):
+        self.raise_operation_error(value, '>=')
 
 
 class Iterable(MCSObject):
@@ -138,6 +154,24 @@ class Number(MCSObject):
             return Number(self.get_value())
         else:
             super().modulus(number)
+
+    def compare_numbers(self, value, operator: str):
+        if isinstance(value, self.supported_operations):
+            return Boolean(eval(f'self.get_value() {operator} value.get_value()'))
+        else:
+            self.raise_operation_error(value, operator)
+
+    def compare_lesser(self, value):
+        return self.compare_numbers(value, '<')
+
+    def compare_greater(self, value):
+        return self.compare_numbers(value, '>')
+
+    def compare_lesser_equals(self, value):
+        return self.compare_numbers(value, '<=')
+
+    def compare_greater_equals(self, value):
+        return self.compare_numbers(value, '>=')
 
     def __str__(self):
         return str(self.get_value())
@@ -269,6 +303,24 @@ class Boolean(MCSObject):
 
     def logical_or(self, other):
         return Boolean(self.get_value() or other)
+
+    def compare_value(self, value, operator: str):
+        if isinstance(value, (Boolean, Number)):
+            return Boolean(eval(f"self.get_value() {operator} value.get_value()"))
+        else:
+            self.raise_operation_error(value, operator)
+
+    def compare_lesser(self, value):
+        return self.compare_value(value, '<')
+
+    def compare_greater(self, value):
+        return self.compare_value(value, '>')
+
+    def compare_lesser_equals(self, value):
+        return self.compare_value(value, '<=')
+
+    def compare_greater_equals(self, value):
+        return self.compare_value(value, '>=')
 
     def __str__(self):
         return str(self.value).lower()

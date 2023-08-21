@@ -85,6 +85,9 @@ class Parser:
     def boolean_operation(self) -> BinaryOperationNode:
         return self.binary_operation(self.term, ['+', '-'])
 
+    def compare_operation(self) -> BinaryOperationNode:
+        return self.binary_operation(self.boolean_operation, ['&&', '||'])
+
     def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode | CodeBlockNode | ReturnNode:
         if self.current_token.tt_type == 'FUNC_DEFINE':
             return self.function_define()
@@ -96,7 +99,7 @@ class Parser:
 
             return ReturnNode(self.expression())
 
-        return self.binary_operation(self.boolean_operation, ['&&', '||'])
+        return self.binary_operation(self.compare_operation, ['==', '>', '>=', '<', '<='])
 
     def statement(self):
         if self.current_token.tt_type == 'VAR_DEFINE':

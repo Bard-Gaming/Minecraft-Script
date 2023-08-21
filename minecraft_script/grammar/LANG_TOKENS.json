@@ -21,6 +21,10 @@
   "TT_LOGICAL_AND"       : "&&",
   "TT_LOGICAL_OR"        : "||",
 
+  "TT_COMPARE_EQUALS"    : "==",
+  "TT_COMPARE_LESSER"    : "<",
+  "TT_COMPARE_GREATER"   : ">",
+
   "TT_QUOTE"             : "\"'`",
 
   "TT_NUMBER"            : "0123456789",
