@@ -31,6 +31,21 @@
     - [ ] Errors
 
 
+- [ ] Add conditions
+  - [ ] Add truth checks
+    - [ ] ``==``
+    - [ ] ``<`` & ``>``
+    - [ ] ``<=`` & ``>=``
+  - [ ] ``if`` condition
+  - [ ] ``else`` condition
+    - [ ] ``else if`` support
+
+
+- [ ] Add loops
+  - [ ] ``for`` loop
+  - [ ] ``while`` loop
+
+
 - [ ] **Add 'Entity' type**
   - [ ] Add dict to cross-check what current entities are being selected
   - [ ] Add tags (delimited with '\[' and '\]')
