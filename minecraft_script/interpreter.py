@@ -67,7 +67,7 @@ class Interpreter:
 
     def visit_UnaryBooleanNode(self, node, context):
         operator_type = node.get_unary_type()
-        boolean = self.visit(node.get_atom(), context)
+        boolean = Boolean(self.visit(node.get_atom(), context))
 
         if operator_type == 'TT_LOGICAL_NOT':
             return boolean.logical_not()

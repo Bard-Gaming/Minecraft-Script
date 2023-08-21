@@ -65,13 +65,13 @@ set variable[2] = "hello again"  // change value at index 2 of variable
 log(variable)  // logs '[1, 2, "hello again", 4]'
 ```
 
-## Operations
+## Default Operations
 Operations in MCS follow PEMDAS and **not** plain left-to-right computations.
 Current operations are:
 - ``+`` Summation
 - ``-`` Subtraction
 - ``*`` Multiplication
-- ``/`` Euclidean Division
+- ``/`` Euclidean Division (i.e. no floating point numbers)
 - ``%`` Modulus Operations
 
 Example as follows:
@@ -148,12 +148,17 @@ var or_operation = false || true
 log(and_operation)  // logs "false" since !true is false
 log(or_operation)  // logs "true" since either one of "false or true" is true
 ```
-However, these operations don't only accept true or false values per se.
-For instance, the number 0 counts as being faulty, meaning that ``0 && true`` results in ``false``.
-Any number value above 0 is considered truthy.<br>
-Expanding on this, booleans can also be used in number operations,
-in which case ``true`` will be interpreted as ``1``,
-and ``false`` will be interpreted as ``0``.
+Boolean operations accept any data type on either side,
+and will parse the data to a valid boolean accordingly.
+These rules apply:
+- ``String`` will always be ``true``, unless empty (``""``)
+- ``List`` will always be ``true``, unless empty (``[]``)
+- ``Number`` will always be ``true``, unless ``0``
+- ``Function`` will always be ``true``
+- ``BuiltinFunction`` will always be ``true``
+
+_Note: You can use ``!!`` to parse anything into a boolean without changing its boolean value,
+since ``!!true`` is the same as ``true``._
 
 ### Functions
 Functions are defined with the ``function`` keyword. They can be anonymous,
@@ -189,4 +194,9 @@ function increment = (num) => {
 }
 
 log(increment(7))  // prints "8"
+
+
+(function = () => {
+    log("hello world")
+})()  // immediately calls function
 ```

@@ -248,6 +248,15 @@ class Boolean(MCSObject):
             case String():
                 self.value = bool(value.get_value())
 
+            case List():
+                self.value = bool(value.get_value())
+
+            case Function():
+                self.value = True
+
+            case BuiltinFunction():
+                self.value = True
+
             case _:
                 MCSValueError(f'{value !r} could not be parsed to boolean')
                 exit()
