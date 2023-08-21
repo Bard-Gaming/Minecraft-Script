@@ -4,21 +4,9 @@
 - [x] Fix everything breaking after function call | Resolved: forgot to .advance()
 
 ## Yet to be done
-- [ ] **Update binary operations**
-  - [ ] change it so the left expr is unchanged (doesn't auto-convert to number)
-  - [ ] make strings concatenable
-  - [ ] exception handling
-
-
 - [ ] Update Variables
   - [x] Once declared, ~~don't need keyword~~ use 'set' keyword
   - [ ] actually make use of 'const' keyword (or remove it entirely)
-
-
-- [ ] Types restructure
-  - [ ] Make Functions & BuiltinFunctions inherit from ``MCSObject``
-  - [x] Add ``MCSObject`` parent class
-  - [x] ``get_value()``
 
 
 - [ ] Add attributes
@@ -54,6 +42,18 @@
 - [ ] Make return statements throw error when not in function / code block (to be decided)
 
 ## Completed
+- [x] **Update binary operations**
+  - [x] change it so the left expr is unchanged (doesn't auto-convert to number)
+  - [x] make strings concatenable
+  - [x] exception handling
+
+
+- [x] Types restructure
+  - [x] Make Functions & BuiltinFunctions inherit from ``MCSObject``
+  - [x] Add ``MCSObject`` parent class
+  - [x] ``get_value()``
+
+
 - [x] Rework Iterables
   - [x] Rework ``ListGetNode`` to support strings (and other iterables in the future)
   - [x] ``IterableSetNode``

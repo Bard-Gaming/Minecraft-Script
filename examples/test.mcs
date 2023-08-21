@@ -1,2 +1,1 @@
-var bob = "hello"
-log(bob[2])
+log([1, 2, 3] * 3)

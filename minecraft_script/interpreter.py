@@ -154,24 +154,19 @@ class Interpreter:
         result = 0
 
         if operator == '+':
-            right_expression = Number(right_expression)
-            result = Number(left_expression).add(right_expression)
+            result = left_expression.add(right_expression)
 
         elif operator == '-':
-            right_expression = Number(right_expression)
-            result = Number(left_expression).subtract(right_expression)
+            result = left_expression.subtract(right_expression)
 
         elif operator == '*':
-            right_expression = Number(right_expression)
-            result = Number(left_expression).multiply(right_expression)
+            result = left_expression.multiply(right_expression)
 
         elif operator == '/':
-            right_expression = Number(right_expression)
-            result = Number(left_expression).divide(right_expression)
+            result = left_expression.divide(right_expression)
 
         elif operator == '%':
-            right_expression = Number(right_expression)
-            result = Number(left_expression).modulus(right_expression)
+            result = left_expression.modulus(right_expression)
 
         elif operator == '&&':
             right_expression = Boolean(right_expression)
