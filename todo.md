@@ -31,7 +31,10 @@
 
 - [ ] Add loops
   - [ ] ``for`` loop
+    - [ ] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement`` 
+    - [ ] ``in`` keyword
   - [ ] ``while`` loop
+    - [ ] structure: ``while`` ``(`` ``atom (parsed to bool)`` ``)``  ``statement``
 
 
 - [ ] **Add 'Entity' type**
