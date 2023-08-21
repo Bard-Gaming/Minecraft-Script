@@ -16,8 +16,19 @@
 
 
 - [ ] Types restructure
-  - [ ] Add ``MCSObject`` parent class
-  - [ ] ``get_value()``
+  - [ ] Make Functions & BuiltinFunctions inherit from ``MCSObject``
+  - [x] Add ``MCSObject`` parent class
+  - [x] ``get_value()``
+
+
+- [ ] Add attributes
+  - [ ] Lexer ``.`` (``tt_type``=``TT_ATTRIBUTE_DOT``)
+  - [ ] Parser attribute
+    - [ ] grammar: ``atom`` ``.`` ``name``
+    - [ ] loop back to atom (i.e. attribute is atom)
+  - [ ] Interpreter attribute
+    - [ ] Context stuff
+    - [ ] Errors
 
 
 - [ ] **Add 'Entity' type**

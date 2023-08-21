@@ -1,8 +1,2 @@
-(function a = () => {
-    var bob = 3
-    log(bob)
-})()
-
-var e = "hello"
-log(e)
-log(var c = "hello")
+var bob = "hello"
+log(bob[2])

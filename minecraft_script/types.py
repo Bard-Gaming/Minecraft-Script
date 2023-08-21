@@ -4,7 +4,14 @@ from .text_additions import text_underline
 
 # -------- Abstract Types --------
 
-class Iterable:
+class MCSObject:
+    value = None
+
+    def get_value(self):
+        return self.value
+
+
+class Iterable(MCSObject):
     def get_index(self, index):
         index: int = index.get_value()
         output = None
@@ -43,7 +50,7 @@ class Return:
 
 # -------- Data Types --------
 
-class Number:
+class Number(MCSObject):
     def __init__(self, value: str | int | object):
         match value:
             case int():
@@ -73,9 +80,6 @@ class Number:
             case _:
                 MCSValueError(f'"{value !s}" is not a number')
                 exit()
-
-    def get_value(self) -> int:
-        return self.value
 
     def add(self, number):
         if isinstance(number, Number):
@@ -126,7 +130,7 @@ class Number:
         return f'Number({self.get_value()})'
 
 
-class String(Iterable):
+class String(Iterable, MCSObject):
     def __init__(self, value):
         match value:
             case str():
@@ -157,9 +161,6 @@ class String(Iterable):
                 MCSValueError(f'"{value}" could not be parsed to String.')
                 exit()
 
-    def get_value(self) -> str:
-        return self.value
-
     def get_index(self, index):
         value = super().get_index(index)
         return String(value)
@@ -175,21 +176,18 @@ class String(Iterable):
         return f'String({self.get_value() !r})'
 
 
-class List(Iterable):
-    def __init__(self, array: list):
-        self.array = array
-
-    def get_value(self) -> list:
-        return self.array
+class List(Iterable, MCSObject):
+    def __init__(self, value: list):
+        self.value = value
 
     def __str__(self):
-        return str([str(element) for element in self.array]).replace("'", "")
+        return str([str(element) for element in self.get_value()]).replace("'", "")
 
     def __repr__(self):
-        return f'List({self.array})'
+        return f'List({self.get_value()})'
 
 
-class Boolean:
+class Boolean(MCSObject):
     def __init__(self, value):
         match value:
             case bool():
@@ -204,9 +202,6 @@ class Boolean:
             case _:
                 MCSValueError(f'{value !r} could not be parsed to boolean')
                 exit()
-
-    def get_value(self) -> bool:
-        return self.value
 
     def logical_not(self):
         return Boolean(not self.get_value())
