@@ -15,6 +15,11 @@
   - [ ] actually make use of 'const' keyword (or remove it entirely)
 
 
+- [ ] Types restructure
+  - [ ] Add ``MCSObject`` parent class
+  - [ ] ``get_value()``
+
+
 - [ ] **Add 'Entity' type**
   - [ ] Add dict to cross-check what current entities are being selected
   - [ ] Add tags (delimited with '\[' and '\]')
