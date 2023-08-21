@@ -85,6 +85,7 @@ var modulus = 5 % 2  // Modulus operation. 5%2 = 1
 var expression = 3 + 5*2 + -4  // in a more "complex" operation, PEMDAS is applied.
 log(expression)  // output is "9"
 ```
+_Note: Depending on the data type, operations might do different things._
 
 ## Data Types
 Minecraft-script doesn't currently support floating point numbers,
@@ -116,6 +117,28 @@ var string3 = `string`
 
 log(string1, string2, string3)  // logs "'this', 'is a', 'string'"
 ```
+
+Strings have rather specific operations.
+Currently, Strings support the following operators:
+- ``+`` String concatenation
+- ``-`` Character subtraction
+- ``*`` String multiplication/repetition
+
+```js
+var string1 = "hel"
+var string2 = "lo"
+var string3 = string1 + string2  // concatenation
+
+log(string3)  // logs "hello"
+log(string3 - 'l')  // logs "helo"
+log(string3 - 'l' * 2)  // logs "heo" (mult. takes precendence over add./sub.)
+
+log(string3 - "lolh")  // logs "e" (doesn't subtract whole string, but every character of string based on how often it appears)
+// ("hello" - "lolh") is the same as ("hello" - "l" - "o" - "l" - "h")
+
+log(string3 * 2)  // logs "hellohello"
+```
+
 
 ### Lists / Arrays
 Lists are groups storing all kinds of data.
