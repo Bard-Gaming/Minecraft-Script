@@ -23,6 +23,8 @@ class Parser:
         result = self.statement_list()
         return result
 
+    # -------------- Grammar --------------
+
     def atom(self):
         token = self.current_token
 
@@ -87,9 +89,6 @@ class Parser:
         if self.current_token.tt_type == 'FUNC_DEFINE':
             return self.function_define()
 
-        elif self.current_token.tt_type == 'TT_LEFT_BRACE':
-            return self.code_block()
-
         elif self.current_token.tt_type == 'TT_RETURN':
             self.advance()
             if self.current_token.tt_type in ['TT_NEWLINE', 'TT_RIGHT_BRACE']:
@@ -99,33 +98,12 @@ class Parser:
 
         return self.binary_operation(self.boolean_operation, ['&&', '||'])
 
-    def binary_operation(self, function, operators) -> BinaryOperationNode:
-        left_node = function()
-        # self.current_token is now the operator
-
-        while self.current_token.value in operators:
-            operator = self.current_token
-            self.advance()
-            right_node = function()
-            left_node = BinaryOperationNode(left_node, operator, right_node)
-        return left_node
-
     def statement(self):
         if self.current_token.tt_type == 'VAR_DEFINE':
-            self.advance()
-            if self.current_token.tt_type != 'TT_NAME':
-                MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead.')
-                exit()
+            return self.var_define()
 
-            var_name_token = self.current_token
-            self.advance()
-
-            if self.current_token.tt_type != 'TT_EQUALS':
-                MCSSyntaxError(f'Expected "=". Got {text_underline(f"{self.current_token.value !r}")} instead')
-                exit()
-
-            self.advance()
-            return VariableAssignNode(var_name_token, self.expression())
+        elif self.current_token.tt_type == 'TT_LEFT_BRACE':
+            return self.code_block()
 
         elif self.current_token.tt_type == 'SET_DEFINE':
             return self.set_define()
@@ -151,6 +129,19 @@ class Parser:
                 statements.append(self.statement())
 
         return MultipleStatementsNode(statements)
+
+    # -------------- Nodes --------------
+
+    def binary_operation(self, function, operators) -> BinaryOperationNode:
+        left_node = function()
+        # self.current_token is now the operator
+
+        while self.current_token.value in operators:
+            operator = self.current_token
+            self.advance()
+            right_node = function()
+            left_node = BinaryOperationNode(left_node, operator, right_node)
+        return left_node
 
     def function_define(self) -> FunctionAssignNode:
         self.advance()
@@ -190,7 +181,7 @@ class Parser:
             exit()
         self.advance()
 
-        function_body = self.expression()
+        function_body = self.statement()
 
         return FunctionAssignNode(function_name_token, function_parameters, function_body)
 
@@ -262,6 +253,22 @@ class Parser:
         else:
             MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
             exit()
+
+    def var_define(self) -> VariableAssignNode:
+        self.advance()
+        if self.current_token.tt_type != 'TT_NAME':
+            MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead.')
+            exit()
+
+        var_name_token = self.current_token
+        self.advance()
+
+        if self.current_token.tt_type != 'TT_EQUALS':
+            MCSSyntaxError(f'Expected "=". Got {text_underline(f"{self.current_token.value !r}")} instead')
+            exit()
+
+        self.advance()
+        return VariableAssignNode(var_name_token, self.expression())
 
     def set_define(self) -> IterableSetNode:
         self.advance()  # skip "set" keyword

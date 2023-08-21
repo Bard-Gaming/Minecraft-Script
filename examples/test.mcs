@@ -1,10 +1,7 @@
-var string1 = "hel"
-var string2 = "lo"
-var string3 = string1 + string2  // concatenation
+function greet = (name) => {
+    log("Hello " + name + "!")
+}
 
-log(string3)  // logs "hello"
-log(string3 - 'l')  // logs "helo"
-log(string3 - 'l' * 2)  // logs "heo" (mult. takes precendence over add./sub.)
-log(string3 - "lolh")  // logs "e" (doesn't subtract whole string, but every character of string based on how often it appears)
-// ("hello" - "lolh") is the same as ("hello" - "l" - "o" - "l" - "h")
-log(string3 * 2)  // logs "hellohello"
+function inline_greet = (name) => log("Hello " + name + "!")
+
+inline_greet("bob")

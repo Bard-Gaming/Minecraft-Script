@@ -17,6 +17,7 @@
   - [ ] Interpreter attribute
     - [ ] Context stuff
     - [ ] Errors
+  - [ ] Make ``extend()`` & ``append()`` attributes of list
 
 
 - [ ] Add conditions
