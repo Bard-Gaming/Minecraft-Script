@@ -16,14 +16,14 @@ log(number)  // logs "1274"
 
 
 ## Character Strings
-Strings are a data type used for storing characters or chains of characters.
+Strings are a data type used for storing characters or chains of characters encoded in ``utf-8``.
 The following symbols are used to indicate the presence of a variable:
 - ``'`` (Apostrophe)
 - ``"`` (Quotation mark)
 - `` ` `` (Grave Accent)
 
-*Note: Strings are broken up by newlines,
-and not matching a starting quote with an end quote will result in a Syntax Error.*
+_Note: Strings are broken up by newlines,
+and not matching a starting quote with an end quote will result in a Syntax Error._
 ```js
 var string1 = 'this'
 var string2 = "is a"
