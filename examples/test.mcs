@@ -3,4 +3,6 @@
     log(bob)
 })()
 
-log(bob)
+var e = "hello"
+log(e)
+log(var c = "hello")

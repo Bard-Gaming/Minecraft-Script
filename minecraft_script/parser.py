@@ -20,7 +20,7 @@ class Parser:
             self.current_token = self.token_list[self.current_index]
 
     def parse(self):
-        result = self.statement()
+        result = self.statement_list()
         return result
 
     def atom(self):
@@ -84,26 +84,7 @@ class Parser:
         return self.binary_operation(self.term, ['+', '-'])
 
     def expression(self) -> BinaryOperationNode | VariableAssignNode | FunctionAssignNode | CodeBlockNode | ReturnNode:
-        if self.current_token.tt_type == 'VAR_DEFINE':
-            self.advance()
-            if self.current_token.tt_type != 'TT_NAME':
-                MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead.')
-                exit()
-
-            var_name_token = self.current_token
-            self.advance()
-
-            if self.current_token.tt_type != 'TT_EQUALS':
-                MCSSyntaxError(f'Expected "=". Got {text_underline(f"{self.current_token.value !r}")} instead')
-                exit()
-
-            self.advance()
-            return VariableAssignNode(var_name_token, self.expression())
-
-        elif self.current_token.tt_type == 'SET_DEFINE':
-            return self.set_define()
-
-        elif self.current_token.tt_type == 'FUNC_DEFINE':
+        if self.current_token.tt_type == 'FUNC_DEFINE':
             return self.function_define()
 
         elif self.current_token.tt_type == 'TT_LEFT_BRACE':
@@ -129,11 +110,34 @@ class Parser:
             left_node = BinaryOperationNode(left_node, operator, right_node)
         return left_node
 
-    def statement(self) -> MultipleStatementsNode:
+    def statement(self):
+        if self.current_token.tt_type == 'VAR_DEFINE':
+            self.advance()
+            if self.current_token.tt_type != 'TT_NAME':
+                MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead.')
+                exit()
+
+            var_name_token = self.current_token
+            self.advance()
+
+            if self.current_token.tt_type != 'TT_EQUALS':
+                MCSSyntaxError(f'Expected "=". Got {text_underline(f"{self.current_token.value !r}")} instead')
+                exit()
+
+            self.advance()
+            return VariableAssignNode(var_name_token, self.expression())
+
+        elif self.current_token.tt_type == 'SET_DEFINE':
+            return self.set_define()
+
+        else:
+            return self.expression()
+
+    def statement_list(self) -> MultipleStatementsNode:
         statements = []
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
-        statements.append(self.expression())
+        statements.append(self.statement())
 
         more_statements = True
         while self.current_token.tt_type == 'TT_NEWLINE' and more_statements:
@@ -144,7 +148,7 @@ class Parser:
                     more_statements = False
 
             if more_statements:
-                statements.append(self.expression())
+                statements.append(self.statement())
 
         return MultipleStatementsNode(statements)
 
@@ -304,7 +308,7 @@ class Parser:
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
 
-        statements.append(self.expression())
+        statements.append(self.statement())
 
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
@@ -315,7 +319,7 @@ class Parser:
                 self.advance()
                 return CodeBlockNode(statements)
 
-            statements.append(self.expression())
+            statements.append(self.statement())
 
         if self.current_token.tt_type == 'TT_RIGHT_BRACE':
             self.advance()

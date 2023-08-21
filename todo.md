@@ -15,14 +15,12 @@
   - [ ] actually make use of 'const' keyword (or remove it entirely)
 
 
-- [ ] Restructure Statements
-  - [ ] ``.statement()`` --> ``.multiple_statements()`` (name subject to change)
-  - [ ] new ``.statement()`` = ``.expression()`` without ``var``, ``code block``
-
-
 - [ ] **Add 'Entity' type**
   - [ ] Add dict to cross-check what current entities are being selected
   - [ ] Add tags (delimited with '\[' and '\]')
+
+
+- [ ] Make return statements throw error when not in function / code block (to be decided)
 
 ## Completed
 - [x] Rework Iterables
@@ -34,3 +32,8 @@
 - [x] implement ``set`` keyword
   - [x] for iterables
   - [x] for non-iterables
+
+
+- [x] Restructure Statements
+  - [x] ``.statement()`` --> ``.statement_list()``
+  - [x] new ``.statement()`` = ``.expression()`` without ``var``, ``set``
