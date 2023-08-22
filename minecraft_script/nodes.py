@@ -195,6 +195,20 @@ class UnaryOperationNode:
         return f'UnaryOperationNode({self.operator !r}, {self.right_node !r})'
 
 
+class IfConditionNode:
+    def __init__(self, conditions: list[dict]):
+        self.conditions = conditions
+
+    def get_conditions(self) -> list[dict]:
+        return self.conditions
+
+    def __str__(self):
+        return f'if node: {self.conditions}'
+
+    def __repr__(self):
+        return f'IfConditionNode({self.conditions !r})'
+
+
 class MultipleStatementsNode:
     def __init__(self, statements: list):
         self.statements = statements

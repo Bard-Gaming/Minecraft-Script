@@ -3,7 +3,7 @@ from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
     FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, IterableGetNode, CodeBlockNode, BooleanNode, \
-    ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode
+    ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode, IfConditionNode
 
 
 class Parser:
@@ -23,7 +23,7 @@ class Parser:
         result = self.statement_list()
         return result
 
-    # -------------- Grammar --------------
+    # ---------------------------- Grammar ---------------------------- :
 
     def atom(self):
         token = self.current_token
@@ -111,6 +111,9 @@ class Parser:
         elif self.current_token.tt_type == 'SET_DEFINE':
             return self.set_define()
 
+        elif self.current_token.tt_type == 'IF_CONDITIONAL':
+            return self.if_conditional()
+
         else:
             return self.expression()
 
@@ -133,7 +136,7 @@ class Parser:
 
         return MultipleStatementsNode(statements)
 
-    # -------------- Nodes --------------
+    # ---------------------------- Nodes ---------------------------- :
 
     def binary_operation(self, function, operators) -> BinaryOperationNode:
         left_node = function()
@@ -208,12 +211,12 @@ class Parser:
             return FunctionCallNode(atom, argument_tokens)
 
         else:
-            MCSSyntaxError(f'Expected ")". Got {self.current_token.value !r} instead.')
+            MCSSyntaxError(f'Expected ")". Got {self.current_token.value !r} instead')
             exit()
 
     def array(self) -> ListNode:
         if self.current_token.tt_type != 'TT_LEFT_BRACKET':
-            MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
+            MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead')
             exit()
         self.advance()
 
@@ -238,12 +241,12 @@ class Parser:
             return ListNode(array_contents)
 
         else:
-            MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
+            MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead')
             exit()
 
     def iterable_get(self, atom) -> IterableGetNode:
         if self.current_token.tt_type != 'TT_LEFT_BRACKET':
-            MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead.')
+            MCSSyntaxError(f'Expected "[". Got {self.current_token.value} instead')
             exit()
         self.advance()
 
@@ -254,13 +257,13 @@ class Parser:
             return IterableGetNode(atom, index)
 
         else:
-            MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead.')
+            MCSSyntaxError(f'Expected "]". Got {self.current_token.value} instead')
             exit()
 
     def var_define(self) -> VariableAssignNode:
         self.advance()
         if self.current_token.tt_type != 'TT_NAME':
-            MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead.')
+            MCSSyntaxError(f'Expected name. Got {text_underline(f"{self.current_token.value !r}")} instead')
             exit()
 
         var_name_token = self.current_token
@@ -277,7 +280,7 @@ class Parser:
         self.advance()  # skip "set" keyword
 
         if self.current_token.tt_type != 'TT_NAME':
-            MCSSyntaxError(f'Expected Variable Name. Got "{self.current_token.value}" instead.')
+            MCSSyntaxError(f'Expected Variable Name. Got "{self.current_token.value}" instead')
             exit()
 
         set_name_token = self.current_token

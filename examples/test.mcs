@@ -1,7 +1,13 @@
-function greet = (name) => {
-    log("Hello " + name + "!")
+function tester = (number) => {
+    if (number < 10) {
+        log(10)
+    }
+
+    else {
+        log(number)
+    }
+    return 'no'
 }
 
-function inline_greet = (name) => log("Hello " + name + "!")
-
-inline_greet("bob")
+tester(5)
+log(tester(15))

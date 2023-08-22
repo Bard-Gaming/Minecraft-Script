@@ -3,6 +3,9 @@
   "const"    : "CONST_DEFINE",
   "set"      : "SET_DEFINE",
 
+  "if"       : "IF_CONDITIONAL",
+  "else"     : "ELSE_CONDITIONAL",
+
   "function" : "FUNC_DEFINE",
   "return"   : "TT_RETURN",
 
