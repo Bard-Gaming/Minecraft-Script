@@ -205,6 +205,18 @@ class Interpreter:
 
         return result
 
+    def visit_IfConditionNode(self, node, context):
+        condition_dict: list[dict] = node.get_conditions()
+
+        for condition_block in condition_dict:
+            if condition_block["type"] != 'else':
+                condition_verified = Boolean(self.visit(condition_block["condition"], context)).get_value()
+
+                if condition_verified is True:  # check if condition is valid
+                    return self.visit(condition_block["statement"], context)  # visit statement
+            else:
+                return self.visit(condition_block["statement"], context)  # visit "else" statement
+
     def visit_MultipleStatementsNode(self, node, context):
         return [self.visit(statement, context) for statement in node.statements]
 
@@ -228,6 +240,3 @@ class Interpreter:
     def no_visit_node(self, node, context):
         print(text_error(f'No visit method defined for {text_underline(type(node).__name__)}'))
 
-
-if __name__ == '__main__':
-    Interpreter()
