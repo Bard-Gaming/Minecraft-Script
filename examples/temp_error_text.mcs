@@ -1,18 +1,8 @@
-function tester = (number) => {
-    if (number < 10) {
-        return 10
-    }
+var number = 5
+log(number)
 
-    else if (number > 10) {
-        return number
-    }
-
-    return 'no'
+if (number == 10) {
+    log('hehe')
+} else {
+    log('not hehe')
 }
-
-log(tester(5))
-log(tester(15))
-
-// notes on this result:
-// - return inside if code block returns the value to the if statement; doesn't do anything
-// - infinite loop in code block after else if nothing (except newlines) follow it

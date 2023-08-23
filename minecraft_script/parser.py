@@ -329,37 +329,32 @@ class Parser:
             exit()
         self.advance()
 
-        self.if_conditional_newline_skip()
-
         statement = self.statement(allow_return=allow_return)
+
+        self.if_conditional_skip_newlines_until('ELSE_CONDITIONAL')
+
         return {
             "type": condition_type,
             "condition": condition,
             "statement": statement
         }
 
-    def if_conditional_newline_skip(self):
+    def if_conditional_skip_newlines_until(self, token_type: str):
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
-        if self.current_token.tt_type == 'TT_RIGHT_BRACE':
+        if self.current_token.tt_type != token_type:
             self.revert_advance()
 
     def if_conditional(self, *, allow_return=False) -> IfConditionNode:
         condition_list = [self.if_conditional_main('if', allow_return=allow_return)]
 
-        self.if_conditional_newline_skip()
-
         if self.current_token.tt_type == 'ELSE_CONDITIONAL':
+            ended_with_else = True
             self.advance()  # skip "else" token
 
-            self.if_conditional_newline_skip()
-
-            ended_with_else = False
             while self.current_token.tt_type == 'IF_CONDITIONAL':
                 ended_with_else = False
                 condition_list.append(self.if_conditional_main('else if', allow_return=allow_return))
-
-                self.if_conditional_newline_skip()
 
                 if self.current_token.tt_type == 'ELSE_CONDITIONAL':
                     ended_with_else = True
