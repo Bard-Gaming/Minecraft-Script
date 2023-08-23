@@ -9,6 +9,14 @@
   - [ ] actually make use of 'const' keyword (or remove it entirely)
 
 
+- [ ] Add loops
+  - [ ] ``for`` loop
+    - [ ] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement`` 
+    - [ ] ``in`` keyword
+  - [ ] ``while`` loop
+    - [ ] structure: ``while`` ``(`` ``atom (parsed to bool)`` ``)``  ``statement``
+
+
 - [ ] Add attributes
   - [ ] Lexer ``.`` (``tt_type``=``TT_ATTRIBUTE_DOT``)
   - [ ] Parser attribute
@@ -20,24 +28,6 @@
   - [ ] Make ``extend()`` & ``append()`` attributes of list
 
 
-- [ ] Add conditions
-  - [x] Add truth checks
-    - [x] ``==``
-    - [x] ``<`` & ``>``
-    - [x] ``<=`` & ``>=``
-  - [ ] ``if`` condition
-  - [ ] ``else`` condition
-    - [ ] ``else if`` support
-
-
-- [ ] Add loops
-  - [ ] ``for`` loop
-    - [ ] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement`` 
-    - [ ] ``in`` keyword
-  - [ ] ``while`` loop
-    - [ ] structure: ``while`` ``(`` ``atom (parsed to bool)`` ``)``  ``statement``
-
-
 - [ ] **Add 'Entity' type**
   - [ ] Add dict to cross-check what current entities are being selected
   - [ ] Add tags (delimited with '\[' and '\]')
@@ -46,6 +36,16 @@
 - [ ] Make return statements throw error when not in function / code block (to be decided)
 
 ## Completed
+- [x] Add conditions
+  - [x] Add truth checks
+    - [x] ``==``
+    - [x] ``<`` & ``>``
+    - [x] ``<=`` & ``>=``
+  - [x] ``if`` condition
+  - [x] ``else`` condition
+    - [x] ``else if`` support
+
+
 - [x] **Update binary operations**
   - [x] change it so the left expr is unchanged (doesn't auto-convert to number)
   - [x] make strings concatenable
