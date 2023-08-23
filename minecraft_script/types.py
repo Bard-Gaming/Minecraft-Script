@@ -76,6 +76,9 @@ class Return:
     def __init__(self, value):
         self.value = value
 
+    def get_value(self):
+        return self.value
+
     def __str__(self):
         return f'{self.value}'
 
