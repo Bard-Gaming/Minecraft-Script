@@ -54,6 +54,8 @@ and place it into Sublime Text's User package folder manually
 or by using Sublime Text and clicking on ``Tools > Build System > New Build System...``.
 ```json
 {
+    "target": "ansi_color_build",
+    "syntax": "Packages/ANSIescape/ANSI.sublime-syntax",
     "cmd": ["python", "-m", "minecraft_script", "run", "$file"],
     "file_patterns": ["*.mcs"]
 }
@@ -62,5 +64,14 @@ or by using Sublime Text and clicking on ``Tools > Build System > New Build Syst
 
 _Note: Don't forget to save the file after pasting the code into it!_
 
+As can be observed in the build system file, it is highly recommended you used [ANSIescape](https://github.com/aziz/SublimeANSI/).
+This is so errors get their colors in the sublime text panel. If you don't have ANSIescape installed,
+all you need to do is hit ``Ctrl + Shift + P``, type ``package control: install package``,
+and search for "ANSIescape". Sublime Text should automatically download and install everything automatically.
+
 Hitting ``Ctrl + B`` when inside a .mcs file should now automatically interpret the code and output the result to
 Sublime's console.
+
+![img](resources/sublime_output.png)
+
+_Minecraft-Script during development_
