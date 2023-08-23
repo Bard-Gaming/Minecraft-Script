@@ -2,6 +2,10 @@ from .text_additions import text_error, text_underline
 from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return, Iterable
 from .errors import MCSNameError, MCSTypeError, MCSIndexError, MCSSyntaxError
 
+from .common import DebugLogger
+
+DebugLogger.indent_space = 4
+
 
 class Context:
     def __init__(self, display_name: str, symbol_table, parent=None):
@@ -93,7 +97,6 @@ class Interpreter:
         new_value = self.visit(node.value_expression, context)
 
         variable.set_index(index, new_value)
-
 
     def visit_VariableAccessNode(self, node, context) -> any:
         var_name: str = node.get_name()
@@ -209,7 +212,7 @@ class Interpreter:
         condition_dict: list[dict] = node.get_conditions()
 
         for condition_block in condition_dict:
-            if condition_block["type"] != 'else':
+            if condition_block["type"] in ('if', 'if else'):
                 condition_verified = Boolean(self.visit(condition_block["condition"], context)).get_value()
 
                 if condition_verified is True:  # check if condition is valid
@@ -226,10 +229,12 @@ class Interpreter:
 
         visit_list = []
         for statement in node.statements:
-            if type(statement).__name__ == 'ReturnNode':
-                visit_list.append(self.visit(statement, local_context))
-                break
-            visit_list.append(self.visit(statement, local_context))
+            visit_statement = self.visit(statement, local_context)
+
+            if isinstance(visit_statement, Return):
+                return visit_statement
+
+            visit_list.append(visit_statement)
 
         return visit_list
 
@@ -239,4 +244,3 @@ class Interpreter:
 
     def no_visit_node(self, node, context):
         print(text_error(f'No visit method defined for {text_underline(type(node).__name__)}'))
-

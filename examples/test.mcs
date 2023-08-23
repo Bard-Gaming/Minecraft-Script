@@ -1,13 +1,8 @@
 function tester = (number) => {
     if (number < 10) {
-        log(10)
+        return number
     }
-
-    else {
-        log(number)
-    }
-    return 'no'
 }
 
-tester(5)
-log(tester(15))
+log(tester(5))
+log(tester(11))

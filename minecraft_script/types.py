@@ -352,12 +352,10 @@ class Function(MCSObject):
             local_context.symbol_table.set(arg_name, arg_value)
 
         output = local_interpreter.visit(self.body_node, local_context)
-        if isinstance(output, list):
-            try:
-                return next(element for element in output if isinstance(element, Return)).value
-            except StopIteration:
-                return Boolean(False)
-
+        if isinstance(output, Return):
+            return output
+        elif isinstance(output, (tuple, list)):
+            return Boolean(False)
         else:
             return output
 

@@ -164,7 +164,7 @@ class FunctionCallNode:
         self.argument_nodes = argument_nodes
 
     def __str__(self):
-        return f'Func call:{self.atom.value !r}'
+        return f'Func call: ({self.atom})'
 
     def __repr__(self):
         return f'FunctionCallNode({self.atom !r}, {self.argument_nodes !r})'

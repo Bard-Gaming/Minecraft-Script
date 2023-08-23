@@ -335,9 +335,6 @@ class Parser:
     def if_conditional(self, *, allow_return=False) -> IfConditionNode:
         condition_list = [self.if_conditional_main('if', allow_return=allow_return)]
 
-        while self.current_token.tt_type == 'TT_NEWLINE':
-            self.advance()
-
         if self.current_token.tt_type == 'ELSE_CONDITIONAL':
             self.advance()  # skip "else" token
 
