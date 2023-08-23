@@ -212,7 +212,7 @@ class Interpreter:
         condition_dict: list[dict] = node.get_conditions()
 
         for condition_block in condition_dict:
-            if condition_block["type"] in ('if', 'if else'):
+            if condition_block["type"] in ('if', 'else if'):
                 condition_verified = Boolean(self.visit(condition_block["condition"], context)).get_value()
 
                 if condition_verified is True:  # check if condition is valid

@@ -1,8 +1,16 @@
 function tester = (number) => {
     if (number < 10) {
         return number
+    } else if (number == 10) {
+        log('nice')
+        return 444
+    } else {
+        return 666
     }
+
+    log('bob')
 }
 
 log(tester(5))
-log(tester(11))
+log(tester(10))
+log(tester(12))

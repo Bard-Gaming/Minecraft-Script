@@ -19,6 +19,10 @@ class Parser:
             self.current_index += 1
             self.current_token = self.token_list[self.current_index]
 
+    def revert_advance(self):
+        self.current_index -= 1
+        self.current_token = self.token_list[self.current_index]
+
     def parse(self):
         result = self.statement_list()
         return result
@@ -325,6 +329,8 @@ class Parser:
             exit()
         self.advance()
 
+        self.if_conditional_newline_skip()
+
         statement = self.statement(allow_return=allow_return)
         return {
             "type": condition_type,
@@ -332,24 +338,40 @@ class Parser:
             "statement": statement
         }
 
+    def if_conditional_newline_skip(self):
+        while self.current_token.tt_type == 'TT_NEWLINE':
+            self.advance()
+        if self.current_token.tt_type == 'TT_RIGHT_BRACE':
+            self.revert_advance()
+
     def if_conditional(self, *, allow_return=False) -> IfConditionNode:
         condition_list = [self.if_conditional_main('if', allow_return=allow_return)]
+
+        self.if_conditional_newline_skip()
 
         if self.current_token.tt_type == 'ELSE_CONDITIONAL':
             self.advance()  # skip "else" token
 
+            self.if_conditional_newline_skip()
+
+            ended_with_else = False
             while self.current_token.tt_type == 'IF_CONDITIONAL':
+                ended_with_else = False
                 condition_list.append(self.if_conditional_main('else if', allow_return=allow_return))
 
+                self.if_conditional_newline_skip()
+
                 if self.current_token.tt_type == 'ELSE_CONDITIONAL':
+                    ended_with_else = True
                     self.advance()
 
-            else_statement = self.statement(allow_return=allow_return)
+            if ended_with_else:
+                else_statement = self.statement(allow_return=allow_return)
 
-            condition_list.append({
-                "type": "else",
-                "statement": else_statement
-            })
+                condition_list.append({
+                    "type": "else",
+                    "statement": else_statement
+                })
 
         return IfConditionNode(condition_list)
 
