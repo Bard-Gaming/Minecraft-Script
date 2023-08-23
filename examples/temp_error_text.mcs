@@ -1,8 +1,0 @@
-var number = 5
-log(number)
-
-if (number == 10) {
-    log('hehe')
-} else {
-    log('not hehe')
-}

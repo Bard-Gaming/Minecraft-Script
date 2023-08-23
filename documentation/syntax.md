@@ -88,3 +88,54 @@ var expression = 3 + 5*2 + -4  // in a more "complex" operation, PEMDAS is appli
 log(expression)  // output is "9"
 ```
 _Note: Depending on the data type, operations might do different things._
+
+## Comparison Operators
+Comparison Operators are used to compare different values.
+How and if they can, be compared depends on the type of the values compared,
+since some data types, like strings and numbers, aren't compatible with each-other.
+
+The comparison operators are expressed as follows:
+- ``==`` (Equality)
+- ``<``  (Inferiority)
+- ``<=`` (Inferiority or Equality)
+- ``>``  (Superiority)
+- ``>=`` (Superiority or Equality)
+
+Example as follows:
+```js
+var value_1 = 15
+var value_2 = 32
+
+log(value_1 <= value_2)  // logs 'true'
+log(true == !false)  // logs 'true'
+log(true < false)  // logs 'false'
+```
+
+## Conditions
+Conditions are expressed with the ``if`` and ``else`` statements.
+They can also be combined to create a chain of conditions.
+Conditions can be in any form, and will automatically be parsed to booleans.
+This means that a truthy value like ``"hello"``, will count as ``true``.
+
+Example as follows:
+```js
+if (true) log('hello')
+else log('goodbye')
+// logs "hello" since condition is true
+
+var age = 17
+if (age >= 18) {
+    log('You are an adult.')
+} else if (age < 18) {
+    log('You are a minor.')
+}
+// logs 'You are a minor.'
+
+function max = (value_1, value_2) => {
+    if (value_1 > value_2) {
+        return value_1
+    } else return value_2
+}
+
+log(max(11, 5))  // logs '11'
+```
