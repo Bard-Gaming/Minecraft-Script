@@ -92,27 +92,31 @@ class Parser:
         if self.current_token.tt_type == 'FUNC_DEFINE':
             return self.function_define()
 
-        elif self.current_token.tt_type == 'TT_RETURN':
-            self.advance()
-            if self.current_token.tt_type in ['TT_NEWLINE', 'TT_RIGHT_BRACE']:
-                return ReturnNode()
-
-            return ReturnNode(self.expression())
-
         return self.binary_operation(self.compare_operation, ['==', '>', '>=', '<', '<='])
 
-    def statement(self):
+    def statement(self, *, allow_return=False):
         if self.current_token.tt_type == 'VAR_DEFINE':
             return self.var_define()
 
         elif self.current_token.tt_type == 'TT_LEFT_BRACE':
-            return self.code_block()
+            return self.code_block(allow_return=allow_return)
 
         elif self.current_token.tt_type == 'SET_DEFINE':
             return self.set_define()
 
         elif self.current_token.tt_type == 'IF_CONDITIONAL':
-            return self.if_conditional()
+            return self.if_conditional(allow_return=allow_return)
+
+        elif self.current_token.tt_type == 'TT_RETURN':
+            if not allow_return:
+                MCSSyntaxError(f'Illegal "return" statement')
+                exit()
+
+            self.advance()
+            if self.current_token.tt_type in ['TT_NEWLINE', 'TT_RIGHT_BRACE']:
+                return ReturnNode()
+
+            return ReturnNode(self.expression())
 
         else:
             return self.expression()
@@ -187,7 +191,7 @@ class Parser:
             exit()
         self.advance()
 
-        function_body = self.statement()
+        function_body = self.statement(allow_return=True)
 
         return FunctionAssignNode(function_name_token, function_parameters, function_body)
 
@@ -306,7 +310,7 @@ class Parser:
 
         return IterableSetNode(set_name_token, index, set_value_expression)
 
-    def if_conditional_main(self, condition_type: str):
+    def if_conditional_main(self, condition_type: str, *, allow_return=False):
         self.advance()
 
         if self.current_token.tt_type != 'TT_LEFT_PARENTHESIS':
@@ -321,15 +325,15 @@ class Parser:
             exit()
         self.advance()
 
-        statement = self.statement()
+        statement = self.statement(allow_return=allow_return)
         return {
             "type": condition_type,
             "condition": condition,
             "statement": statement
         }
 
-    def if_conditional(self) -> IfConditionNode:
-        condition_list = [self.if_conditional_main('if')]
+    def if_conditional(self, *, allow_return=False) -> IfConditionNode:
+        condition_list = [self.if_conditional_main('if', allow_return=allow_return)]
 
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
@@ -337,35 +341,22 @@ class Parser:
         if self.current_token.tt_type == 'ELSE_CONDITIONAL':
             self.advance()  # skip "else" token
 
-            ended_on_else = False
             while self.current_token.tt_type == 'IF_CONDITIONAL':
-                ended_on_else = False
-                condition_list.append(self.if_conditional_main('else if'))
-
-                while self.current_token.tt_type == 'TT_NEWLINE':
-                    self.advance()
+                condition_list.append(self.if_conditional_main('else if', allow_return=allow_return))
 
                 if self.current_token.tt_type == 'ELSE_CONDITIONAL':
                     self.advance()
-                    ended_on_else = True
 
-            if ended_on_else:  # "else" without "if" after
-                else_statement = self.statement()
+            else_statement = self.statement(allow_return=allow_return)
 
-                condition_list.append({
-                    "type": "else",
-                    "statement": else_statement
-                })
-
-            else:  # temporary fix ig; artificially adds newline that was removed in the while loop
-                self.current_token = Token('\n', 'TT_NEWLINE')
-
-        else:  # temporary fix ig; artificially adds newline that was removed in the while loop
-            self.current_token = Token('\n', 'TT_NEWLINE')
+            condition_list.append({
+                "type": "else",
+                "statement": else_statement
+            })
 
         return IfConditionNode(condition_list)
 
-    def code_block(self):
+    def code_block(self, *, allow_return=False):
         if self.current_token.tt_type != 'TT_LEFT_BRACE':
             MCSSyntaxError('Expected "{". Got "%s" instead' % self.current_token.value)
             exit()
@@ -380,7 +371,7 @@ class Parser:
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
 
-        statements.append(self.statement())
+        statements.append(self.statement(allow_return=allow_return))
 
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()
@@ -391,7 +382,7 @@ class Parser:
                 self.advance()
                 return CodeBlockNode(statements)
 
-            statements.append(self.statement())
+            statements.append(self.statement(allow_return=allow_return))
 
         if self.current_token.tt_type == 'TT_RIGHT_BRACE':
             self.advance()
