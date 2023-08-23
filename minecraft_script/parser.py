@@ -341,7 +341,10 @@ class Parser:
 
     def if_conditional_skip_newlines_until(self, token_type: str):
         while self.current_token.tt_type == 'TT_NEWLINE':
+            previous_index = self.current_index
             self.advance()
+            if self.current_index == previous_index:
+                break
         if self.current_token.tt_type != token_type:
             self.revert_advance()
 
