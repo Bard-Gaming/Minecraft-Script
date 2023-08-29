@@ -3,7 +3,7 @@ from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
     FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, IterableGetNode, CodeBlockNode, BooleanNode, \
-    ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode, IfConditionNode
+    ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode, IfConditionNode, ForLoopNode
 
 
 class Parser:
@@ -110,6 +110,9 @@ class Parser:
 
         elif self.current_token.tt_type == 'IF_CONDITIONAL':
             return self.if_conditional(allow_return=allow_return)
+
+        elif self.current_token.tt_type == 'FOR_LOOP':
+            return self.for_loop(allow_return=allow_return)
 
         elif self.current_token.tt_type == 'TT_RETURN':
             if not allow_return:
@@ -372,6 +375,39 @@ class Parser:
                 })
 
         return IfConditionNode(condition_list)
+
+    def for_loop(self, *, allow_return=False) -> ForLoopNode:
+        self.advance()  # skip "for" token
+
+        element_name_token: Token = None
+
+        if self.current_token.tt_type != 'TT_LEFT_PARENTHESIS':
+            MCSSyntaxError(f'Expected "(". Got "{self.current_token.value}" instead')
+            exit()
+        self.advance()  # skip left parenthesis
+
+        if self.current_token.tt_type == 'TT_NAME':
+            element_name_token = self.current_token
+            self.advance()
+        else:
+            MCSSyntaxError(f'Expected Name. Got "{self.current_token.value}" instead')
+            exit()
+
+        if self.current_token.tt_type != 'TT_IN':
+            MCSSyntaxError(f'Expected "in". Got "{self.current_token.value}" instead')
+            exit()
+        self.advance()  # skip "in" token
+
+        iterable = self.expression()
+
+        if self.current_token.tt_type != 'TT_RIGHT_PARENTHESIS':
+            MCSSyntaxError(f'Expected ")". Got "{self.current_token.value}" instead')
+            exit()
+        self.advance()  # skip right parenthesis
+
+        body_node = self.statement(allow_return=allow_return)
+
+        return ForLoopNode(element_name_token, iterable, body_node)
 
     def code_block(self, *, allow_return=False):
         if self.current_token.tt_type != 'TT_LEFT_BRACE':

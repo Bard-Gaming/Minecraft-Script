@@ -10,9 +10,10 @@
 
 
 - [ ] Add loops
-  - [ ] ``for`` loop
-    - [ ] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement`` 
-    - [ ] ``in`` keyword
+  - [x] ``for`` loop
+    - [x] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement``
+    - [x] ``in`` keyword
+    - [ ] fix body node doing weird stuff when not in code block
   - [ ] ``while`` loop
     - [ ] structure: ``while`` ``(`` ``atom (parsed to bool)`` ``)``  ``statement``
 

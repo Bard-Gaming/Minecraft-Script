@@ -209,6 +209,22 @@ class IfConditionNode:
         return f'IfConditionNode({self.conditions !r})'
 
 
+class ForLoopNode:
+    def __init__(self, element_name_token, iterable, body_node):
+        self.element_name_token = element_name_token
+        self.iterable = iterable
+        self.body_node = body_node
+
+    def get_name(self):
+        return self.element_name_token.value
+
+    def __str__(self):
+        return f'for {self.element_name_token} in {self.iterable}'
+
+    def __repr__(self):
+        return f'ForLoopNode({self.element_name_token !r}, {self.iterable !r}, {self.body_node !r})'
+
+
 class MultipleStatementsNode:
     def __init__(self, statements: list):
         self.statements = statements

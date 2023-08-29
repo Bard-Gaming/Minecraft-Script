@@ -1,9 +1,13 @@
-function max = (number_1, number_2) => {
-	if (number_1 > number_2) {
-		return number_1
-	}
+function length = (iterable) => {
+    var iterable_len = 0
 
-	else return number_2
+    for (element in iterable) {
+        set iterable_len = iterable_len + 1
+    }
+
+    return iterable_len
 }
 
-log(max(6451, 651))
+log("range(5) length: ", length(range(5)))
+log(length([0, 1, 2]))
+log(length([]))

@@ -6,6 +6,9 @@
   "if"       : "IF_CONDITIONAL",
   "else"     : "ELSE_CONDITIONAL",
 
+  "for"      : "FOR_LOOP",
+  "in"       : "TT_IN",
+
   "function" : "FUNC_DEFINE",
   "return"   : "TT_RETURN",
 

@@ -11,7 +11,8 @@ class MCSObject:
         return self.value
 
     def raise_operation_error(self, value: any, operator: str):
-        MCSTypeError(f'Unsupported operand type(s) for "{operator}": "{self.__class__.__name__}" and "{value.__class__.__name__}"')
+        MCSTypeError(
+            f'Unsupported operand type(s) for "{operator}": "{self.__class__.__name__}" and "{value.__class__.__name__}"')
         exit()
 
     def add(self, value):
@@ -48,7 +49,13 @@ class MCSObject:
 
 class Iterable(MCSObject):
     def get_index(self, index):
-        index: int = index.get_value()
+        match index:
+            case int():
+                index = index
+
+            case Number():
+                index = index.get_value()
+
         output = None
 
         try:
@@ -84,6 +91,27 @@ class Return:
 
     def __repr__(self):
         return f'Return({self.value !r})'
+
+
+class ForLoop:
+    def __init__(self, name: str, iterable, body_node, context):
+        self.name = name
+        self.iterable = iterable
+        self.body_node = body_node
+        self.context = context
+
+    def start_loop(self):
+        from .interpreter import Interpreter, Context, SymbolTable
+        local_interpreter = Interpreter()
+
+        local_symbol_table = SymbolTable(self.context.symbol_table, load_builtins=False)
+        local_context = Context("for_loop", local_symbol_table)
+
+        python_iterable = self.iterable.get_value()
+
+        for current_index in range(len(python_iterable)):
+            local_context.symbol_table.set(self.name, self.iterable.get_index(current_index))
+            local_interpreter.visit(self.body_node, local_context)
 
 
 # -------- Data Types --------
@@ -227,7 +255,8 @@ class String(Iterable, MCSObject):
             output = self.get_value() + value.get_value()
             return String(output)
         else:
-            MCSTypeError(f'Failed to concatenate {self !s} (String) with operand {value !s} ({value.__class__.__name__})')
+            MCSTypeError(
+                f'Failed to concatenate {self !s} (String) with operand {value !s} ({value.__class__.__name__})')
             exit()
 
     def subtract(self, value):

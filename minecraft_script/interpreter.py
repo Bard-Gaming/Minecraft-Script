@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return, Iterable
+from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return, ForLoop, Iterable
 from .errors import MCSNameError, MCSTypeError, MCSIndexError, MCSSyntaxError
 
 from .common import DebugLogger
@@ -219,6 +219,15 @@ class Interpreter:
                     return self.visit(condition_block["statement"], context)  # visit statement
             else:
                 return self.visit(condition_block["statement"], context)  # visit "else" statement
+
+    def visit_ForLoopNode(self, node, context):
+        name = node.get_name()
+        iterable = self.visit(node.iterable, context)
+
+        loop = ForLoop(name, iterable, node.body_node, context)
+        loop.start_loop()
+
+        return None
 
     def visit_MultipleStatementsNode(self, node, context):
         return [self.visit(statement, context) for statement in node.statements]
