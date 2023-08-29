@@ -11,6 +11,18 @@ function max = (number_1, number_2) => {
 	else return number_2
 }
 
-var a = extend_builtins([1, 2, 3])  // a is list [1, 2, 3, log, append, extend, range]
+function iterable_length = (iterable) => {
+    var len_count = 0
+
+    for (element in iterable) {
+        set len_count = len_count + 1
+    }
+
+    return len_count
+}
+
+var a = extend_builtins([1, 2, 3])  // a is list [1, 2, 3, log, append, extend, range, ...]
+
 log(a)
 log(max(a[1], a[0]))  // 2 > 1, so logs "2"
+log(iterable_length(a))
