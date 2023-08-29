@@ -1,10 +1,14 @@
-version = "0.1.415"
+version = "0.1.416"
 module_folder = "/".join(__file__.split('\\')[:-1])
 
 
 class DebugLogger:
     global_indent_level = 0
     indent_space = 2
+
+    def __new__(cls, *args, **kwargs):
+        self = object.__new__(cls)
+        return self.function_call
 
     @classmethod
     def indent_str(cls):
@@ -26,14 +30,13 @@ class DebugLogger:
 
 
 if __name__ == '__main__':
-    @DebugLogger.function_call
+    @DebugLogger()
     def test():
         bob()
 
 
-    @DebugLogger.function_call
+    @DebugLogger()
     def bob():
         return 2 + 2
-
 
     test()
