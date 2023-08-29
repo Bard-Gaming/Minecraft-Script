@@ -353,7 +353,7 @@ class Function(MCSObject):
 
         output = local_interpreter.visit(self.body_node, local_context)
         if isinstance(output, Return):
-            return output
+            return output.get_value()  # return the value of what's return
         elif isinstance(output, (tuple, list)):
             return Boolean(False)
         else:

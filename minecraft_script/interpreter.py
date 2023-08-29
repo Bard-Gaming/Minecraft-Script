@@ -87,14 +87,6 @@ class Interpreter:
         if isinstance(current_iterable, Iterable.types()):
             return current_iterable.get_index(index)
 
-        elif isinstance(current_iterable, Return):
-            current_iterable = current_iterable.get_value()
-            if isinstance(current_iterable, Iterable.types()):
-                return current_iterable.get_index(index)
-            else:
-                MCSTypeError(f'{type(current_iterable).__name__} "{current_iterable}" is not iterable')
-                exit()
-
         else:
             MCSTypeError(f'{type(current_iterable).__name__} "{current_iterable}" is not iterable')
             exit()
