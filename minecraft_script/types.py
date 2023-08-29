@@ -413,7 +413,7 @@ class BuiltinFunction:
             MCSTypeError(f'{text_underline(f"{extend_list}")} is not a list')
             exit()
 
-        base_list.array.extend(extend_list.array)
+        base_list.get_value().extend(extend_list.get_value())
 
         return base_list
 
