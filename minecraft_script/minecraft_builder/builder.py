@@ -1,9 +1,9 @@
+from .build_interpreter import build
+from ..common import module_folder
+from ..text_additions import text_error
 from os import mkdir
 from time import time
 from shutil import copyfile
-from .common import module_folder
-from .text_additions import text_error
-from .build_interpreter import build
 
 
 class Builder:

@@ -1,3 +1,4 @@
 .idea/
 test_file.py
 minecraft_script/__pycache__/
+minecraft_script/minecraft_builder/__pycache__/

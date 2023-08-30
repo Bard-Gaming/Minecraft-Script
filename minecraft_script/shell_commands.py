@@ -1,5 +1,5 @@
-from . import run_file, get_ast_from_file
-from .builder import Builder
+from . import run_file
+from .minecraft_builder import build_file
 from .text_additions import text_error
 import os
 
@@ -16,13 +16,7 @@ def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = Tru
     datapack_name = datapack_name if datapack_name else mcs_file.split('/')[-1].split('.')[0].replace('_', ' ').replace('-', ' ').title()
     mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
 
-    try:
-        ast = get_ast_from_file(mcs_file)
-    except FileNotFoundError:
-        print(text_error(f'Error: File "{mcs_file}" not found.'))
-        return
-
-    Builder(ast, datapack_name).build(verbose)
+    build_file(mcs_file, datapack_name, verbose)
 
 
 def sh_run_file_iteration(filename: str, *args) -> None:
