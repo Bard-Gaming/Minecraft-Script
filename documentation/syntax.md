@@ -139,3 +139,21 @@ function max = (value_1, value_2) => {
 
 log(max(11, 5))  // logs '11'
 ```
+
+## Loops
+MCS currently supports ``for`` loops. These loops follow a python syntax,
+allowing to loop over iterables instead of continually incrementing a variable
+with the use of the ``in`` keyword.
+
+Example as follows:
+```js
+for (number in [5, 7, 3, 1, 9, 4, 6]) {
+    log(number)  // logs "5", then "7", then "3", etc...
+}
+
+// works with any iterable:
+var string = "Hello"
+for (character in string) {
+    log(character)  // logs "H", then "e", then "l", etc...
+}
+```

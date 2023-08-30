@@ -21,8 +21,17 @@ function iterable_length = (iterable) => {
     return len_count
 }
 
+function has_number = (list, number) => {
+    for (element in list) {
+        if (element == number) {
+            return true
+        }
+    }
+}
+
 var a = extend_builtins([1, 2, 3])  // a is list [1, 2, 3, log, append, extend, range, ...]
 
 log(a)
 log(max(a[1], a[0]))  // 2 > 1, so logs "2"
 log(iterable_length(a))
+log(has_number(a, 3))  // logs "true", since 3 is in list a

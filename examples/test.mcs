@@ -1,13 +1,3 @@
-function length = (iterable) => {
-    var iterable_len = 0
-
-    for (element in iterable) {
-        set iterable_len = iterable_len + 1
-    }
-
-    return iterable_len
+for (character in "hello") {
+    log(character)
 }
-
-log("range(5) length: ", length(range(5)))
-log(length([0, 1, 2]))
-log(length([]))

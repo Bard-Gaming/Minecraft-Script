@@ -93,14 +93,14 @@ class Return:
         return f'Return({self.value !r})'
 
 
-class ForLoop:
-    def __init__(self, name: str, iterable, body_node, context):
-        self.name = name
+class LoopObject:
+    def __init__(self, *, for_loop_name: str = None, iterable = None, body_node = None, context = None):
+        self.for_loop_name = for_loop_name
         self.iterable = iterable
         self.body_node = body_node
         self.context = context
 
-    def start_loop(self):
+    def run_for_loop(self):
         from .interpreter import Interpreter, Context, SymbolTable
         local_interpreter = Interpreter()
 
@@ -110,8 +110,10 @@ class ForLoop:
         python_iterable = self.iterable.get_value()
 
         for current_index in range(len(python_iterable)):
-            local_context.symbol_table.set(self.name, self.iterable.get_index(current_index))
-            local_interpreter.visit(self.body_node, local_context)
+            local_context.symbol_table.set(self.for_loop_name, self.iterable.get_index(current_index))
+            body_node_result = local_interpreter.visit(self.body_node, local_context)
+            if isinstance(body_node_result, Return):
+                return body_node_result
 
 
 # -------- Data Types --------

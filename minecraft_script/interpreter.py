@@ -1,5 +1,5 @@
 from .text_additions import text_error, text_underline
-from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return, ForLoop, Iterable
+from .types import Number, String, List, Boolean, Function, BuiltinFunction, Return, LoopObject, Iterable
 from .errors import MCSNameError, MCSTypeError, MCSIndexError, MCSSyntaxError
 
 from .common import DebugLogger
@@ -224,10 +224,10 @@ class Interpreter:
         name = node.get_name()
         iterable = self.visit(node.iterable, context)
 
-        loop = ForLoop(name, iterable, node.body_node, context)
-        loop.start_loop()
+        loop = LoopObject(for_loop_name=name, iterable=iterable, body_node=node.body_node, context=context)
+        loop_output = loop.run_for_loop()
 
-        return None
+        return loop_output
 
     def visit_MultipleStatementsNode(self, node, context):
         return [self.visit(statement, context) for statement in node.statements]
