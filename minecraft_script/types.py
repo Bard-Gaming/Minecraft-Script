@@ -397,7 +397,7 @@ class Function(MCSObject):
         return f'Function({self.name !r}, {self.parameter_names !r}, {self.body_node !r}, {self.context !r})'
 
 
-class BuiltinFunction:
+class BuiltinFunction(MCSObject):
     names = ['log', 'append', 'extend', 'range', 'any', 'parseNumber', 'parseString']
 
     def __init__(self, name):
