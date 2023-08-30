@@ -1,4 +1,4 @@
-version = "0.1.417"
+version = "0.1.418"
 module_folder = "/".join(__file__.split('\\')[:-1])
 
 

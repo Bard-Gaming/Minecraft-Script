@@ -7,10 +7,13 @@ from .text_additions import text_underline
 # --------------------------------------------------------------------
 
 class MCSObject:
-    value = None
+    __value = None
 
     def get_value(self):
-        return self.value
+        return self.__value
+
+    def set_value(self, new_value):
+        self.__value = new_value
 
     def raise_operation_error(self, value: any, operator: str):
         MCSTypeError(
@@ -83,16 +86,16 @@ class Iterable(MCSObject):
 
 class Return:
     def __init__(self, value):
-        self.value = value
+        self.__value = value
 
     def get_value(self):
-        return self.value
+        return self.__value
 
     def __str__(self):
-        return f'{self.value}'
+        return f'{self.__value}'
 
     def __repr__(self):
-        return f'Return({self.value !r})'
+        return f'Return({self.__value !r})'
 
 
 class LoopObject:
@@ -145,11 +148,11 @@ class Number(MCSObject):
 
         match value:
             case int():
-                self.value = value
+                self.__value = value
 
             case str():
                 try:
-                    self.value = int(value)
+                    self.__value = int(value)
                 except ValueError:
                     MCSValueError(f'{value !r} is not a number')
                     exit()
@@ -163,10 +166,10 @@ class Number(MCSObject):
                 exit()
 
             case Number():
-                self.value = value.get_value()
+                self.__value = value.get_value()
 
             case Boolean():
-                self.value = value.get_value()
+                self.__value = value.get_value()
 
             case _:
                 MCSValueError(f'"{value !s}" is not a number')
@@ -174,37 +177,48 @@ class Number(MCSObject):
 
     def add(self, number):
         if isinstance(number, self.supported_operations):
-            self.value = self.get_value() + number.get_value()
+            result = self.get_value() + number.get_value()
+            self.set_value(result)
+
             return Number(self.get_value())
         else:
             super().add(number)
 
     def subtract(self, number):
         if isinstance(number, self.supported_operations):
-            self.value = self.get_value() - number.value
+            result = self.get_value() - number.get_value()
+            self.set_value(result)
+
             return Number(self.get_value())
         else:
             super().subtract(number)
 
     def multiply(self, number):
         if isinstance(number, self.supported_operations):
-            self.value = self.get_value() * number.value
+            result = self.get_value() * number.get_value()
+            self.set_value(result)
+
             return Number(self.get_value())
         else:
             super().multiply(number)
 
     def divide(self, number):
         if isinstance(number, self.supported_operations):
-            if number.value == 0:
+            if number.get_value() == 0:
                 MCSZeroDivisionError(f"Can't divide by zero")
-            self.value = self.get_value() // number.value
+
+            result = self.get_value() // number.get_value()
+            self.set_value(result)
+
             return Number(self.get_value())
         else:
             super().divide(number)
 
     def modulus(self, number):
         if isinstance(number, self.supported_operations):
-            self.value = self.get_value() % number.value
+            result = self.get_value() % number.get_value()
+            self.set_value(result)
+
             return Number(self.get_value())
         else:
             super().modulus(number)
@@ -238,28 +252,28 @@ class String(Iterable, MCSObject):
     def __init__(self, value):
         match value:
             case str():
-                self.value = value
+                self.__value = value
 
             case int():
-                self.value = str(value)
+                self.__value = str(value)
 
             case list():
-                self.value = str(value)
+                self.__value = str(value)
 
             case bool():
-                self.value = str(value)
+                self.__value = str(value)
 
             case Number():
-                self.value = str(value.get_value())
+                self.__value = str(value.get_value())
 
             case String():
-                self.value = value.get_value()
+                self.__value = value.get_value()
 
             case List():
-                self.value = str(value.get_value())
+                self.__value = str(value.get_value())
 
             case Boolean():
-                self.value = str(value.get_value())
+                self.__value = str(value.get_value())
 
             case _:
                 MCSValueError(f'"{value}" could not be parsed to String.')
@@ -275,8 +289,8 @@ class String(Iterable, MCSObject):
 
     def add(self, value):
         if isinstance(value, String):
-            output = self.get_value() + value.get_value()
-            return String(output)
+            result = self.get_value() + value.get_value()
+            return String(result)
         else:
             MCSTypeError(
                 f'Failed to concatenate {self !s} (String) with operand {value !s} ({value.__class__.__name__})')
@@ -285,11 +299,11 @@ class String(Iterable, MCSObject):
     def subtract(self, value):
         if isinstance(value, String):
             characters = set(value.get_value())
-            output = self.get_value()
+            result = self.get_value()
             for char in characters:
-                output = output.replace(char, "", value.get_value().count(char))
+                result = result.replace(char, "", value.get_value().count(char))
 
-            return String(output)
+            return String(result)
 
         else:
             MCSTypeError(f'Failed to subtract {self !s} (String) with operand {value !s} ({value.__class__.__name__})')
@@ -297,8 +311,8 @@ class String(Iterable, MCSObject):
 
     def multiply(self, value):
         if isinstance(value, Number):
-            output = self.get_value() * value.get_value()
-            return String(output)
+            result = self.get_value() * value.get_value()
+            return String(result)
 
         else:
             MCSTypeError(f'Can\'t multiply String by non-number of type "{value.__class__.__name__}"')
@@ -313,7 +327,7 @@ class String(Iterable, MCSObject):
 
 class List(Iterable, MCSObject):
     def __init__(self, value: list):
-        self.value = value
+        self.__value = value
 
     def __str__(self):
         return str([str(element) for element in self.get_value()]).replace("'", "")
@@ -326,25 +340,25 @@ class Boolean(MCSObject):
     def __init__(self, value):
         match value:
             case bool():
-                self.value = value
+                self.__value = value
 
             case Boolean():
-                self.value = value.get_value()
+                self.__value = value.get_value()
 
             case Number():
-                self.value = bool(value.get_value())
+                self.__value = bool(value.get_value())
 
             case String():
-                self.value = bool(value.get_value())
+                self.__value = bool(value.get_value())
 
             case List():
-                self.value = bool(value.get_value())
+                self.__value = bool(value.get_value())
 
             case Function():
-                self.value = True
+                self.__value = True
 
             case BuiltinFunction():
-                self.value = True
+                self.__value = True
 
             case _:
                 MCSValueError(f'{value !r} could not be parsed to boolean')
@@ -378,10 +392,10 @@ class Boolean(MCSObject):
         return self.compare_value(value, '>=')
 
     def __str__(self):
-        return str(self.value).lower()
+        return str(self.__value).lower()
 
     def __repr__(self):
-        return f'Boolean({self.value})'
+        return f'Boolean({self.__value})'
 
 
 class Function(MCSObject):

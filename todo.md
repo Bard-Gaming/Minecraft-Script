@@ -29,6 +29,11 @@
 - [ ] Make return statements throw error when not in function / code block (to be decided)
 
 ## Completed
+- [x] Update type structure
+  - [x] "private" variable mangling
+  - [x] add "value" variable to MCSObject class (super().\_\_init\_\_() it)
+
+
 - [x] Add loops
   - [x] ``for`` loop
     - [x] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement``
