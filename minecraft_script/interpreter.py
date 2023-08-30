@@ -38,6 +38,10 @@ class SymbolTable:
         return value
 
     def set(self, variable_name: str, variable_value: any):
+
+        if self.parent and self.parent.get(variable_name) is not None:
+            return self.parent.set(variable_name, variable_value)
+
         self.symbols[variable_name] = variable_value
 
     def remove(self, variable_name):
