@@ -7,6 +7,7 @@
   "else"     : "ELSE_CONDITIONAL",
 
   "for"      : "FOR_LOOP",
+  "while"    : "WHILE_LOOP",
   "in"       : "TT_IN",
 
   "function" : "FUNC_DEFINE",

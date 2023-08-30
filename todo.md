@@ -2,24 +2,12 @@
 
 ## Emergencies
 - [x] Fix everything breaking after function call | Resolved: forgot to .advance()
+- [ ] Fix for/while loop body node doing weird stuff when not in code block
 
 ## Yet to be done
 - [ ] Update Variables
   - [x] Once declared, ~~don't need keyword~~ use 'set' keyword
   - [ ] actually make use of 'const' keyword (or remove it entirely)
-
-
-- [ ] Add loops
-  - [x] ``for`` loop
-    - [x] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement``
-    - [x] ``in`` keyword
-    - [x] fix return
-    - [ ] fix body node doing weird stuff when not in code block
-    - [x] documentation
-  - [ ] ``while`` loop
-    - [ ] structure: ``while`` ``(`` ``atom (parsed to bool)`` ``)``  ``statement``
-    - [ ] fix return
-    - [ ] documentation
 
 
 - [ ] Add attributes
@@ -41,6 +29,18 @@
 - [ ] Make return statements throw error when not in function / code block (to be decided)
 
 ## Completed
+- [x] Add loops
+  - [x] ``for`` loop
+    - [x] structure: ``for`` ``(`` ``name token`` ``in`` ``iterable`` ``)`` ``statement``
+    - [x] ``in`` keyword
+    - [x] fix return
+    - [x] documentation
+  - [x] ``while`` loop
+    - [x] structure: ``while`` ``(`` ``atom (parsed to bool)`` ``)``  ``statement``
+    - [x] fix return
+    - [x] documentation
+
+
 - [x] Add conditions
   - [x] Add truth checks
     - [x] ``==``

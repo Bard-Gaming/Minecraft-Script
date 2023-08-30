@@ -141,9 +141,13 @@ log(max(11, 5))  // logs '11'
 ```
 
 ## Loops
-MCS currently supports ``for`` loops. These loops follow a python syntax,
-allowing to loop over iterables instead of continually incrementing a variable
-with the use of the ``in`` keyword.
+MCS currently supports ``for`` and ``while`` loops. They function similarly to python loops,
+while still retaining Ecmascript syntax.
+
+### For loops
+``for`` loops allow the looping over iterables.
+Instead of continually incrementing a variable on each execution (like in Java/JS),
+they serve the purpose of running through iterables with the use of the ``in`` keyword.
 
 Example as follows:
 ```js
@@ -157,3 +161,34 @@ for (character in string) {
     log(character)  // logs "H", then "e", then "l", etc...
 }
 ```
+_Note: (legal) ``return`` statements inside ``for`` loops halt their execution._
+
+### While loops
+``while`` loops allow you to loop over a block of code for an undetermined amount of
+time, until the condition is met. The loop runs as long as the condition,
+which is automatically parsed to a boolean, is true.
+
+Example as follows:
+
+```js
+var condition = 1
+
+while (condition) {
+    log(condition)
+    set condition = condition + 1
+    
+    if (condition > 10) {
+        set condition = false
+    }
+}
+// this logs "1", "2", "3", etc... until "10", then stops
+
+// alternative:
+var condition = 1
+
+while (condition <= 10) {
+    log(condition)
+    set condition = condition + 1
+}
+```
+_Note: (legal) ``return`` statements inside ``while`` loops halt their execution._

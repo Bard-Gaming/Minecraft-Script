@@ -228,8 +228,15 @@ class Interpreter:
         name = node.get_name()
         iterable = self.visit(node.iterable, context)
 
-        loop = LoopObject(for_loop_name=name, iterable=iterable, body_node=node.body_node, context=context)
-        loop_output = loop.run_for_loop()
+        loop = LoopObject(body_node=node.body_node, context=context)
+        loop_output = loop.run_for_loop(for_loop_name=name, iterable=iterable)
+
+        return loop_output
+
+    @staticmethod
+    def visit_WhileLoopNode(node, context):
+        loop = LoopObject(body_node=node.body_node, context=context)
+        loop_output = loop.run_while_loop(condition_expr=node.condition_expr)
 
         return loop_output
 

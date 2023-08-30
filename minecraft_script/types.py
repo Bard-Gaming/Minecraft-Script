@@ -2,7 +2,9 @@ from .errors import MCSTypeError, MCSZeroDivisionError, MCSValueError, MCSIndexE
 from .text_additions import text_underline
 
 
-# -------- Abstract Types --------
+# --------------------------------------------------------------------
+# -------------------------- Abstract Types --------------------------
+# --------------------------------------------------------------------
 
 class MCSObject:
     value = None
@@ -94,29 +96,48 @@ class Return:
 
 
 class LoopObject:
-    def __init__(self, *, for_loop_name: str = None, iterable = None, body_node = None, context = None):
-        self.for_loop_name = for_loop_name
-        self.iterable = iterable
+    def __init__(self, *, body_node = None, context = None):
         self.body_node = body_node
         self.context = context
 
-    def run_for_loop(self):
+    def run_for_loop(self, for_loop_name: str, iterable = None):
         from .interpreter import Interpreter, Context, SymbolTable
         local_interpreter = Interpreter()
 
         local_symbol_table = SymbolTable(self.context.symbol_table, load_builtins=False)
         local_context = Context("for_loop", local_symbol_table)
 
-        python_iterable = self.iterable.get_value()
+        python_iterable = iterable.get_value()
 
         for current_index in range(len(python_iterable)):
-            local_context.symbol_table.set(self.for_loop_name, self.iterable.get_index(current_index))
+            local_context.symbol_table.set(for_loop_name, iterable.get_index(current_index))
             body_node_result = local_interpreter.visit(self.body_node, local_context)
             if isinstance(body_node_result, Return):
                 return body_node_result
 
+    def run_while_loop(self, condition_expr):
+        # condition_expr is node
+        from .interpreter import Interpreter, Context, SymbolTable
+        local_interpreter = Interpreter()
 
-# -------- Data Types --------
+        local_symbol_table = SymbolTable(self.context.symbol_table, load_builtins=False)
+        local_context = Context("while_loop", local_symbol_table)
+
+        condition_value = Boolean(local_interpreter.visit(condition_expr, local_context))
+
+        while condition_value.get_value():
+            body_node_output = local_interpreter.visit(self.body_node, local_context)
+
+            if isinstance(body_node_output, Return):
+                return body_node_output
+
+            condition_value = Boolean(local_interpreter.visit(condition_expr, local_context))
+
+
+# --------------------------------------------------------------------
+# ---------------------------- Data Types ----------------------------
+# --------------------------------------------------------------------
+
 
 class Number(MCSObject):
     def __init__(self, value: str | int | object):

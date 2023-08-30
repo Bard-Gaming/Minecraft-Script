@@ -2,8 +2,8 @@ from .tokens import Token
 from .errors import MCSSyntaxError
 from .text_additions import text_underline
 from .nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignNode, VariableAccessNode, \
-    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, IterableGetNode, CodeBlockNode, BooleanNode, \
-    ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode, IfConditionNode, ForLoopNode
+    FunctionAssignNode, FunctionCallNode, MultipleStatementsNode, ListNode, IterableGetNode, CodeBlockNode, \
+    BooleanNode, ReturnNode, UnaryBooleanNode, StringNode, IterableSetNode, IfConditionNode, ForLoopNode, WhileLoopNode
 
 
 class Parser:
@@ -27,7 +27,9 @@ class Parser:
         result = self.statement_list()
         return result
 
-    # ---------------------------- Grammar ---------------------------- :
+    # -----------------------------------------------------------------
+    # ---------------------------- Grammar ----------------------------
+    # -----------------------------------------------------------------
 
     def atom(self):
         token = self.current_token
@@ -114,6 +116,9 @@ class Parser:
         elif self.current_token.tt_type == 'FOR_LOOP':
             return self.for_loop(allow_return=allow_return)
 
+        elif self.current_token.tt_type == 'WHILE_LOOP':
+            return self.while_loop(allow_return=allow_return)
+
         elif self.current_token.tt_type == 'TT_RETURN':
             if not allow_return:
                 MCSSyntaxError(f'Illegal "return" statement')
@@ -147,7 +152,9 @@ class Parser:
 
         return MultipleStatementsNode(statements)
 
-    # ---------------------------- Nodes ---------------------------- :
+    # ---------------------------------------------------------------
+    # ---------------------------- Nodes ----------------------------
+    # ---------------------------------------------------------------
 
     def binary_operation(self, function, operators) -> BinaryOperationNode:
         left_node = function()
@@ -408,6 +415,26 @@ class Parser:
         body_node = self.statement(allow_return=allow_return)
 
         return ForLoopNode(element_name_token, iterable, body_node)
+
+    def while_loop(self, *, allow_return=False) -> WhileLoopNode:
+        self.advance()  # skip "while" token
+
+        if self.current_token.tt_type != 'TT_LEFT_PARENTHESIS':
+            MCSSyntaxError(f'Expected "(". Got "{self.current_token.value}" instead')
+            exit()
+        self.advance()  # skip left parenthesis
+
+        condition_expr = self.expression()
+
+        if self.current_token.tt_type != 'TT_RIGHT_PARENTHESIS':
+            MCSSyntaxError(f'Expected ")". Got "{self.current_token.value}" instead')
+            exit()
+        self.advance()  # skip right parenthesis
+
+        body_node = self.statement(allow_return=allow_return)
+
+        return WhileLoopNode(condition_expr, body_node)
+
 
     def code_block(self, *, allow_return=False):
         if self.current_token.tt_type != 'TT_LEFT_BRACE':

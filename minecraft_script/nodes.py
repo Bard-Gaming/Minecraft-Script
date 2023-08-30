@@ -225,6 +225,18 @@ class ForLoopNode:
         return f'ForLoopNode({self.element_name_token !r}, {self.iterable !r}, {self.body_node !r})'
 
 
+class WhileLoopNode:
+    def __init__(self, condition_expr, body_node):
+        self.condition_expr = condition_expr
+        self.body_node = body_node
+
+    def __str__(self):
+        return f'while {self.condition_expr}'
+
+    def __repr__(self):
+        return f'WhileLoopNode({self.condition_expr !r}, {self.body_node !r})'
+
+
 class MultipleStatementsNode:
     def __init__(self, statements: list):
         self.statements = statements
