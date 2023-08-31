@@ -26,6 +26,9 @@ class BuildVariable(BuildType):
     def get_value(self):
         return self.value.get_value()
 
+    def call_command(self, arguments):
+        return self.value.call_command(arguments)
+
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.value.storage_location}'
 
@@ -69,3 +72,29 @@ class BuildList(BuildType):
 
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.storage_location}'
+
+
+class BuildFunction(BuildType):
+    def __init__(self, *, name: str = None, parameter_names, datapack_id, body_node, context, interpreter):
+        self.name = name if name is not None else f'function_{self.generate_storage_location()}'
+        self.datapack_id = datapack_id
+        self.path = f'{self.datapack_id}:{self.name}'
+
+        self.parameter_names = parameter_names if parameter_names else None
+        self.body_node = body_node
+        self.context = context
+        self.interpreter = interpreter
+
+        self.setup()
+
+    def setup(self):
+        from .build_interpreter import BuildContext
+        local_context = BuildContext(self.name, self.name)
+        self.interpreter.visit(self.body_node, local_context)
+
+    def call_command(self, arguments: BuildList):
+        if arguments.get_value() is not None:
+            arguments.set_temporary()
+            return f'function {self.datapack_id}:{self.name} with storage mcs_{self.datapack_id} temporary'
+        else:
+            return f'function {self.datapack_id}:{self.name}'

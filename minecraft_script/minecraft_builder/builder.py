@@ -54,6 +54,7 @@ class Builder:
         # datapack folders:
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}')
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions')
+        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/code_blocks')
 
         # default stuff
         if verbose:
