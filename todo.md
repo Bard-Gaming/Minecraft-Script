@@ -5,6 +5,29 @@
 - [ ] Fix for/while loop body node doing weird stuff when not in code block
 
 ## Yet to be done
+- [ ] Minecraft datapack
+  - [x] NumberNode
+  - [x] StringNode
+  - [x] ListNode
+  - [ ] IterableGetNode
+  - [ ] IterableSetNode
+  - [ ] BooleanNode
+  - [ ] UnaryBooleanNode
+  - [x] VariableAssignNode
+  - [ ] VariableSetNode
+  - [x] VariableAccessNode
+  - [x] FunctionAssignNode
+  - [x] FunctionCallNode
+  - [ ] BinaryOperationNode (good luck)
+  - [ ] UnaryOperationNode
+  - [ ] IfConditionNode
+  - [ ] ForLoopNode
+  - [ ] WhileLoopNode
+  - [x] MultipleStatementsNode
+  - [x] CodeBlockNode
+  - [ ] ReturnNode
+
+
 - [ ] Update Variables
   - [x] Once declared, ~~don't need keyword~~ use 'set' keyword
   - [ ] actually make use of 'const' keyword (or remove it entirely)
