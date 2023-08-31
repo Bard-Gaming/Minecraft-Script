@@ -8,5 +8,5 @@ function test = () => {
 test()
 
 (function = () => {
-    var chiller = "hello"
+    var chiller = bob[1]
 })()

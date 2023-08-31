@@ -9,7 +9,7 @@
   - [x] NumberNode
   - [x] StringNode
   - [x] ListNode
-  - [ ] IterableGetNode
+  - [x] IterableGetNode
   - [ ] IterableSetNode
   - [ ] BooleanNode
   - [ ] UnaryBooleanNode

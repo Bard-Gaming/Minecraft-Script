@@ -82,11 +82,19 @@ class BuildInterpreter:
 
     def visit_ListNode(self, node, context):
         value_array = [self.visit(element, context) for element in node.array]
-        list = BuildList(value_array, self.datapack_id)
+        list_obj = BuildList(value_array, self.datapack_id)
 
-        self.add_commands(list.list_commands(), context.function_name)
+        self.add_commands(list_obj.list_commands(), context.function_name)
 
-        return list
+        return list_obj
+
+    def visit_IterableGetNode(self, node, context):
+        current_iterable = self.visit(node.atom, context)
+        index = self.visit(node.index, context).get_value()
+
+        self.add_command(current_iterable.get_index_cmd(index), context.function_name)
+
+        return current_iterable.get_index(index)
 
     def visit_VariableAccessNode(self, node, context) -> any:
         var_name = f'{node.get_name()}'
@@ -124,7 +132,7 @@ class BuildInterpreter:
         self.add_command(function.call_command(arguments))
 
     def visit_CodeBlockNode(self, node, context):
-        local_context = BuildContext('code_block', f'code_blocks/cb_{token_hex(16)}')
+        local_context = BuildContext('code_block', f'code_blocks/cb_{token_hex(16)}', context)
         self.add_command(f'function {self.datapack_id}:{local_context.function_name}', context.function_name)
 
         visit_list = []

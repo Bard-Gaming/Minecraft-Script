@@ -2,12 +2,12 @@ from secrets import token_hex
 
 
 class BuildType:
-    __value = None
+    value = None
     datapack_id = None
     storage_location = None
 
     def get_value(self):
-        return self.__value
+        return self.value
 
     @staticmethod
     def generate_storage_location():
@@ -15,6 +15,14 @@ class BuildType:
 
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.storage_location}'
+
+
+class BuildIterable(BuildType):
+    def get_index_cmd(self, index: int):
+        return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.storage_location}.{index}'
+
+    def get_index(self, index):
+        return self.value[index]
 
 
 class BuildVariable(BuildType):
@@ -29,18 +37,30 @@ class BuildVariable(BuildType):
     def call_command(self, arguments):
         return self.value.call_command(arguments)
 
+    def get_index_cmd(self, index: int):
+        return self.value.get_index_cmd(index)
+
+    def get_index(self, index: int):
+        return self.value.get_index(index)
+
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.value.storage_location}'
 
 
-class BuildString(BuildType):
+class BuildString(BuildIterable, BuildType):
     def __init__(self, value, datapack_id):
-        self.__value = value
+        self.value = value
         self.datapack_id = datapack_id
         self.storage_location = f'string.{self.generate_storage_location()}'
 
     def get_value(self):
-        return self.__value
+        return self.value
+
+    def get_index_cmd(self, index: int):
+        return f'data modify storage mcs_{self.datapack_id} temporary set string storage {self.get_full_storage_location()} {index} {index + 1}'
+
+    def get_index(self, index):
+        return BuildString(self.value[index], self.datapack_id)
 
     def get_full_storage_location(self):
         return f'mcs_{self.datapack_id} {self.storage_location}'
@@ -48,25 +68,25 @@ class BuildString(BuildType):
 
 class BuildNumber(BuildType):
     def __init__(self, value, datapack_id):
-        self.__value = value
+        self.value = value
         self.datapack_id = datapack_id
         self.storage_location = f'number.{self.generate_storage_location()}'
 
     def get_value(self):
-        return self.__value
+        return self.value
 
     def get_full_storage_location(self):
         return f'mcs_{self.datapack_id} {self.storage_location}'
 
 
-class BuildList(BuildType):
+class BuildList(BuildIterable, BuildType):
     def __init__(self, value, datapack_id):
-        self.__value = value
+        self.value = value
         self.datapack_id = datapack_id
         self.storage_location = f'list.{self.generate_storage_location()}'
 
     def list_commands(self) -> iter:
-        for index, element in enumerate(self.__value):
+        for index, element in enumerate(self.value):
             yield element.set_temporary()
             yield f'data modify storage mcs_{self.datapack_id} {self.storage_location}.{index} set from storage mcs_{self.datapack_id} temporary'
 
@@ -89,7 +109,7 @@ class BuildFunction(BuildType):
 
     def setup(self):
         from .build_interpreter import BuildContext
-        local_context = BuildContext(self.name, self.name)
+        local_context = BuildContext(self.name, self.name, self.context)
         self.interpreter.visit(self.body_node, local_context)
 
     def call_command(self, arguments: BuildList):
