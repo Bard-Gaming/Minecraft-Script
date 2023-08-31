@@ -12,6 +12,25 @@ class Builder:
         self.datapack_name = datapack_name
         self.datapack_id = datapack_name.lower().replace(' ', '_')
 
+    def make_init_file(self):
+        with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file:
+            init_file.write('# init file. This mcfunction file is run when the game loads.')
+            init_file.write('\nscoreboard objectives add mcs_math dummy {"text":"MCS Math"}')
+
+    def make_main_file(self):
+        with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file:
+            main_file.write('# main file. This mcfunction file is run every tick.')
+
+    def make_kill_file(self):
+        with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file:
+            kill_file.write('# kill file. This mcfunction file is used to disable the datapack.')
+            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} variables')
+            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} string')
+            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} number')
+            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} list')
+            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} temporary')
+            kill_file.write(f'\nscoreboard objectives remove mcs_math\ndatapack disable "file/{self.datapack_name}"')
+
     def build(self, verbose: bool = True):
         start_time = time()
         if verbose: print(f'Building with name "{self.datapack_name}" (id: "{self.datapack_id}")')
@@ -63,20 +82,11 @@ class Builder:
             print('Done!')
             print('Building Functions...', end=" ")
 
-        with (
-            open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file,
-            open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file,
-            open(f'{self.datapack_name}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file
-        ):
-            main_file.write('# main file. This mcfunction file is run every tick.\n')
+        self.make_init_file()
+        self.make_main_file()
+        self.make_kill_file()
 
-            init_file.write('# init file. This mcfunction file is run when the game loads.\n')
-            init_file.write('scoreboard objectives add mcs_math dummy {"text":"MCS Math"}\n')
-
-            kill_file.write('# kill file. This mcfunction file is used to disable the datapack.\n')
-            kill_file.write(f'scoreboard objectives remove mcs_math\ndatapack disable "file/{self.datapack_name}"')
-
-        build(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/')
+        build(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/', self.datapack_id)
 
         elapsed_time = time() - start_time
 

@@ -1,6 +1,2 @@
-var condition = 1
-
-while (condition <= 10) {
-    log(condition)
-    set condition = condition + 1
-}
+var bob = "hello"
+var bob2 = [bob, "hihi", 3]
