@@ -36,7 +36,7 @@
 - [ ] Add attributes
   - [ ] Lexer ``.`` (``tt_type``=``TT_ATTRIBUTE_DOT``)
   - [ ] Parser attribute
-    - [ ] grammar: ``atom`` ``.`` ``name``
+    - [ ] grammar: ``atom`` = ``atom`` ``.`` ``name``
     - [ ] loop back to atom (i.e. attribute is atom)
   - [ ] Interpreter attribute
     - [ ] Context stuff
@@ -47,9 +47,10 @@
 - [ ] **Add 'Entity' type**
   - [ ] Add dict to cross-check what current entities are being selected
   - [ ] Add tags (delimited with '\[' and '\]')
+  - [ ] Structure ``@`` ``name``
 
 
-- [ ] Make return statements throw error when not in function / code block (to be decided)
+- [x] Make return statements throw error when not in function / code block (to be decided)
 
 ## Completed
 - [x] Update type structure

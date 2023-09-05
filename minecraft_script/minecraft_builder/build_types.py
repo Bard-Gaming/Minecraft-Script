@@ -16,6 +16,12 @@ class BuildType:
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.storage_location}'
 
+    def __str__(self):
+        return f'{self.get_value}'
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.value !r}, {self.datapack_id !r}, {self.storage_location !r})'
+
 
 class BuildIterable(BuildType):
     def get_index_cmd(self, index: int):
@@ -45,6 +51,9 @@ class BuildVariable(BuildType):
 
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.value.storage_location}'
+
+    def __str__(self):
+        return str(self.value)
 
 
 class BuildString(BuildIterable, BuildType):
@@ -93,6 +102,9 @@ class BuildList(BuildIterable, BuildType):
     def set_temporary(self):
         return f'data modify storage mcs_{self.datapack_id} temporary set from storage mcs_{self.datapack_id} {self.storage_location}'
 
+    def __str__(self):
+        return ', '.join([str(element) for element in self.get_value()])
+
 
 class BuildFunction(BuildType):
     def __init__(self, *, name: str = None, parameter_names, datapack_id, body_node, context, interpreter):
@@ -118,3 +130,31 @@ class BuildFunction(BuildType):
             return f'function {self.datapack_id}:{self.name} with storage mcs_{self.datapack_id} temporary'
         else:
             return f'function {self.datapack_id}:{self.name}'
+
+
+class BuildBuiltinFunction(BuildType):
+    functions = ['log']
+
+    def __init__(self, name):
+        self.name = name
+
+    def call_command(self, arguments: BuildList):
+        method = getattr(self, f'call_{self.name}')
+        return method(arguments)
+
+    @staticmethod
+    def call_log(arguments: BuildList):
+        if arguments.get_value() is None:
+            return
+        else:
+            tellraw_string = '[""'
+            previous = False
+            for element in arguments.get_value():
+                if previous:
+                    tellraw_string += ', {"text":", "}'
+                tellraw_string += ', {"text":' f'"{element.get_value()}"' '}'  # TODO: fix weird bug with BuildList
+                previous = True
+
+            tellraw_string += ']'
+            print(tellraw_string)
+            return f'tellraw @a {tellraw_string}'

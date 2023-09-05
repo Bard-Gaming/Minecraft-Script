@@ -1,4 +1,4 @@
-from .build_types import BuildString, BuildNumber, BuildList, BuildVariable, BuildFunction
+from .build_types import BuildString, BuildNumber, BuildList, BuildVariable, BuildFunction, BuildBuiltinFunction
 from secrets import token_hex
 
 
@@ -26,12 +26,16 @@ class BuildSymbol:
 
 
 class BuildContext:
-    def __init__(self, name: str, function_name = 'init', parent = None, symbol_table = None):
+    def __init__(self, name: str, function_name = 'init', parent = None, symbol_table = None, *, load_builtins: bool = False):
         self.name = name
         self.parent = parent
         self.id = f'mcs_{name.lower()}'
         self.symbol_table = symbol_table if symbol_table is not None else BuildSymbol(parent)
         self.function_name = function_name
+
+        if load_builtins:
+            for function_name in BuildBuiltinFunction.functions:
+                self.symbol_table.set(function_name, BuildBuiltinFunction(function_name))
 
 
 class BuildInterpreter:
@@ -50,7 +54,7 @@ class BuildInterpreter:
             return
 
         if self.commands.get(function) is None:
-            self.commands[function] = [f'\n{command}']
+            self.commands[function] = ['# This file was generated with Minecraft Script\n', f'\n{command}']
             return
 
         else:
@@ -129,7 +133,7 @@ class BuildInterpreter:
         function: BuildFunction = self.visit(node.atom, context)
         arguments = BuildList([self.visit(arg_token, context) for arg_token in node.argument_nodes], self.datapack_id)
 
-        self.add_command(function.call_command(arguments))
+        self.add_command(function.call_command(arguments), context.function_name)
 
     def visit_CodeBlockNode(self, node, context):
         local_context = BuildContext('code_block', f'code_blocks/cb_{token_hex(16)}', context)
@@ -157,7 +161,7 @@ def build(ast: list, parent_folder, datapack_id):
         parent_folder += '/'
 
     build_interpreter = BuildInterpreter(datapack_id)
-    main_context = BuildContext('main')
+    main_context = BuildContext('main', load_builtins=True)
     build_interpreter.visit(ast, main_context)
 
     for function, command_list in build_interpreter.commands.items():

@@ -3,6 +3,7 @@ var bob2 = [bob, "hihi", 3]
 
 function test = () => {
     var bob3 = "bobby car"
+    log(bob3, bob2)
 }
 
 test()
