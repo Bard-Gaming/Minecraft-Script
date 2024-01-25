@@ -1,5 +1,6 @@
 from json import loads
 from .tokens import Token
+from .errors import MCSIllegalCharacterError
 from .common import module_folder
 
 with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
@@ -26,11 +27,12 @@ class Lexer:
         self.current_char = None
         self.position_x = 0
         self.position_y = 1
+        self.__token_list = []
 
         self.advance()  # initialize current_char and current_index to correct values
 
     def advance(self):
-        if self.current_index >= len(self.code_input):
+        if self.current_index > len(self.code_input) - 2:  # - 2 since len is max_index + 1 and +1 added to index later
             self.current_char = None
             return
 
@@ -44,15 +46,75 @@ class Lexer:
         else:
             self.position_x += 1
 
-    def default_tokenize_treatment(self):
-        pass
+    @property
+    def next_char(self) -> str | None:
+        return self.code_input[self.current_index + 1] if self.current_index < len(self.code_input) - 2 else None
+
+    def default_tokenize_treatment(self) -> None:
+        position = (self.position_x, self.position_y)
+
+        advance_needed = True  # If token is composed of 2 chars, advance is needed
+        token_value = self.current_char + self.next_char
+        token_type = token_lookup_table.get(token_value)  # try with composed token first (priority to composed tokens)
+
+        if token_type is None:  # check if composed token exists
+            advance_needed = False  # only 1 char, no advance needed
+            token_value = self.current_char
+            token_type = token_lookup_table.get(token_value)
+
+            if token_type is None:  # no composed token and no simple token
+                raise MCSIllegalCharacterError(token_value, position)
+
+        if advance_needed:
+            self.advance()
+
+        self.__token_list.append(Token(token_value, token_type, position))
+        self.advance()
+
+    def make_number(self) -> Token:
+        number = self.current_char
+        position = (self.position_x, self.position_y)
+        self.advance()
+
+        while self.current_char in LANG_TOKENS['TT_NUMBER']:
+            number += self.current_char
+            self.advance()
+
+        return Token(number, 'TT_NUMBER', position)
+
+    def make_name(self) -> Token:
+        name = self.current_char
+        position = (self.position_x, self.position_y)
+        self.advance()
+
+        while self.current_char in LANG_TOKENS['TT_NAME'] + LANG_TOKENS['_TT_NAME_extend']:
+            name += self.current_char
+            self.advance()
+
+        return Token(name, 'TT_NAME', position)
 
     def tokenize(self) -> tuple[Token, ...]:
-        token_list = []
+        if self.__token_list:
+            return tuple(self.__token_list)
 
         while self.current_char is not None:
-            pass
+            if self.current_char in LANG_TOKENS['TT_IGNORE']:
+                self.advance()
 
-        return tuple(token_list)
+            elif self.current_char in LANG_TOKENS['TT_NUMBER']:
+                self.__token_list.append(self.make_number())
+
+            elif self.current_char in LANG_TOKENS['TT_NAME']:
+                self.__token_list.append(self.make_name())
+
+            elif self.current_char + self.next_char in LANG_TOKENS['TT_COMMENT']:
+                self.advance()  # skip second "/" (self.next_char)
+                while self.current_char is not None and self.current_char != "\n":
+                    self.advance()  # skip everything until newline (it's a comment)
+
+            else:
+                self.default_tokenize_treatment()
+
+        return tuple(self.__token_list)
 
 

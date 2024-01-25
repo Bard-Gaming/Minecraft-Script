@@ -29,9 +29,9 @@ class MCSValueError(MCSError):
         super().__init__(details, "Value Error", line_number)
 
 
-class MCSIllegalCharError(MCSError):
-    def __init__(self, details: str, line_number: int = None):
-        super().__init__(details, "Illegal Character", line_number)
+class MCSIllegalCharacterError(Exception):
+    def __init__(self, value: str, position: tuple[int, int]):
+        super().__init__(f"Illegal Character: {value} (line {position[1]}, {position[0]})")
 
 
 class MCSTypeError(MCSError):
