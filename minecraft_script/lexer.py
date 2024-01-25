@@ -1,6 +1,6 @@
 from json import loads
 from .tokens import Token
-from .errors import MCSIllegalCharacterError
+from .errors import MCSIllegalCharacterError, MCSSyntaxError
 from .common import module_folder
 
 with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
@@ -32,7 +32,7 @@ class Lexer:
         self.advance()  # initialize current_char and current_index to correct values
 
     def advance(self):
-        if self.current_index > len(self.code_input) - 2:  # - 2 since len is max_index + 1 and +1 added to index later
+        if self.current_index >= len(self.code_input) - 1:  # if index is equal to len - 1, don't advance
             self.current_char = None
             return
 
@@ -91,7 +91,28 @@ class Lexer:
             name += self.current_char
             self.advance()
 
-        return Token(name, 'TT_NAME', position)
+        reserved_name = LANG_KEYWORDS.get(name)
+        if reserved_name is not None:  # if a name is reserved, update
+            return Token(name, reserved_name, position)
+
+        return Token(name, 'TT_NAME', position)  # generic variable name
+
+    def make_string(self) -> Token:
+        string_quote = self.current_char
+        string = ""
+        position = (self.position_x, self.position_y)
+        self.advance()
+
+        while self.current_char is not None and self.current_char != string_quote:
+            string += self.current_char
+            self.advance()
+
+        if self.current_char is None:
+            raise MCSSyntaxError(f'Unmachted string starting at line {position[1]}, {position[0]}')
+        self.advance()  # skip closing string quote
+
+
+        return Token(string, 'TT_STRING', position)
 
     def tokenize(self) -> tuple[Token, ...]:
         if self.__token_list:
@@ -107,6 +128,9 @@ class Lexer:
             elif self.current_char in LANG_TOKENS['TT_NAME']:
                 self.__token_list.append(self.make_name())
 
+            elif self.current_char in LANG_TOKENS['TT_QUOTE']:
+                self.__token_list.append(self.make_string())
+
             elif self.current_char + self.next_char in LANG_TOKENS['TT_COMMENT']:
                 self.advance()  # skip second "/" (self.next_char)
                 while self.current_char is not None and self.current_char != "\n":
@@ -116,5 +140,3 @@ class Lexer:
                 self.default_tokenize_treatment()
 
         return tuple(self.__token_list)
-
-
