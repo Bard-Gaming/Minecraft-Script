@@ -1,5 +1,5 @@
 from .common import version
-from .shell_commands import *
+from .shell_commands import shell_functions
 from sys import argv
 from os import getcwd
 
@@ -8,8 +8,8 @@ if not arguments:
     print(f"Minecraft Script version {version}; currently in {getcwd()}\nUse \"help\" for more information.")
     exit()
 
-function = f'sh_{arguments[0]}'
-if function in shell_function_names:
-    eval(function)(*arguments[1:])
+function = shell_functions.get(arguments[0])
+if function is not None:
+    function(*arguments[1:])
 else:
     print(f'Unknown MCS command: "{arguments[0]}"')

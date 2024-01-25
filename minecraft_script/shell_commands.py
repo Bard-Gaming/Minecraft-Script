@@ -3,11 +3,6 @@ from .minecraft_builder import build_file
 from .text_additions import text_error
 import os
 
-shell_function_names = [
-    'sh_help',
-    'sh_run', 'sh_build',
-]
-
 
 def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = True, *args) -> None:
     if isinstance(verbose, str):
@@ -62,3 +57,10 @@ Example: "example/test_file.mcs" turns to "Test File".
 
 def check_extension(filename: str) -> bool:
     return filename.split('.')[-1] == 'mcs'
+
+
+shell_functions = {
+    'help': sh_help,
+    'run': sh_run,
+    'build': sh_build,
+}
