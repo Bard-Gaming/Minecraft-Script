@@ -1,16 +1,16 @@
 {
-  "var"      : "VAR_DEFINE",
-  "const"    : "CONST_DEFINE",
-  "set"      : "SET_DEFINE",
+  "var"      : "TT_VAR_DEFINE",
+  "const"    : "TT_CONST_DEFINE",
+  "set"      : "TT_SET_DEFINE",
 
-  "if"       : "IF_CONDITIONAL",
-  "else"     : "ELSE_CONDITIONAL",
+  "if"       : "TT_IF_CONDITIONAL",
+  "else"     : "TT_ELSE_CONDITIONAL",
 
-  "for"      : "FOR_LOOP",
-  "while"    : "WHILE_LOOP",
+  "for"      : "TT_FOR_LOOP",
+  "while"    : "TT_WHILE_LOOP",
   "in"       : "TT_IN",
 
-  "function" : "FUNC_DEFINE",
+  "function" : "TT_FUNC_DEFINE",
   "return"   : "TT_RETURN",
 
   "true"     : "TT_BOOLEAN",
