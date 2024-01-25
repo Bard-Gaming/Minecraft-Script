@@ -44,7 +44,6 @@ def sh_help(*args) -> None:
     help_message = """
 #-------------------------------HELP PAGE-------------------------------#
     
-    
 - help: display this help page!
     
 - run *[file(s): optional]: run file(s) and output result to terminal.

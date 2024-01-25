@@ -1,33 +1,29 @@
 {
-  "TT_IGNORE"            : " \t",
-  "TT_NEWLINE"           : ";\n",
-  "TT_COMMENT"           : "//",
+  "TT_IGNORE"            : [1, " ", "\t"],
+  "TT_NEWLINE"           : [1, ";"],
+  "TT_COMMENT"           : [2, "//"],
 
-  "TT_BINARY_OPERATOR"   : "+-*/%",
+  "TT_BINARY_OPERATOR"   : [1, "+", "-", "*", "/", "%"],
 
-  "TT_LEFT_PARENTHESIS"  : "(",
-  "TT_RIGHT_PARENTHESIS" : ")",
-  "TT_COMMA"             : ",",
+  "TT_PARENTHESIS"       : [1, "(", ")"],
+  "TT_COMMA"             : [1, ","],
 
-  "TT_LEFT_BRACE"        : "{",
-  "TT_RIGHT_BRACE"       : "}",
-  "TT_LEFT_BRACKET"      : "[",
-  "TT_RIGHT_BRACKET"     : "]",
+  "TT_BRACE"             : [1, "{", "}"],
+  "TT_BRACKET"           : [1, "[", "]"],
 
-  "TT_EQUALS"            : "=",
-  "TT_FUNCTION_ARROW"    : "=>",
+  "TT_EQUALS"            : [1, "="],
+  "TT_FUNCTION_ARROW"    : [2, "=>"],
 
-  "TT_LOGICAL_NOT"       : "!",
-  "TT_LOGICAL_AND"       : "&&",
-  "TT_LOGICAL_OR"        : "||",
+  "TT_LOGICAL_NOT"       : [1, "!"],
+  "TT_LOGICAL_AND"       : [2, "&&"],
+  "TT_LOGICAL_OR"        : [2, "||"],
 
-  "TT_COMPARE_EQUALS"    : "==",
-  "TT_COMPARE_LESSER"    : "<",
-  "TT_COMPARE_GREATER"   : ">",
+  "TT_EQUALITY"    : [2, "=="],
+  "TT_COMPARE"    : [1, "<", ">"],
 
-  "TT_QUOTE"             : "\"'`",
+  "TT_QUOTE"             : [1, "\"", "'","`"],
 
-  "TT_NUMBER"            : "0123456789",
-  "TT_NAME"              : "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_",
-  "TT_NAME__extend"      : "0123456789-"
+  "TT_NUMBER"            : [1, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "TT_NAME"              : [1, "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "_"],
+  "_TT_NAME_extend"      : "0123456789-"
 }
