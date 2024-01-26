@@ -50,27 +50,6 @@ class Lexer:
     def next_char(self) -> str | None:
         return self.code_input[self.current_index + 1] if self.current_index < len(self.code_input) - 2 else None
 
-    def default_tokenize_treatment(self) -> None:
-        position = (self.position_x, self.position_y)
-
-        advance_needed = True  # If token is composed of 2 chars, advance is needed
-        token_value = self.current_char + self.next_char
-        token_type = token_lookup_table.get(token_value)  # try with composed token first (priority to composed tokens)
-
-        if token_type is None:  # check if composed token exists
-            advance_needed = False  # only 1 char, no advance needed
-            token_value = self.current_char
-            token_type = token_lookup_table.get(token_value)
-
-            if token_type is None:  # no composed token and no simple token
-                raise MCSIllegalCharacterError(token_value, position)
-
-        if advance_needed:
-            self.advance()
-
-        self.__token_list.append(Token(token_value, token_type, position))
-        self.advance()
-
     def make_number(self) -> Token:
         number = self.current_char
         position = (self.position_x, self.position_y)
@@ -98,9 +77,9 @@ class Lexer:
         return Token(name, 'TT_NAME', position)  # generic variable name
 
     def make_string(self) -> Token:
-        string_quote = self.current_char
+        string_quote = self.current_char  # store quote type to know when to stop string
         string = ""
-        position = (self.position_x, self.position_y)
+        position = (self.position_x, self.position_y)  # store position since token gets starting pos of string
         self.advance()
 
         while self.current_char is not None and self.current_char != string_quote:
@@ -108,11 +87,31 @@ class Lexer:
             self.advance()
 
         if self.current_char is None:
-            raise MCSSyntaxError(f'Unmachted string starting at line {position[1]}, {position[0]}')
+            raise MCSSyntaxError(f'Unmatched string starting at line {position[1]}, {position[0]}')
         self.advance()  # skip closing string quote
 
-
         return Token(string, 'TT_STRING', position)
+
+    def default_tokenize_treatment(self) -> None:
+        position = (self.position_x, self.position_y)
+
+        advance_needed = True if self.next_char is not None else False  # If token is composed, advance is needed
+        token_value = self.current_char + self.next_char if self.next_char is not None else self.current_char
+        token_type = token_lookup_table.get(token_value)  # try with composed token first (priority to composed tokens)
+
+        if token_type is None:  # check if composed token exists
+            advance_needed = False  # only 1 char, no advance needed
+            token_value = self.current_char
+            token_type = token_lookup_table.get(token_value)
+
+            if token_type is None:  # no composed token and no simple token
+                raise MCSIllegalCharacterError(token_value, position)
+
+        if advance_needed:
+            self.advance()
+
+        self.__token_list.append(Token(token_value, token_type, position))
+        self.advance()
 
     def tokenize(self) -> tuple[Token, ...]:
         if self.__token_list:
@@ -131,7 +130,7 @@ class Lexer:
             elif self.current_char in LANG_TOKENS['TT_QUOTE']:
                 self.__token_list.append(self.make_string())
 
-            elif self.current_char + self.next_char in LANG_TOKENS['TT_COMMENT']:
+            elif self.next_char is not None and self.current_char + self.next_char in LANG_TOKENS['TT_COMMENT']:
                 self.advance()  # skip second "/" (self.next_char)
                 while self.current_char is not None and self.current_char != "\n":
                     self.advance()  # skip everything until newline (it's a comment)
