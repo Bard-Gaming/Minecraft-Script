@@ -44,7 +44,7 @@ class Lexer:
 
         # Keep track of position
         if self.current_char == '\n':
-            self.position_x = 1
+            self.position_x = 0
             self.position_y += 1
         else:
             self.position_x += 1
