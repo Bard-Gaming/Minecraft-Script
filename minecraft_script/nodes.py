@@ -89,3 +89,18 @@ class BinaryOperationNode(ParserNode):
 
     def __repr__(self):
         return self.repr_gen(self.left_value, self.get_determinant_value(), self.right_value)
+
+
+class GetKeyNode(ParserNode):
+    def __init__(self, atom, key):
+        super().__init__(atom)
+        self.key = key
+
+    def get_atom(self) -> ParserNode:
+        return self.get_determinant_value()
+
+    def get_key(self) -> ParserNode:
+        return self.key
+
+    def __repr__(self):
+        return self.repr_gen(self.get_determinant_value(), self.key)

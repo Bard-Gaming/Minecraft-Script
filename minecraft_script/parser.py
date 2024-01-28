@@ -81,6 +81,9 @@ class Parser:
     def atom(self, atom=None):
         atom = self.sub_atom() if atom is None else atom
 
+        if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.value == '[':
+            return self.atom(self.get_key(atom))
+
         return atom
 
     def factor(self):
@@ -114,7 +117,6 @@ class Parser:
             node_list.append(self.statement())  # self.advance() already called
 
         if self.current_token is not None:
-            print(self.current_token)
             self.raise_error("Unexpected end of statement. Did you perhaps forget a ';'?")
 
         return tuple(node_list)
@@ -148,7 +150,7 @@ class Parser:
 
         list_nodes.append(self.expression())
 
-        while self.current_token is not None and self.current_token.tt_type == 'TT_COMMA':  # check if null
+        while self.current_token is not None and self.current_token.tt_type == 'TT_COMMA':  # check if None in loop
             self.advance()  # skip comma
 
             if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.value == ']':
@@ -181,4 +183,17 @@ class Parser:
 
         value = self.expression()  # self.advance() call already in self.expression()
         return VariableAssignNode(name, value)
+
+    def get_key(self, atom: ParserNode) -> GetKeyNode:
+        if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.value != '[':
+            self.raise_error(f"Expected '[', got {self.current_token.value !r}")
+        self.advance()
+
+        key = self.expression()  # includes advance() call
+
+        if self.current_token.tt_type != 'TT_BRACKET' and self.current_token.value != ']':
+            self.raise_error(f"Expected ']', got {self.current_token.value !r}")
+        self.advance()
+
+        return GetKeyNode(atom, key)
 
