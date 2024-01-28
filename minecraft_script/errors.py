@@ -34,3 +34,8 @@ class MCSIllegalCharacterError(Exception):
 class MCSParserError(Exception):
     def __init__(self, details):
         super().__init__(details)
+
+
+class MCSInterpreterError(NotImplementedError):
+    def __init__(self, details):
+        super().__init__(details)

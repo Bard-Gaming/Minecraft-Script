@@ -14,5 +14,6 @@
   "return"   : "TT_RETURN",
 
   "true"     : "TT_BOOLEAN",
-  "false"    : "TT_BOOLEAN"
+  "false"    : "TT_BOOLEAN",
+  "null"     : "TT_NULL"
 }

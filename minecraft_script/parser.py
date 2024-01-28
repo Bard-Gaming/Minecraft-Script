@@ -61,6 +61,10 @@ class Parser:
             self.advance()
             return node
 
+        elif self.current_token.tt_type == 'TT_NULL':
+            self.advance()
+            return NullNode()
+
         elif self.current_token.tt_type == 'TT_PARENTHESIS':
             if self.current_token.value != '(':
                 position = self.current_token.get_position()
@@ -97,11 +101,13 @@ class Parser:
 
     def statement(self):
         if self.current_token.tt_type == 'TT_VAR_DEFINE':
-            return self.assign_variable()
+            return self.declare_variable()
 
         return self.expression()
 
-    def multiline_code(self) -> tuple[ParserNode, ...]:
+    def multiline_code(self) -> MultilineCodeNode:
+        position = self.current_token.get_position()
+
         while self.current_token.tt_type == 'TT_NEWLINE':
             self.advance()  # skip all leading newlines
 
@@ -112,14 +118,14 @@ class Parser:
                 self.advance()
 
             if self.current_token is None:
-                return tuple(node_list)  # end parsing
+                return MultilineCodeNode(tuple(node_list), position)  # end parsing
 
             node_list.append(self.statement())  # self.advance() already called
 
         if self.current_token is not None:
             self.raise_error("Unexpected end of statement. Did you perhaps forget a ';'?")
 
-        return tuple(node_list)
+        return MultilineCodeNode(tuple(node_list), position)
 
     # --------------- Implementation  --------------- :
 
@@ -165,7 +171,7 @@ class Parser:
 
         return ListNode(list_nodes, pos)
 
-    def assign_variable(self) -> VariableAssignNode:
+    def declare_variable(self) -> VariableDeclareNode:
         if self.current_token.tt_type != "TT_VAR_DEFINE":
             self.raise_error(f'Expected "var" keyword, got {self.current_token.value !r}')
         self.advance()
@@ -176,13 +182,13 @@ class Parser:
         self.advance()
 
         if self.current_token.tt_type == 'TT_NEWLINE':
-            return VariableAssignNode(name)
+            return VariableDeclareNode(name)
         elif self.current_token.tt_type != 'TT_EQUALS':
             self.raise_error(f"Expected ';' or '=', got {self.current_token.value !r}")
         self.advance()  # skip '=' Token
 
         value = self.expression()  # self.advance() call already in self.expression()
-        return VariableAssignNode(name, value)
+        return VariableDeclareNode(name, value)
 
     def get_key(self, atom: ParserNode) -> GetKeyNode:
         if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.value != '[':
@@ -196,4 +202,3 @@ class Parser:
         self.advance()
 
         return GetKeyNode(atom, key)
-

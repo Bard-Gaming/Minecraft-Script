@@ -1,4 +1,2 @@
 var test1 = 3*(1 + 2);
-var test = ["well damn bro", 2];
-
-test[5];
+test1;
