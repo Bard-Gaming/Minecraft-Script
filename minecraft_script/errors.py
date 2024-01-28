@@ -1,11 +1,8 @@
+# --------------- User Errors --------------- :
+
 class MCSSyntaxError(SyntaxError):
     def __init__(self, details: str):
         super().__init__(details)
-
-
-class MCSIllegalCharacterError(Exception):
-    def __init__(self, value: str, position: tuple[int, int]):
-        super().__init__(f"Illegal Character: {value} (line {position[1]}, {position[0]})")
 
 
 class MCSTypeError(TypeError):
@@ -26,3 +23,14 @@ class MCSIndexError(IndexError):
 
 class MCSNameError(NameError):
     pass
+
+
+# --------------- Language Errors --------------- :
+class MCSIllegalCharacterError(Exception):
+    def __init__(self, value: str, position: tuple[int, int]):
+        super().__init__(f"Illegal Character: {value} (line {position[1]}, {position[0]})")
+
+
+class MCSParserError(Exception):
+    def __init__(self, details):
+        super().__init__(details)
