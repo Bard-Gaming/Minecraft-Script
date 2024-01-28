@@ -122,3 +122,9 @@ class MultilineCodeNode(ParserNode):
         return self.get_determinant_value()
 
 
+class ReturnNode(ParserNode):
+    def __init__(self, value: any, position: tuple):
+        super().__init__(value, position)
+
+    def get_value(self):
+        return self.get_determinant_value()

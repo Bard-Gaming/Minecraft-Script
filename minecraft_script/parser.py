@@ -103,6 +103,9 @@ class Parser:
         if self.current_token.tt_type == 'TT_VAR_DEFINE':
             return self.declare_variable()
 
+        elif self.current_token.tt_type == 'TT_RETURN':
+            return self.return_statement()
+
         return self.expression()
 
     def multiline_code(self) -> MultilineCodeNode:
@@ -202,3 +205,17 @@ class Parser:
         self.advance()
 
         return GetKeyNode(atom, key)
+
+    def return_statement(self):
+        position = self.current_token.get_position()
+
+        if self.current_token.tt_type != 'TT_RETURN':
+            self.raise_error(f'Expected "return" keyword, got {self.current_token.value !r}')
+        self.advance()
+
+        if self.current_token.tt_type == 'TT_NEWLINE':
+            return ReturnNode(None, position)  # don't advance since newline is part of statement
+        else:
+            return ReturnNode(self.expression(), position)
+
+

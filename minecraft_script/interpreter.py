@@ -109,9 +109,22 @@ class Interpreter:
         value_method = getattr(left_operand, operation_lookup_table[operator])
         return value_method(right_operand)
 
-    def visit_MultilineCodeNode(self, node, context):
+    def visit_MultilineCodeNode(self, node, context: InterpreterContext):
         for statement in node.get_nodes():
+            if statement.__class__.__name__ == 'ReturnNode':
+                return self.visit(statement, context)  # return statement and don't continue iterating
+
             self.visit(statement, context)
+
+        return MCSNull()
+
+    def visit_ReturnNode(self, node, context: InterpreterContext):
+        if context.is_top_level():
+            pos_x, pos_y = node.get_position()
+            raise MCSSyntaxError(f"Illegal return statement (line {pos_y}, {pos_x})")
+
+        return_value = self.visit(node.get_value(), context) if node.get_value() is not None else MCSNull()
+        return return_value
 
     # --------------- Error --------------- :
     def visit_unknown(self, node, context):
