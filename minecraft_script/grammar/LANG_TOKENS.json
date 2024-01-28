@@ -1,29 +1,29 @@
 {
-  "TT_IGNORE"            : [1, " ", "\t", "\n"],
-  "TT_NEWLINE"           : [1, ";"],
-  "TT_COMMENT"           : [2, "//"],
+  "TT_IGNORE"            : {"char_length": 1, "chars": [" ", "\t", "\n"]},
+  "TT_NEWLINE"           : {"char_length": 1, "chars": [";"]},
+  "TT_COMMENT"           : {"char_length": 2, "chars": ["//"]},
 
-  "TT_BINARY_OPERATOR"   : [1, "+", "-", "*", "/", "%"],
+  "TT_BINARY_OPERATOR"   : {"char_length": 1, "chars": ["+", "-", "*", "/", "%"]},
 
-  "TT_PARENTHESIS"       : [1, "(", ")"],
-  "TT_COMMA"             : [1, ","],
+  "TT_PARENTHESIS"       : {"char_length": 1, "chars": ["(", ")"]},
+  "TT_COMMA"             : {"char_length": 1, "chars": [","]},
 
-  "TT_BRACE"             : [1, "{", "}"],
-  "TT_BRACKET"           : [1, "[", "]"],
+  "TT_BRACE"             : {"char_length": 1, "chars": ["{", "}"]},
+  "TT_BRACKET"           : {"char_length": 1, "chars": ["[", "]"]},
 
-  "TT_EQUALS"            : [1, "="],
-  "TT_FUNCTION_ARROW"    : [2, "=>"],
+  "TT_EQUALS"            : {"char_length": 1, "chars": ["="]},
+  "TT_FUNCTION_ARROW"    : {"char_length": 2, "chars": ["=>"]},
 
-  "TT_LOGICAL_NOT"       : [1, "!"],
-  "TT_LOGICAL_AND"       : [2, "&&"],
-  "TT_LOGICAL_OR"        : [2, "||"],
+  "TT_LOGICAL_NOT"       : {"char_length": 1, "chars": ["!"]},
+  "TT_LOGICAL_AND"       : {"char_length": 2, "chars": ["&&"]},
+  "TT_LOGICAL_OR"        : {"char_length": 2, "chars": ["||"]},
 
-  "TT_EQUALITY"    : [2, "=="],
-  "TT_COMPARE"    : [1, "<", ">"],
+  "TT_EQUALITY"          : {"char_length": 2, "chars": ["=="]},
+  "TT_COMPARE"           : {"char_length": 1, "chars": ["<", ">"]},
 
-  "TT_QUOTE"             : [1, "\"", "'","`"],
+  "TT_QUOTE"             : {"char_length": 1, "chars": ["\"", "'","`"]},
 
-  "TT_NUMBER"            : [1, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
-  "TT_NAME"              : [1, "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "_"],
+  "TT_NUMBER"            : {"char_length": 1, "chars": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
+  "TT_NAME"              : {"char_length": 1, "chars": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "_"]},
   "_TT_NAME_extend"      : ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-"]
 }

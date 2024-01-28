@@ -10,14 +10,17 @@ with open(f'{module_folder}/grammar/LANG_KEYWORDS.json') as file:
     LANG_KEYWORDS = loads(file.read())
 
 token_lookup_table = {}
-for tt_type, tt_char_list in LANG_TOKENS.items():
-    if tt_type[0] == '_':  # ignored token types
-        continue
+for tt_type, tt_char_dict in LANG_TOKENS.items():
+    if tt_type[0] == '_':
+        continue  # ignore "private" token types
 
-    char_count = tt_char_list[0]
-    char_list = tt_char_list[1:]
-    for i in range(0, len(char_list), char_count):
-        token_lookup_table["".join(char_list[i:i + char_count])] = tt_type
+    char_length: int = tt_char_dict["char_length"]
+    char_list: list = tt_char_dict["chars"]
+    for i in range(0, len(char_list), char_length):  # ex: if length is 2, treat 2 chars as 1
+        token_lookup_table["".join(char_list[i:i + char_length])] = tt_type
+
+# turn LANG_TOKENS into dict of lists (remove char_length, as it's not needed anymore)
+LANG_TOKENS = {key: value["chars"] if key[0] != "_" else value for (key, value) in LANG_TOKENS.items()}
 
 
 class Lexer:
