@@ -5,7 +5,7 @@ from .nodes import *
 
 class Parser:
     def __init__(self, token_input: tuple[Token, ...]):
-        self.token_input = token_input
+        self.token_input = token_input + (Token(';', 'TT_NEWLINE'),)  # add a newline at the end
         self.__current_token: Token = None  # NOQA (Only None until the self.advance() call)
         self.current_index = -1
 
@@ -112,6 +112,10 @@ class Parser:
                 return tuple(node_list)  # end parsing
 
             node_list.append(self.statement())  # self.advance() already called
+
+        if self.current_token is not None:
+            print(self.current_token)
+            self.raise_error("Unexpected end of statement. Did you perhaps forget a ';'?")
 
         return tuple(node_list)
 
