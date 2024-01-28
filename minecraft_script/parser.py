@@ -131,7 +131,7 @@ class Parser:
         return left
 
     def make_list(self) -> ListNode:
-        pos = self.current_token.get_position()  # use starting __position for whole node
+        pos = self.current_token.get_position()  # use starting position for whole node
         list_nodes = []
 
         if self.current_token.value != '[':  # has to be a bracket (otherwise function can't be called)
