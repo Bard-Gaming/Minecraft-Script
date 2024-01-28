@@ -1,22 +1,20 @@
 ## General Syntax
 MCS inherits its syntax from both Python and JavaScript.
 
-Instructions are separated by newlines ('``\n``') and/or semicolons ('``;``').
-Both newlines and semicolons are treated exactly the same on the lexer level,
-so feel free to use whatever you prefer.
+Instructions (statements) are separated semicolons ('``;``').
+Newlines ('``\n``') spaces ('`` ``') and tabs ('``\t``') are completely ignored
+(skipped in the lexer).
 
 Comments are made using two forward-slashes ('``//``') and go up to the end of the line.
 ```js
-// this
-log(5);log(5);
+// this comment goes until the end of the line
+// even; with semicolons present!
+log("hello world");log("goodbye");
 
-// or this
-log(5)
-log(5)
+// same as:
+log("hello world");
 
-// or even this
-log(5);
-log(5);
+    log("goodbye");
 ```
 
 ### Code Blocks
@@ -25,16 +23,16 @@ This is especially useful when using functions (example in the Function section)
 Code blocks are simply defined as being the instructions inside of **braces** ('``{}``').
 Example as follows:
 ```js
-var hello = 10
-var hello2 = 15
+var hello = 10;
+var hello2 = 15;
 
 {
-    var hello = 5
-    log(hello)  // logs "5"
-    log(hello2)  // logs "15"
+    var hello = 5;
+    log(hello);  // logs "5"
+    log(hello2);  // logs "15"
 }
 
-log(hello)  // logs "10"
+log(hello);  // logs "10"
 ```
 
 ### Variables
@@ -42,10 +40,10 @@ The ``var`` keyword can be used to initialize new variables.
 Use it by following it by the variable's name, then an equals sign and a value.
 
 ```js
-var hello2 = 500  // Assigned variable "hello2" with value 500
+var hello2 = 500;  // Assigned variable "hello2" with value 500
 
-var hello2 = 300  // Reassign variable "hello2" to have the value 300
-var hello2 = hello2 + 500  // Reassign variable "hello2" to 300 + 500
+var hello2 = 300;  // Reassign variable "hello2" to have the value 300
+var hello2 = hello2 + 500;  // Reassign variable "hello2" to 300 + 500
 ```
 _Note: reassigning variables to new values works,
 but it isn't the "main" way of changing a variable's value._
@@ -57,12 +55,12 @@ useful for debugging, since it raises a NameError when used with a name that was
 previously, as well as having more features.
 
 ```js
-var variable = "hello"  // String variable
-set variable = [1, 2, 3, 4]  // "variable" is now a List
-log(variable)  // logs "[1, 2, 3, 4]"
+var variable = "hello";  // String variable
+set variable = [1, 2, 3, 4];  // "variable" is now a List
+log(variable);  // logs "[1, 2, 3, 4]"
 
-set variable[2] = "hello again"  // change value at index 2 of variable
-log(variable)  // logs '[1, 2, "hello again", 4]'
+set variable[2] = "hello again";  // change value at index 2 of variable
+log(variable);  // logs '[1, 2, "hello again", 4]'
 ```
 
 ## Default Operations
@@ -78,14 +76,14 @@ Some types might not support certain operations, in which case a ``TypeError`` i
 
 Example as follows:
 ```js
-var sum = 5 + 5  // normal sum. 5+5 = 10
-var substraction = 5 - -5  // normal substraction. Unary operators work, so 5 - -5 = 10
-var multiplication = 2 * 2  // normal multiplication. 2*2=4
-var division = 5 / 2  // Euclidean divison. 5/2 = 2 (no support for floating point numbers)
-var modulus = 5 % 2  // Modulus operation. 5%2 = 1
+var sum = 5 + 5;  // normal sum. 5+5 = 10
+var substraction = 5 - -5;  // normal substraction. Unary operators work, so 5 - -5 = 10
+var multiplication = 2 * 2;  // normal multiplication. 2*2=4
+var division = 5 / 2;  // Euclidean divison. 5/2 = 2 (no support for floating point numbers)
+var modulus = 5 % 2;  // Modulus operation. 5%2 = 1
 
-var expression = 3 + 5*2 + -4  // in a more "complex" operation, PEMDAS is applied.
-log(expression)  // output is "9"
+var expression = 3 + 5*2 + -4;  // in a more "complex" operation, PEMDAS is applied.
+log(expression);  // output is "9"
 ```
 _Note: Depending on the data type, operations might do different things._
 
@@ -103,12 +101,12 @@ The comparison operators are expressed as follows:
 
 Example as follows:
 ```js
-var value_1 = 15
-var value_2 = 32
+var value_1 = 15;
+var value_2 = 32;
 
-log(value_1 <= value_2)  // logs 'true'
-log(true == !false)  // logs 'true'
-log(true < false)  // logs 'false'
+log(value_1 <= value_2);  // logs 'true'
+log(true == !false);  // logs 'true'
+log(true < false);  // logs 'false'
 ```
 
 ## Conditions
