@@ -87,8 +87,10 @@ class Parser:
     def binary_operation(self, operation_function, operators):
         left = operation_function()
 
-        if self.current_token.value in operators:
+        while self.current_token is not None and self.current_token.value in operators:
             operator = self.current_token
+            self.advance()  # skip operator token
+
             right = operation_function()
 
             left = BinaryOperationNode(left, operator, right)
@@ -96,7 +98,7 @@ class Parser:
         return left
 
     def make_list(self) -> ListNode:
-        pos = self.current_token.get_position()  # use starting position for whole node
+        pos = self.current_token.get_position()  # use starting __position for whole node
         list_nodes = []
 
         if self.current_token.value != '[':  # has to be a bracket (otherwise function can't be called)
