@@ -120,6 +120,12 @@ class Interpreter:
         value_method = getattr(left_operand, operation_lookup_table[operator])
         return value_method(right_operand)
 
+    def visit_CodeBlockNode(self, node, context: InterpreterContext):
+        body = node.get_body()
+        local_context = InterpreterContext(parent=context, top_level=context.top_level)
+
+        return self.visit(body, local_context)  # return in case of "return" statement
+
     def visit_MultilineCodeNode(self, node, context: InterpreterContext):
         for statement in node.get_nodes():
             if statement.__class__.__name__ == 'ReturnNode':

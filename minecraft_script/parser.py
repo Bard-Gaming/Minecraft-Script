@@ -106,9 +106,12 @@ class Parser:
         elif self.current_token.tt_type == 'TT_RETURN':
             return self.return_statement()
 
+        elif self.current_token.tt_type == 'TT_BRACE' and self.current_token.value == '{':
+            return self.code_block()
+
         return self.expression()
 
-    def multiline_code(self) -> MultilineCodeNode:
+    def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
         position = self.current_token.get_position()
 
         while self.current_token.tt_type == 'TT_NEWLINE':
@@ -120,12 +123,12 @@ class Parser:
             while self.current_token is not None and self.current_token.tt_type == 'TT_NEWLINE':
                 self.advance()
 
-            if self.current_token is None:
+            if self.current_token is None or self.current_token.value == '}':
                 return MultilineCodeNode(tuple(node_list), position)  # end parsing
 
             node_list.append(self.statement())  # self.advance() already called
 
-        if self.current_token is not None:
+        if not expect_end and self.current_token is not None:
             self.raise_error("Unexpected end of statement. Did you perhaps forget a ';'?")
 
         return MultilineCodeNode(tuple(node_list), position)
@@ -206,7 +209,7 @@ class Parser:
 
         return GetKeyNode(atom, key)
 
-    def return_statement(self):
+    def return_statement(self) -> ReturnNode:
         position = self.current_token.get_position()
 
         if self.current_token.tt_type != 'TT_RETURN':
@@ -217,5 +220,21 @@ class Parser:
             return ReturnNode(None, position)  # don't advance since newline is part of statement
         else:
             return ReturnNode(self.expression(), position)
+
+    def code_block(self) -> CodeBlockNode:
+        position = self.current_token.get_position()
+        self.advance()  # skip left brace
+
+        if self.current_token.value == '}':
+            self.advance()
+            return CodeBlockNode(NullNode(), position)
+
+        body = self.multiline_code(expect_end=True)
+
+        if self.current_token.value != '}':
+            self.raise_error(f"Expected '{'}'}', got {self.current_token.value !r}")
+        self.advance()
+
+        return CodeBlockNode(body, position)
 
 

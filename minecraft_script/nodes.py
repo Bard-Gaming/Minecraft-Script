@@ -114,6 +114,14 @@ class GetKeyNode(ParserNode):
         return self.repr_gen(self.get_determinant_value(), self.key)
 
 
+class CodeBlockNode(ParserNode):
+    def __init__(self, body, position):
+        super().__init__(body, position)
+
+    def get_body(self):
+        return self.get_determinant_value()
+
+
 class MultilineCodeNode(ParserNode):
     def __init__(self, statements: tuple, position: tuple):
         super().__init__(statements, position)

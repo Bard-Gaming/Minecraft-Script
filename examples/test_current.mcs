@@ -1,2 +1,6 @@
 var test1 = 3*(1 + 2);
-var test2 = "hello " / "t";
+var test2 = "hello " + "t";
+var test3 = test2[1];
+{
+    var test3 = 2;
+}
