@@ -15,8 +15,11 @@ class MCSObject:
     def get_value(self):
         raise MCSInterpreterError('Failed getting value of unknown Object')
 
+    def get_key(self, key):
+        raise MCSTypeError(f'{self.class_name() !r} is not subscriptable')
+
     def class_name(self) -> str:
-        return self.__class__.__name__[2:]
+        return self.__class__.__name__[3:]
 
     # ----------------- Operations  ----------------- :
     def _binary_operation(self, other, operator: str):
@@ -48,8 +51,7 @@ class MCSObject:
 
 
 class MCSIterable:
-    def get_key(self, key):
-        return self[]
+    pass
 
 
 class MCSNumber(MCSObject):
@@ -91,6 +93,14 @@ class MCSString(MCSIterable, MCSObject):
 
     def get_value(self) -> str:
         return self.value
+
+    def get_key(self, key: str) -> "MCSString":
+        try:
+            index = int(key)
+        except ValueError as err:
+            raise MCSTypeError('String indices must be integers') from err
+
+        return MCSString(self.value[index])
 
     # ----------------- Operations ----------------- :
     def _binary_operation(self, other, operator: str):

@@ -93,6 +93,13 @@ class Interpreter:
     def visit_NullNode(self, node, context):
         return MCSNull()
 
+    # --------------- Builtin Type Manipulation --------------- :
+    def visit_GetKeyNode(self, node, context):
+        root_object = self.visit(node.get_atom(), context)
+        key = node.get_key()
+
+        return root_object.get_key(key.get_value())
+
     # --------------- Variables --------------- :
     def visit_VariableAccessNode(self, node, context):
         name = node.get_name()
