@@ -1,2 +1,2 @@
 var test1 = 3*(1 + 2);
-test1;
+var test2 = "hello " / "t";

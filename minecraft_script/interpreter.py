@@ -86,6 +86,10 @@ class Interpreter:
         value: str = node.get_value()
         return MCSNumber(int(value))
 
+    def visit_StringNode(self, node, context):
+        value: str = node.get_value()
+        return MCSString(value)
+
     def visit_NullNode(self, node, context):
         return MCSNull()
 
