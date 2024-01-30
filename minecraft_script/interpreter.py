@@ -100,6 +100,12 @@ class Interpreter:
 
         return root_object.get_key(key.get_value())
 
+    def visit_FunctionCallNode(self, node, context: InterpreterContext):
+        root = self.visit(node.get_root(), context)
+        args = [self.visit(arg_node, context) for arg_node in node.get_arguments()]
+
+        return root.call(args, context)
+
     # --------------- Variables --------------- :
     def visit_VariableAccessNode(self, node, context):
         name = node.get_name()

@@ -18,6 +18,9 @@ class MCSObject:
     def get_key(self, key):
         raise MCSTypeError(f'{self.class_name() !r} is not subscriptable')
 
+    def call(self, *args):
+        raise MCSTypeError(f'{self.class_name() !r} is not callable')
+
     def class_name(self) -> str:
         return self.__class__.__name__[3:]
 
@@ -121,5 +124,20 @@ class MCSList(MCSObject):
     pass
 
 
-class MCSFunction:
-    pass
+class MCSFunction(MCSObject):
+    def __init__(self, name: str, body, parameter_names: tuple[str, ...]):
+        self.name = name if name is not None else "<anonymous function>"
+        self.body = body
+        self.parameter_names = parameter_names
+
+    def get_value(self):
+        raise MCSInterpreterError("Can't get value of function")
+
+    def call(self, arg_list: list | None, context):
+        from .interpreter import Interpreter, InterpreterContext
+        local_context = InterpreterContext(parent=context)  # top level always false here
+
+        print(arg_list)
+
+    def __repr__(self) -> str:
+        return f"MCSFunction({self.name !r}, {self.body !r}, {self.parameters !r})"

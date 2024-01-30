@@ -88,6 +88,9 @@ class Parser:
         if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.value == '[':
             return self.atom(self.get_key(atom))
 
+        elif self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.value == '(':
+            return self.atom(self.call_function(atom))
+
         return atom
 
     def factor(self):
@@ -102,6 +105,9 @@ class Parser:
     def statement(self):
         if self.current_token.tt_type == 'TT_VAR_DEFINE':
             return self.declare_variable()
+
+        elif self.current_token.tt_type == 'TT_FUNC_DEFINE':
+            return self.define_function()
 
         elif self.current_token.tt_type == 'TT_RETURN':
             return self.return_statement()
@@ -236,5 +242,80 @@ class Parser:
         self.advance()
 
         return CodeBlockNode(body, position)
+
+    def define_function(self) -> DefineFunctionNode:
+        self.advance()  # skip "function" token
+
+        if not self.current_token.tt_type in ('TT_NAME', 'TT_EQUALS'):
+            self.raise_error(f"Expected name or '=', got {self.current_token.value !r}")
+
+        name = None
+
+        if self.current_token.tt_type == 'TT_NAME':
+            name = self.current_token
+            self.advance()
+
+            if self.current_token.tt_type != 'TT_EQUALS':
+                self.raise_error(f"Expected '=', got {self.current_token.value !r}")
+        self.advance()  # skip '=' token
+
+        argument_names = []
+
+        if self.current_token.value != '(':
+            self.raise_error(f"Expected '(', got {self.current_token.value !r}")
+        self.advance()
+
+        if self.current_token.value != ')':
+            if self.current_token.tt_type == 'TT_NAME':
+                argument_names.append(self.current_token)
+                self.advance()
+            else:
+                self.raise_error(f"Expected ')' or parameter name, got {self.current_token.value !r}")
+
+        while self.current_token.tt_type == 'TT_COMMA':
+            self.advance()
+
+            if self.current_token.tt_type == ')':
+                break  # go out of loop if right parenthesis (treated after)
+
+            if self.current_token.tt_type != 'TT_NAME':
+                self.raise_error(f"Expected ')' or parameter name, got {self.current_token.value !r}")
+
+            argument_names.append(self.current_token)
+            self.advance()
+
+        self.advance()  # skip right parenthesis (self.current_token has to be ')' here)
+
+        if self.current_token.tt_type != 'TT_FUNC_ARROW':
+            ...  # TODO: FINISH IMPLEMENTATION
+
+
+
+    def call_function(self, atom) -> FunctionCallNode:
+        call_position = self.current_token.get_position()
+        self.advance()  # skip opening left parenthesis
+
+        arguments = []
+
+        if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.value == ')':
+            self.advance()
+            return FunctionCallNode(atom, arguments, call_position)
+
+        arguments.append(self.expression())
+
+        while self.current_token is not None and self.current_token.tt_type == 'TT_COMMA':
+            self.advance()
+
+            if self.current_token.value == ')':
+                self.advance()  # skip parenthesis
+                return FunctionCallNode(atom, arguments, call_position)
+
+            arguments.append(self.expression())
+
+        if self.current_token.value != ')':
+            self.raise_error(f"Expected ')', got {self.current_token.value !r}")
+        self.advance()  # skip parenthesis
+
+        return FunctionCallNode(atom, arguments, call_position)
 
 

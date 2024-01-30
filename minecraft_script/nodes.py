@@ -136,3 +136,31 @@ class ReturnNode(ParserNode):
 
     def get_value(self):
         return self.get_determinant_value()
+
+
+class DefineFunctionNode(ParserNode):
+    def __init__(self, name: Token, body: ParserNode, parameter_names):
+        super().__init__(name)
+        self.body = body
+        self.parameter_names = parameter_names
+
+    def get_name(self) -> str:
+        return self.get_determinant_value().value  # extract token value
+
+    def get_body(self) -> ParserNode:
+        return self.body
+
+    def get_parameter_names(self) -> list:
+        return [token.value for token in self.parameter_names]
+
+
+class FunctionCallNode(ParserNode):
+    def __init__(self, root_node, arguments, position):
+        super().__init__(root_node, position)
+        self.arguments: list = arguments  # list of nodes
+
+    def get_root(self):
+        return self.get_determinant_value()
+
+    def get_arguments(self) -> tuple[ParserNode, ...]:
+        return tuple(self.arguments)
