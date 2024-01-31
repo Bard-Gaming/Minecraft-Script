@@ -250,17 +250,14 @@ class Parser:
         position = self.current_token.get_position()
         self.advance()  # skip "function" token
 
-        if not self.current_token.tt_type in ('TT_NAME', 'TT_EQUALS'):
-            self.raise_error(f"Expected name or '=', got {self.current_token.value !r}")
+        if self.current_token.tt_type != 'TT_NAME':
+            self.raise_error(f"Expected name, got {self.current_token.value !r}")
 
-        name = None
+        name = self.current_token
+        self.advance()
 
-        if self.current_token.tt_type == 'TT_NAME':
-            name = self.current_token
-            self.advance()
-
-            if self.current_token.tt_type != 'TT_EQUALS':
-                self.raise_error(f"Expected '=', got {self.current_token.value !r}")
+        if self.current_token.tt_type != 'TT_EQUALS':
+            self.raise_error(f"Expected '=', got {self.current_token.value !r}")
         self.advance()  # skip '=' token
 
         parameter_names = []

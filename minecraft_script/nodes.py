@@ -145,7 +145,7 @@ class DefineFunctionNode(ParserNode):
         self.parameter_names = parameter_names
 
     def get_name(self) -> str:
-        return self.get_determinant_value().value if self.get_determinant_value() is not None else None
+        return self.get_determinant_value().value  # extract string from token
 
     def get_body(self) -> ParserNode:
         return self.body

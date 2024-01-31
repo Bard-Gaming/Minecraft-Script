@@ -103,8 +103,6 @@ class Interpreter:
         if name is not None:
             context.declare(name, function)
 
-        return function
-
     # --------------- Builtin Type Manipulation --------------- :
     def visit_GetKeyNode(self, node, context):
         root_object = self.visit(node.get_atom(), context)
