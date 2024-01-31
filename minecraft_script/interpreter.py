@@ -99,7 +99,11 @@ class Interpreter:
         parameter_names: list[str, ...] = node.get_parameter_names()
 
         function = MCSFunction(name, body, tuple(parameter_names))
-        context.declare(name, function)
+
+        if name is not None:
+            context.declare(name, function)
+
+        return function
 
     # --------------- Builtin Type Manipulation --------------- :
     def visit_GetKeyNode(self, node, context):

@@ -139,13 +139,13 @@ class ReturnNode(ParserNode):
 
 
 class DefineFunctionNode(ParserNode):
-    def __init__(self, name: Token, body: ParserNode, parameter_names):
-        super().__init__(name)
+    def __init__(self, name: Token, body: ParserNode, parameter_names, position):
+        super().__init__(name, position)
         self.body = body
         self.parameter_names = parameter_names
 
     def get_name(self) -> str:
-        return self.get_determinant_value().value  # extract token value
+        return self.get_determinant_value().value if self.get_determinant_value() is not None else None
 
     def get_body(self) -> ParserNode:
         return self.body

@@ -247,6 +247,7 @@ class Parser:
         return CodeBlockNode(body, position)
 
     def define_function(self) -> DefineFunctionNode:
+        position = self.current_token.get_position()
         self.advance()  # skip "function" token
 
         if not self.current_token.tt_type in ('TT_NAME', 'TT_EQUALS'):
@@ -295,7 +296,7 @@ class Parser:
 
         body = self.code_block_statement()
 
-        return DefineFunctionNode(name, body, parameter_names)
+        return DefineFunctionNode(name, body, parameter_names, position)
 
     def call_function(self, atom) -> FunctionCallNode:
         call_position = self.current_token.get_position()
