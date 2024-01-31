@@ -135,9 +135,19 @@ class MCSFunction(MCSObject):
 
     def call(self, arg_list: list | None, context):
         from .interpreter import Interpreter, InterpreterContext
+        local_interpreter = Interpreter()
         local_context = InterpreterContext(parent=context)  # top level always false here
 
-        print(arg_list)
+        if len(arg_list) != len(self.parameter_names):
+            raise MCSValueError(f"function <{self.name}> takes {len(self.parameter_names)} arguments, got {len(arg_list)}")
+
+        # Add argument values to parameter names in local context (to make arguments work)
+        for i in range(len(self.parameter_names)):
+            local_context.declare(self.parameter_names[i], arg_list[i])
+
+        result = local_interpreter.visit(self.body, local_context)
+
+        return result if result is not None else MCSNull()
 
     def __repr__(self) -> str:
-        return f"MCSFunction({self.name !r}, {self.body !r}, {self.parameters !r})"
+        return f"MCSFunction({self.name !r}, {self.body !r}, {self.parameter_names !r})"

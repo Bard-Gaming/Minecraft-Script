@@ -93,6 +93,14 @@ class Interpreter:
     def visit_NullNode(self, node, context):
         return MCSNull()
 
+    def visit_DefineFunctionNode(self, node, context: InterpreterContext):
+        name: str = node.get_name()
+        body = node.get_body()
+        parameter_names: list[str, ...] = node.get_parameter_names()
+
+        function = MCSFunction(name, body, tuple(parameter_names))
+        context.declare(name, function)
+
     # --------------- Builtin Type Manipulation --------------- :
     def visit_GetKeyNode(self, node, context):
         root_object = self.visit(node.get_atom(), context)

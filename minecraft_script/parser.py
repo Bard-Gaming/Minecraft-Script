@@ -102,6 +102,12 @@ class Parser:
     def expression(self):
         return self.term()
 
+    def code_block_statement(self):
+        if self.current_token.tt_type == 'TT_BRACE' and self.current_token.value == '{':
+            return self.code_block()
+
+        return self.expression()
+
     def statement(self):
         if self.current_token.tt_type == 'TT_VAR_DEFINE':
             return self.declare_variable()
@@ -112,10 +118,7 @@ class Parser:
         elif self.current_token.tt_type == 'TT_RETURN':
             return self.return_statement()
 
-        elif self.current_token.tt_type == 'TT_BRACE' and self.current_token.value == '{':
-            return self.code_block()
-
-        return self.expression()
+        return self.code_block_statement()
 
     def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
         position = self.current_token.get_position()
@@ -259,7 +262,7 @@ class Parser:
                 self.raise_error(f"Expected '=', got {self.current_token.value !r}")
         self.advance()  # skip '=' token
 
-        argument_names = []
+        parameter_names = []
 
         if self.current_token.value != '(':
             self.raise_error(f"Expected '(', got {self.current_token.value !r}")
@@ -267,7 +270,7 @@ class Parser:
 
         if self.current_token.value != ')':
             if self.current_token.tt_type == 'TT_NAME':
-                argument_names.append(self.current_token)
+                parameter_names.append(self.current_token)
                 self.advance()
             else:
                 self.raise_error(f"Expected ')' or parameter name, got {self.current_token.value !r}")
@@ -281,15 +284,18 @@ class Parser:
             if self.current_token.tt_type != 'TT_NAME':
                 self.raise_error(f"Expected ')' or parameter name, got {self.current_token.value !r}")
 
-            argument_names.append(self.current_token)
+            parameter_names.append(self.current_token)
             self.advance()
 
         self.advance()  # skip right parenthesis (self.current_token has to be ')' here)
 
-        if self.current_token.tt_type != 'TT_FUNC_ARROW':
-            ...  # TODO: FINISH IMPLEMENTATION
+        if self.current_token.tt_type != 'TT_FUNCTION_ARROW':
+            self.raise_error(f"Expected '=>', got {self.current_token.value !r}")
+        self.advance()
 
+        body = self.code_block_statement()
 
+        return DefineFunctionNode(name, body, parameter_names)
 
     def call_function(self, atom) -> FunctionCallNode:
         call_position = self.current_token.get_position()
@@ -317,5 +323,3 @@ class Parser:
         self.advance()  # skip parenthesis
 
         return FunctionCallNode(atom, arguments, call_position)
-
-
