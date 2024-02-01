@@ -101,7 +101,8 @@ since ``!!true`` is the same as ``true``._
 Functions are defined with the ``function`` keyword. They can be anonymous,
 or be attributed to a name. Parentheses around the parameters are required, even if there are none.
 For simple, single-line functions, the expression is returned.
-For more complex, multi-line functions using code blocks, the ``return`` statement is needed.
+For more complex, multi-line functions using code blocks, ``null`` is returned if
+the ``return`` statement is not used.
 
 ```js
 function = (a) => a * 3  // anonymous function

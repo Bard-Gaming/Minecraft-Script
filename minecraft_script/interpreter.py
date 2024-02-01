@@ -1,5 +1,6 @@
 from .errors import *
 from .types import *
+from .builtin_functions import builtin_functions
 
 
 class SymbolTable:
@@ -10,8 +11,9 @@ class SymbolTable:
         if load_builtins:
             self.load_builtins()
 
-    def load_builtins(self):
-        pass
+    def load_builtins(self) -> None:
+        for function in builtin_functions:
+            self.declare(function.name, function)
 
     def get(self, name, *, generate_error: bool = True) -> any:
         # Search for value in self

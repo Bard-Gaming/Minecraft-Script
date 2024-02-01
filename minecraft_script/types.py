@@ -24,6 +24,9 @@ class MCSObject:
     def class_name(self) -> str:
         return self.__class__.__name__[3:]
 
+    def print_value(self) -> str:
+        return str(self.get_value())
+
     # ----------------- Operations  ----------------- :
     def _binary_operation(self, other, operator: str):
         if isinstance(other, self.__class__):
@@ -126,12 +129,15 @@ class MCSList(MCSObject):
 
 class MCSFunction(MCSObject):
     def __init__(self, name: str, body, parameter_names: tuple[str, ...]):
-        self.name = name if name is not None else "<anonymous function>"
+        self.name = name if name is not None else "anonymous function"
         self.body = body
         self.parameter_names = parameter_names
 
     def get_value(self):
         raise MCSInterpreterError("Can't get value of function")
+
+    def print_value(self) -> str:
+        return f'<{self.name}>'
 
     def call(self, arg_list: list | None, context):
         from .interpreter import Interpreter, InterpreterContext

@@ -1,5 +1,0 @@
-function test = (value_1, value_2) => {
-    return value_1 + value_2
-};
-
-var result = test(3, 4);
