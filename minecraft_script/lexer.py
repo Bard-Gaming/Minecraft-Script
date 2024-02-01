@@ -141,7 +141,7 @@ class Lexer:
             elif self.current_char in token_type_chars['TT_QUOTE']:
                 self.__token_list.append(self.make_string())
 
-            elif self.next_char is not None and self.current_char + self.next_char in LANG_TOKENS['TT_COMMENT']:
+            elif self.next_char is not None and self.current_char + self.next_char in token_type_chars['TT_COMMENT']:
                 self.advance()  # skip second "/" (self.next_char)
                 while self.current_char is not None and self.current_char != "\n":
                     self.advance()  # skip everything until newline (it's a comment)
