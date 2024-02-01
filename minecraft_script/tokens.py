@@ -9,4 +9,4 @@ class Token:
         return self.position
 
     def __repr__(self):
-        return f'Token({self.value !r}, {self.tt_type !r}, {self.position !r})'
+        return f'Token({self.value !r}, {self.tt_type !r}{f", {self.position !r}" if self.position is not None else ""}{f", {self.variant !r}" if self.variant is not None else ""})'

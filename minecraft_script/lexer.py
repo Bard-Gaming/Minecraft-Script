@@ -115,10 +115,10 @@ class Lexer:
 
         # Check for variants (to add information to token):
         variant = None
-        for char_obj in LANG_TOKENS[token_type]:
-            if char_obj.get(char) == token_value:
-                variant = char_obj.get("variant")  # if no variant, default to None
-                break
+        for char_dict in LANG_TOKENS[token_type]:
+            if char_dict.get("char") == token_value:
+                variant = char_dict.get("variant")  # if no variant, default to None
+                break  # if you get a match, don't need to continue searching
 
         token = Token(token_value, token_type, position, variant)
         self.__token_list.append(token)
