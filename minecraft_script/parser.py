@@ -254,20 +254,20 @@ class Parser:
         if self.current_token.tt_type != 'TT_NAME':
             self.raise_error(f"Expected name, got {self.current_token.value !r}")
 
-        name = self.current_token
+        name = self.current_token  # keep track of function name
         self.advance()
 
         if self.current_token.tt_type != 'TT_EQUALS':
             self.raise_error(f"Expected '=', got {self.current_token.value !r}")
         self.advance()  # skip '=' token
 
-        parameter_names = []
+        parameter_names = []  # keep track of parameter names for DefineFunctionNode
 
         if not (self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'LEFT'):
             self.raise_error(f"Expected '(', got {self.current_token.value !r}")
         self.advance()
 
-        if self.current_token.value != ')':
+        if not (self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT'):
             if self.current_token.tt_type == 'TT_NAME':
                 parameter_names.append(self.current_token)
                 self.advance()
@@ -277,7 +277,7 @@ class Parser:
         while self.current_token.tt_type == 'TT_COMMA':
             self.advance()
 
-            if self.current_token.tt_type == ')':
+            if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT':
                 break  # go out of loop if right parenthesis (treated after)
 
             if self.current_token.tt_type != 'TT_NAME':
@@ -302,7 +302,7 @@ class Parser:
 
         arguments = []
 
-        if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.value == ')':
+        if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT':
             self.advance()
             return FunctionCallNode(atom, arguments, call_position)
 
@@ -311,13 +311,13 @@ class Parser:
         while self.current_token is not None and self.current_token.tt_type == 'TT_COMMA':
             self.advance()
 
-            if self.current_token.value == ')':
+            if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT':
                 self.advance()  # skip parenthesis
                 return FunctionCallNode(atom, arguments, call_position)
 
             arguments.append(self.expression())
 
-        if self.current_token.value != ')':
+        if not (self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT'):
             self.raise_error(f"Expected ')', got {self.current_token.value !r}")
         self.advance()  # skip parenthesis
 
