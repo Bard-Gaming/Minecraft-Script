@@ -10,17 +10,17 @@ with open(f'{module_folder}/grammar/LANG_KEYWORDS.json') as file:
     LANG_KEYWORDS = loads(file.read())
 
 token_lookup_table = {}
-for tt_type, tt_char_dict in LANG_TOKENS.items():
-    if tt_type[0] == '_':
+for token_type, char_list in LANG_TOKENS.items():
+    if token_type[0] == '_':
         continue  # ignore "private" token types
 
-    char_length: int = tt_char_dict["char_length"]
-    char_list: list = tt_char_dict["chars"]
-    for i in range(0, len(char_list), char_length):  # ex: if length is 2, treat 2 chars as 1
-        token_lookup_table["".join(char_list[i:i + char_length])] = tt_type
+    for char_obj in char_list:
+        char = char_obj.get("char")
+        token_lookup_table[char] = token_type
 
-# turn LANG_TOKENS into dict of lists (remove char_length, as it's not needed anymore)
-LANG_TOKENS = {key: value["chars"] if key[0] != "_" else value for (key, value) in LANG_TOKENS.items()}
+token_type_chars = {
+    token_type: [char["char"] for char in chars] for (token_type, chars) in LANG_TOKENS.items() if token_type[0] != '_'
+}
 
 
 class Lexer:
@@ -58,7 +58,7 @@ class Lexer:
         position = (self.position_x, self.position_y)
         self.advance()
 
-        while self.current_char in LANG_TOKENS['TT_NUMBER']:
+        while self.current_char in token_type_chars['TT_NUMBER']:
             number += self.current_char
             self.advance()
 
@@ -69,7 +69,7 @@ class Lexer:
         position = (self.position_x, self.position_y)
         self.advance()
 
-        while self.current_char in LANG_TOKENS['TT_NAME'] + LANG_TOKENS['_TT_NAME_extend']:
+        while self.current_char in token_type_chars['TT_NAME'] + LANG_TOKENS['_TT_NAME_extend']:
             name += self.current_char
             self.advance()
 
@@ -113,7 +113,15 @@ class Lexer:
         if advance_needed:
             self.advance()
 
-        self.__token_list.append(Token(token_value, token_type, position))
+        # Check for variants (to add information to token):
+        variant = None
+        for char_obj in LANG_TOKENS[token_type]:
+            if char_obj.get(char) == token_value:
+                variant = char_obj.get("variant")  # if no variant, default to None
+                break
+
+        token = Token(token_value, token_type, position, variant)
+        self.__token_list.append(token)
         self.advance()
 
     def tokenize(self) -> tuple[Token, ...]:
@@ -121,16 +129,16 @@ class Lexer:
             return tuple(self.__token_list)
 
         while self.current_char is not None:
-            if self.current_char in LANG_TOKENS['TT_IGNORE']:
+            if self.current_char in token_type_chars['TT_IGNORE']:
                 self.advance()
 
-            elif self.current_char in LANG_TOKENS['TT_NUMBER']:
+            elif self.current_char in token_type_chars['TT_NUMBER']:
                 self.__token_list.append(self.make_number())
 
-            elif self.current_char in LANG_TOKENS['TT_NAME']:
+            elif self.current_char in token_type_chars['TT_NAME']:
                 self.__token_list.append(self.make_name())
 
-            elif self.current_char in LANG_TOKENS['TT_QUOTE']:
+            elif self.current_char in token_type_chars['TT_QUOTE']:
                 self.__token_list.append(self.make_string())
 
             elif self.next_char is not None and self.current_char + self.next_char in LANG_TOKENS['TT_COMMENT']:
