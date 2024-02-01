@@ -1,13 +1,9 @@
 var bob = "hello";
-var bob2 = [bob, "hihi", 3];
+var bob2 = [bob, "hihi", 3,];
 
 function test = () => {
-    var bob3 = "bobby car"
+    var bob3 = "bobby car";
     log(bob3, bob2)
-}
+};
 
-test()
-
-(function = () => {
-    var chiller = bob[1]
-})()
+test();

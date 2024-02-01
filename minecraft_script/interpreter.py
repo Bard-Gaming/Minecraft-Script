@@ -92,6 +92,11 @@ class Interpreter:
         value: str = node.get_value()
         return MCSString(value)
 
+    def visit_ListNode(self, node, context):
+        value_nodes: list = node.get_node_list()
+        value_list = [self.visit(value_node, context) for value_node in value_nodes]
+        return MCSList(value_list)
+
     def visit_NullNode(self, node, context):
         return MCSNull()
 
@@ -133,9 +138,9 @@ class Interpreter:
     def visit_BinaryOperationNode(self, node, context):
         left_operand = self.visit(node.get_left_node(), context)
         right_operand = self.visit(node.get_right_node(), context)
-        operator: str = node.get_operator()
+        operator = node.get_operator()  # Token
 
-        value_method = getattr(left_operand, operation_lookup_table[operator])
+        value_method = getattr(left_operand, operator.variant.lower())
         return value_method(right_operand)
 
     def visit_CodeBlockNode(self, node, context: InterpreterContext):

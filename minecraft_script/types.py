@@ -1,11 +1,6 @@
 from .errors import *
 
 operation_lookup_table = {
-    "+": "add",
-    "-": "subtract",
-    "*": "multiply",
-    "/": "divide",
-    "%": "modulus",
     "&&": "logical_and",
     "||": "logical_or",
 }
@@ -26,6 +21,9 @@ class MCSObject:
 
     def print_value(self) -> str:
         return str(self.get_value())
+
+    def repr_value(self) -> str:
+        return repr(self.get_value())
 
     # ----------------- Operations  ----------------- :
     def _binary_operation(self, other, operator: str):
@@ -56,8 +54,14 @@ class MCSObject:
         )
 
 
-class MCSIterable:
-    pass
+class MCSIterable(MCSObject):
+    def get_key(self, key: str):
+        try:
+            index = int(key)
+        except ValueError as err:
+            raise MCSTypeError(f'{self.class_name()} indices must be integers') from err
+
+        return self.get_value()[index]
 
 
 class MCSNumber(MCSObject):
@@ -101,12 +105,7 @@ class MCSString(MCSIterable, MCSObject):
         return self.value
 
     def get_key(self, key: str) -> "MCSString":
-        try:
-            index = int(key)
-        except ValueError as err:
-            raise MCSTypeError('String indices must be integers') from err
-
-        return MCSString(self.value[index])
+        return MCSString(super().get_key(key))
 
     # ----------------- Operations ----------------- :
     def _binary_operation(self, other, operator: str):
@@ -123,8 +122,32 @@ class MCSString(MCSIterable, MCSObject):
         return f"MCSString({self.value !r})"
 
 
-class MCSList(MCSObject):
-    pass
+class MCSList(MCSIterable, MCSObject):
+    def __init__(self, value: list | tuple):
+        if not isinstance(value, (list, tuple)):
+            raise MCSInterpreterError(f"Expected type 'list' or 'tuple', got {value.__class__.__name__ !r}")
+
+        self.value = list(value)
+
+    def get_value(self) -> list:
+        return self.value
+
+    def print_value(self) -> str:
+        return f"[{', '.join(value.repr_value() for value in self.value)}]"
+
+    # ----------------- Operations ----------------- :
+    def _binary_operation(self, other, operator: str):
+        if operator in ('//', '%', '-'):  # invalid operations
+            raise self.operation_error(other, operator)
+
+        if isinstance(other, MCSList):
+            return MCSList(self.value + other.get_value())
+
+        raise self.operation_error(other, operator)
+
+    # ----------------- Miscellaneous ----------------- :
+    def __repr__(self) -> str:
+        return f'MCSList({self.value !r})'
 
 
 class MCSFunction(MCSObject):
@@ -139,13 +162,16 @@ class MCSFunction(MCSObject):
     def print_value(self) -> str:
         return f'<{self.name}>'
 
+    def repr_value(self) -> str:
+        return self.print_value()
+
     def call(self, arg_list: list | None, context):
         from .interpreter import Interpreter, InterpreterContext
         local_interpreter = Interpreter()
         local_context = InterpreterContext(parent=context)  # top level always false here
 
         if len(arg_list) != len(self.parameter_names):
-            raise MCSValueError(f"function <{self.name}> takes {len(self.parameter_names)} arguments, got {len(arg_list)}")
+            raise MCSValueError(f"Function {self.print_value()} takes {len(self.parameter_names)} arguments, got {len(arg_list)}")
 
         # Add argument values to parameter names in local context (to make arguments work)
         for i in range(len(self.parameter_names)):

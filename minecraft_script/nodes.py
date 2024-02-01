@@ -91,9 +91,8 @@ class BinaryOperationNode(ParserNode):
     def get_right_node(self):
         return self.right_value
 
-    def get_operator(self) -> str:
-        operator_token: Token = self.get_determinant_value()
-        return operator_token.value  # extract token value
+    def get_operator(self) -> Token:
+        return self.get_determinant_value()  # don't extract token value (can be used to determine type of operator)
 
     def __repr__(self):
         return self.repr_gen(self.left_value, self.get_determinant_value(), self.right_value)
