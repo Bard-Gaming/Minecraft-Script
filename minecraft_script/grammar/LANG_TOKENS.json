@@ -1,5 +1,5 @@
 {
-  "TT_IGNORE"            : {"char_length": 1, "chars": [" ", "\t", "\n"]},
+  "TT_IGNORE"            : [{"char": " ", "variant": "SPACE"},{"char": "\t", "variant": "TAB"}, "\n"],
   "TT_NEWLINE"           : {"char_length": 1, "chars": [";"]},
   "TT_COMMENT"           : {"char_length": 2, "chars": ["//"]},
 
