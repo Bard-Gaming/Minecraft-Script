@@ -150,4 +150,4 @@ class MCSFunction(MCSObject):
         return result if result is not None else MCSNull()
 
     def __repr__(self) -> str:
-        return f"MCSFunction({self.name !r}, {self.body !r}, {self.parameter_names !r})"
+        return f"MCSFunction({self.name !r}, {self.parameter_names !r})"
