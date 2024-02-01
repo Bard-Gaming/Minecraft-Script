@@ -43,37 +43,37 @@ class Parser:
     # --------------- Grammar --------------- :
 
     def sub_atom(self):
-        if self.current_token.tt_type == 'TT_NUMBER':
+        if self.current_token.matches('TT_NUMBER'):
             node = NumberNode(self.current_token)
             self.advance()
             return node
 
-        elif self.current_token.tt_type == 'TT_STRING':
+        elif self.current_token.matches('TT_STRING'):
             node = StringNode(self.current_token)
             self.advance()
             return node
 
-        elif self.current_token.tt_type == 'TT_BRACKET':
+        elif self.current_token.matches('TT_BRACKET'):
             return self.make_list()
 
-        elif self.current_token.tt_type == 'TT_NAME':
+        elif self.current_token.matches('TT_NAME'):
             node = VariableAccessNode(self.current_token)
             self.advance()
             return node
 
-        elif self.current_token.tt_type == 'TT_NULL':
+        elif self.current_token.matches('TT_NULL'):
             self.advance()
             return NullNode()
 
-        elif self.current_token.tt_type == 'TT_PARENTHESIS':
-            if self.current_token.variant != 'LEFT':
+        elif self.current_token.matches('TT_PARENTHESIS'):
+            if not self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
                 position = self.current_token.get_position()
                 raise MCSSyntaxError(f"Unmatched closing parenthesis at line {position[1]}, {position[0]}")
             self.advance()  # skip opening parenthesis
 
             expression = self.expression()
 
-            if self.current_token.variant != 'RIGHT':
+            if not self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
                 position = self.current_token.get_position()
                 raise MCSSyntaxError(f"Unclosed parenthesis at line {position[1]}, {position[0]}")
             self.advance()  # skip closing parenthesis
@@ -85,10 +85,10 @@ class Parser:
     def atom(self, atom=None):
         atom = self.sub_atom() if atom is None else atom
 
-        if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.variant == 'LEFT':
+        if self.current_token.matches('TT_BRACKET', 'LEFT'):
             return self.atom(self.get_key(atom))
 
-        elif self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'LEFT':
+        elif self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
             return self.atom(self.call_function(atom))
 
         return atom
@@ -103,19 +103,19 @@ class Parser:
         return self.term()
 
     def code_block_statement(self):
-        if self.current_token.tt_type == 'TT_BRACE' and self.current_token.variant == 'LEFT':
+        if self.current_token.matches('TT_BRACE', 'LEFT'):
             return self.code_block()
 
         return self.expression()
 
     def statement(self):
-        if self.current_token.tt_type == 'TT_VAR_DEFINE':
+        if self.current_token.matches('TT_VAR_DEFINE'):
             return self.declare_variable()
 
-        elif self.current_token.tt_type == 'TT_FUNC_DEFINE':
+        elif self.current_token.matches('TT_FUNC_DEFINE'):
             return self.define_function()
 
-        elif self.current_token.tt_type == 'TT_RETURN':
+        elif self.current_token.matches('TT_RETURN'):
             return self.return_statement()
 
         return self.code_block_statement()
@@ -123,16 +123,16 @@ class Parser:
     def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
         position = self.current_token.get_position()
 
-        while self.current_token.tt_type == 'TT_NEWLINE':
+        while self.current_token.matches('TT_NEWLINE'):
             self.advance()  # skip all leading newlines
 
         node_list = [self.statement()]  # self.advance() call already in self.statement()
 
-        while self.current_token is not None and self.current_token.tt_type == 'TT_NEWLINE':
-            while self.current_token is not None and self.current_token.tt_type == 'TT_NEWLINE':
+        while self.current_token is not None and self.current_token.matches('TT_NEWLINE'):
+            while self.current_token is not None and self.current_token.matches('TT_NEWLINE'):
                 self.advance()
 
-            if self.current_token is None or self.current_token.variant == 'RIGHT':
+            if self.current_token is None or self.current_token.matches('TT_BRACKET', 'RIGHT'):
                 return MultilineCodeNode(tuple(node_list), position)  # end parsing
 
             node_list.append(self.statement())  # self.advance() already called
@@ -162,44 +162,44 @@ class Parser:
         list_nodes = []
 
         # has to be a bracket (otherwise function can't be called)
-        if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.variant != 'LEFT':
+        if not self.current_token.matches('TT_BRACKET', 'LEFT'):
             self.raise_error(f"Expected '[', got {self.current_token.value !r}")
         self.advance()
 
-        if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.variant == 'RIGHT':
+        if self.current_token.matches('TT_BRACKET', 'RIGHT'):
             self.advance()
             return ListNode(list_nodes, pos)
 
         list_nodes.append(self.expression())
 
-        while self.current_token is not None and self.current_token.tt_type == 'TT_COMMA':  # check if None in loop
+        while self.current_token is not None and self.current_token.matches('TT_COMMA'):  # check if None in loop
             self.advance()  # skip comma
 
-            if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.variant == 'RIGHT':
+            if self.current_token.matches('TT_BRACKET', 'RIGHT'):
                 self.advance()
                 return ListNode(list_nodes, pos)
 
             list_nodes.append(self.expression())
 
-        if not (self.current_token.tt_type == 'TT_BRACKET' and self.current_token.variant == 'RIGHT'):
+        if not self.current_token.matches('TT_BRACKET', 'RIGHT'):
             self.raise_error('Unclosed list bracket')
         self.advance()
 
         return ListNode(list_nodes, pos)
 
     def declare_variable(self) -> VariableDeclareNode:
-        if self.current_token.tt_type != "TT_VAR_DEFINE":
+        if not self.current_token.matches('TT_VAR_DEFINE'):
             self.raise_error(f'Expected "var" keyword, got {self.current_token.value !r}')
         self.advance()
 
-        if self.current_token.tt_type != 'TT_NAME':
+        if not self.current_token.matches('TT_NAME'):
             self.raise_error(f'Expected name, got {self.current_token.value !r}')
         name = self.current_token
         self.advance()
 
-        if self.current_token.tt_type == 'TT_NEWLINE':
+        if self.current_token.matches('TT_NEWLINE'):
             return VariableDeclareNode(name)
-        elif self.current_token.tt_type != 'TT_EQUALS':
+        elif not self.current_token.matches('TT_EQUALS'):
             self.raise_error(f"Expected ';' or '=', got {self.current_token.value !r}")
         self.advance()  # skip '=' Token
 
@@ -207,13 +207,13 @@ class Parser:
         return VariableDeclareNode(name, value)
 
     def get_key(self, atom: ParserNode) -> GetKeyNode:
-        if self.current_token.tt_type == 'TT_BRACKET' and self.current_token.variant != 'LEFT':
+        if not self.current_token.matches('TT_BRACKET', 'LEFT'):
             self.raise_error(f"Expected '[', got {self.current_token.value !r}")
         self.advance()
 
         key = self.expression()  # includes advance() call
 
-        if self.current_token.tt_type != 'TT_BRACKET' and self.current_token.variant != 'RIGHT':
+        if not self.current_token.matches('TT_BRACKET', 'RIGHT'):
             self.raise_error(f"Expected ']', got {self.current_token.value !r}")
         self.advance()
 
@@ -222,11 +222,11 @@ class Parser:
     def return_statement(self) -> ReturnNode:
         position = self.current_token.get_position()
 
-        if self.current_token.tt_type != 'TT_RETURN':
+        if self.current_token.matches('TT_RETURN'):
             self.raise_error(f'Expected "return" keyword, got {self.current_token.value !r}')
         self.advance()
 
-        if self.current_token.tt_type == 'TT_NEWLINE':
+        if self.current_token.matches('TT_NEWLINE'):
             return ReturnNode(None, position)  # don't advance since newline is part of statement
         else:
             return ReturnNode(self.expression(), position)
@@ -235,13 +235,13 @@ class Parser:
         position = self.current_token.get_position()
         self.advance()  # skip left brace
 
-        if self.current_token.tt_type == 'TT_BRACE' and self.current_token.variant == 'RIGHT':
+        if self.current_token.matches('TT_BRACE', 'RIGHT'):
             self.advance()
             return CodeBlockNode(NullNode(), position)
 
         body = self.multiline_code(expect_end=True)
 
-        if self.current_token.tt_type == 'TT_BRACE' and self.current_token.variant != 'RIGHT':
+        if not self.current_token.matches('TT_BRACE', 'RIGHT'):
             self.raise_error(f"Expected '{'}'}', got {self.current_token.value !r}")
         self.advance()
 
@@ -251,36 +251,36 @@ class Parser:
         position = self.current_token.get_position()
         self.advance()  # skip "function" token
 
-        if self.current_token.tt_type != 'TT_NAME':
+        if not self.current_token.matches('TT_NAME'):
             self.raise_error(f"Expected name, got {self.current_token.value !r}")
 
         name = self.current_token  # keep track of function name
         self.advance()
 
-        if self.current_token.tt_type != 'TT_EQUALS':
+        if not self.current_token.matches('TT_EQUALS'):
             self.raise_error(f"Expected '=', got {self.current_token.value !r}")
         self.advance()  # skip '=' token
 
         parameter_names = []  # keep track of parameter names for DefineFunctionNode
 
-        if not (self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'LEFT'):
+        if not self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
             self.raise_error(f"Expected '(', got {self.current_token.value !r}")
         self.advance()
 
-        if not (self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT'):
+        if not self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
             if self.current_token.tt_type == 'TT_NAME':
                 parameter_names.append(self.current_token)
                 self.advance()
             else:
                 self.raise_error(f"Expected ')' or parameter name, got {self.current_token.value !r}")
 
-        while self.current_token.tt_type == 'TT_COMMA':
+        while self.current_token.matches('TT_COMMA'):
             self.advance()
 
-            if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT':
+            if self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
                 break  # go out of loop if right parenthesis (treated after)
 
-            if self.current_token.tt_type != 'TT_NAME':
+            if not self.current_token.matches('TT_NAME'):
                 self.raise_error(f"Expected ')' or parameter name, got {self.current_token.value !r}")
 
             parameter_names.append(self.current_token)
@@ -288,7 +288,7 @@ class Parser:
 
         self.advance()  # skip right parenthesis (self.current_token has to be ')' here)
 
-        if self.current_token.tt_type != 'TT_FUNCTION_ARROW':
+        if not self.current_token.matches('TT_FUNCTION_ARROW'):
             self.raise_error(f"Expected '=>', got {self.current_token.value !r}")
         self.advance()
 
@@ -302,22 +302,22 @@ class Parser:
 
         arguments = []
 
-        if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT':
+        if self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
             self.advance()
             return FunctionCallNode(atom, arguments, call_position)
 
         arguments.append(self.expression())
 
-        while self.current_token is not None and self.current_token.tt_type == 'TT_COMMA':
+        while self.current_token is not None and self.current_token.matches('TT_COMMA'):
             self.advance()
 
-            if self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT':
+            if self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
                 self.advance()  # skip parenthesis
                 return FunctionCallNode(atom, arguments, call_position)
 
             arguments.append(self.expression())
 
-        if not (self.current_token.tt_type == 'TT_PARENTHESIS' and self.current_token.variant == 'RIGHT'):
+        if not self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
             self.raise_error(f"Expected ')', got {self.current_token.value !r}")
         self.advance()  # skip parenthesis
 
