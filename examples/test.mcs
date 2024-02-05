@@ -1,9 +1,11 @@
 var bob = "hello";
 var bob2 = [bob, "hihi", 3,];
 
-function test = () => {
+function test = (input) => {
     var bob3 = "bobby car";
-    log(bob3, bob2)
+    if (input) {
+        log(bob3, bob2);
+    }
 };
 
-test();
+test(true);

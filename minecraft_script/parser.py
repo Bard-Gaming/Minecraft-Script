@@ -118,6 +118,9 @@ class Parser:
         elif self.current_token.matches('TT_RETURN'):
             return self.return_statement()
 
+        elif self.current_token.matches('TT_IF_CONDITIONAL'):
+            return self.if_condition()
+
         return self.code_block_statement()
 
     def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
@@ -322,3 +325,46 @@ class Parser:
         self.advance()  # skip parenthesis
 
         return FunctionCallNode(atom, arguments, call_position)
+
+    def if_condition(self) -> IfConditionNode:
+        position = self.current_token.get_position()
+        conditions = [self.if_condition_block()]  # current token has to be 'if'
+
+        while self.current_token is not None and self.current_token.matches("TT_ELSE_CONDITIONAL"):
+            if conditions[-1].get('type') == 'else':
+                self.raise_error("Continued 'else' statement after existing 'else' statement")
+
+            conditions.append(self.if_condition_block())
+
+        return IfConditionNode(conditions, position)
+
+    def if_condition_block(self) -> tuple[dict, bool]:
+        """
+        DO NOT CALL THIS FUNCTION IF NOT IN "IF STATEMENT"
+        """
+        self.advance()  # skip "if" token
+
+        if not self.current_token.matches('TT_IF_CONDITIONAL'):
+            condition_block = {
+                "type": "else",
+                "body": self.code_block_statement()
+            }
+
+            return condition_block, True
+
+        condition_block = {"type": "if"}
+        self.advance()
+
+        if not self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
+            self.raise_error(f"Expected '(', got {self.current_token.value !r}")
+        self.advance()  # skip '(' token
+
+        condition_block["expression"] = self.expression()
+
+        if not self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
+            self.raise_error(f"Expected ')', got {self.current_token.value !r}")
+        self.advance()
+
+        condition_block['body'] = self.code_block_statement()
+
+        return condition_block, False
