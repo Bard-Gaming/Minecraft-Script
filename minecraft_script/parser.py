@@ -48,6 +48,11 @@ class Parser:
             self.advance()
             return node
 
+        elif self.current_token.matches('TT_BOOL'):
+            node = BooleanNode(self.current_token)
+            self.advance()
+            return node
+
         elif self.current_token.matches('TT_STRING'):
             node = StringNode(self.current_token)
             self.advance()

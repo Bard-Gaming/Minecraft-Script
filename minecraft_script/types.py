@@ -53,6 +53,10 @@ class MCSObject:
             f"{self.class_name() !r} and {other.class_name() !r}"
         )
 
+    # ----------------- Miscellaneous  ----------------- :
+    def __bool__(self):
+        return bool(self.get_value())
+
 
 class MCSIterable(MCSObject):
     def get_key(self, key: str):
@@ -77,6 +81,23 @@ class MCSNumber(MCSObject):
     # ----------------- Miscellaneous ----------------- :
     def __repr__(self) -> str:
         return f'MCSNumber({self.value !r})'
+
+
+class MCSBool(MCSObject):
+    def __init__(self, value: bool):
+        if not isinstance(value, bool):
+            raise MCSInterpreterError(f"Expected type 'bool', got {value.__class__.__name__ !r}")
+
+        self.value = value
+
+    def get_value(self) -> bool:
+        return self.value
+
+    def print_value(self) -> str:
+        return "true" if self.value else "false"
+
+    def repr_value(self) -> str:
+        return self.print_value()  # same as print value
 
 
 class MCSNull(MCSObject):

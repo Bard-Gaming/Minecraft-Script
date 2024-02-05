@@ -45,6 +45,14 @@ class ListNode(ParserNode):
         return self.get_determinant_value()  # NOQA needed since there is no problem with det_val here
 
 
+class BooleanNode(ParserNode):
+    def __init__(self, value):
+        super().__init__(value)
+
+    def get_value(self) -> bool:
+        return self.get_determinant_value().value == 'true'
+
+
 class NullNode(ParserNode):
     def __init__(self):  # NOQA override ParserNode's init
         pass

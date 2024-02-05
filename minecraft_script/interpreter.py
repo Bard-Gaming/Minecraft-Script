@@ -88,6 +88,10 @@ class Interpreter:
         value: str = node.get_value()
         return MCSNumber(int(value))
 
+    def visit_BooleanNode(self, node, context):
+        value: bool = node.get_value()
+        return MCSBool(value)
+
     def visit_StringNode(self, node, context):
         value: str = node.get_value()
         return MCSString(value)
@@ -140,13 +144,12 @@ class Interpreter:
         local_context = InterpreterContext(parent=context, top_level=context.is_top_level())
 
         for condition in conditions:
-            if condition.get('type') == 'if':  # condition is 'if' or 'else if'
+            if condition.get('type') == 'if':  # condition is 'if' or 'else if' -> expression needs to be evaluated
                 if bool(self.visit(condition.get('expression'), context)) is True:
                     return self.visit(condition.get('body'), local_context)
 
-            else:  # final 'else' statement (not 'else if'
+            else:  # final 'else' statement (not 'else if') -> no expression to evaluate
                 return self.visit(condition.get('body'), local_context)
-
 
     # --------------- Miscellaneous --------------- :
     def visit_BinaryOperationNode(self, node, context):
