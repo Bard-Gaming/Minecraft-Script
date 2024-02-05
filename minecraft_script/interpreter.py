@@ -134,6 +134,20 @@ class Interpreter:
 
         context.declare(name, value)
 
+    # --------------- Conditionals --------------- :
+    def visit_IfConditionNode(self, node, context: InterpreterContext):
+        conditions: list[dict, ...] = node.get_conditions()
+        local_context = InterpreterContext(parent=context, top_level=context.is_top_level())
+
+        for condition in conditions:
+            if condition.get('type') == 'if':  # condition is 'if' or 'else if'
+                if bool(self.visit(condition.get('expression'), context)) is True:
+                    return self.visit(condition.get('body'), local_context)
+
+            else:  # final 'else' statement (not 'else if'
+                return self.visit(condition.get('body'), local_context)
+
+
     # --------------- Miscellaneous --------------- :
     def visit_BinaryOperationNode(self, node, context):
         left_operand = self.visit(node.get_left_node(), context)

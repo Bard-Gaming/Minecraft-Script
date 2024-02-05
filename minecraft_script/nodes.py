@@ -163,3 +163,12 @@ class FunctionCallNode(ParserNode):
 
     def get_arguments(self) -> tuple[ParserNode, ...]:
         return tuple(self.arguments)
+
+
+class IfConditionNode(ParserNode):
+    def __init__(self, condition_list, position):
+        super().__init__(condition_list, position)
+
+    def get_conditions(self) -> list[dict, ...]:
+        return self.get_determinant_value()
+
