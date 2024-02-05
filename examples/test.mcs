@@ -5,7 +5,9 @@ function test = (input) => {
     var bob3 = "bobby car";
     if (input) {
         log(bob3, bob2);
-    }
+    } else {
+        log(bob2, bob3);
+    };
 };
 
 test(true);

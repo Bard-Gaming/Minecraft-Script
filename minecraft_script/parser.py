@@ -48,7 +48,7 @@ class Parser:
             self.advance()
             return node
 
-        elif self.current_token.matches('TT_BOOL'):
+        elif self.current_token.matches('TT_BOOLEAN'):
             node = BooleanNode(self.current_token)
             self.advance()
             return node
@@ -140,8 +140,8 @@ class Parser:
             while self.current_token is not None and self.current_token.matches('TT_NEWLINE'):
                 self.advance()
 
-            if self.current_token is None or self.current_token.matches('TT_BRACKET', 'RIGHT'):
-                return MultilineCodeNode(tuple(node_list), position)  # end parsing
+            if self.current_token is None or self.current_token.matches('TT_BRACE', 'RIGHT'):
+                return MultilineCodeNode(tuple(node_list), position)  # end parsing without skipping bracket
 
             node_list.append(self.statement())  # self.advance() already called
 
@@ -241,11 +241,11 @@ class Parser:
 
     def code_block(self) -> CodeBlockNode:
         position = self.current_token.get_position()
-        self.advance()  # skip left brace
+        self.advance()  # skip left brace (not needed)
 
-        if self.current_token.matches('TT_BRACE', 'RIGHT'):
+        if self.current_token.matches('TT_BRACE', 'RIGHT'):  # if empty code block
             self.advance()
-            return CodeBlockNode(NullNode(), position)
+            return CodeBlockNode(NullNode(), position)  # NullNode as placeholder
 
         body = self.multiline_code(expect_end=True)
 
@@ -343,19 +343,19 @@ class Parser:
 
         return IfConditionNode(conditions, position)
 
-    def if_condition_block(self) -> tuple[dict, bool]:
-        """
-        DO NOT CALL THIS FUNCTION IF NOT IN "IF STATEMENT"
-        """
-        self.advance()  # skip "if" token
+    def if_condition_block(self) -> dict:
+        if self.current_token.matches('TT_ELSE_CONDITIONAL'):
+            self.advance()
+            if self.current_token.matches('TT_IF_CONDITIONAL'):  # if next in line is an if
+                return self.if_condition_block()
 
-        if not self.current_token.matches('TT_IF_CONDITIONAL'):
+            # No expression needed since standalone "else" is the default fallback
             condition_block = {
                 "type": "else",
                 "body": self.code_block_statement()
             }
 
-            return condition_block, True
+            return condition_block
 
         condition_block = {"type": "if"}
         self.advance()
@@ -372,4 +372,4 @@ class Parser:
 
         condition_block['body'] = self.code_block_statement()
 
-        return condition_block, False
+        return condition_block
