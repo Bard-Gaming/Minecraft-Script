@@ -55,7 +55,12 @@ class MCSObject:
 
     # ----------------- Comparisons ----------------- :
     def _comparison_operation(self, other, comparator: str):
-        return MCSBool(eval(f"self.get_value() {comparator} other.get_value()"))
+        try:
+            result = eval(f"self.get_value() {comparator} other.get_value()")
+        except TypeError as err:
+            raise self.comparison_error(other, comparator) from err
+        else:
+            return MCSBool(result)
 
     def equals(self, other):
         return self._comparison_operation(other, '==')
@@ -74,7 +79,7 @@ class MCSObject:
 
     def comparison_error(self, other, comparator: str):
         return MCSTypeError(
-            f"Unsupported operand types for {comparator !r}: "
+            f"{comparator !r} not supported between instances of "
             f"{self.class_name() !r} and {other.class_name() !r}"
         )
 
@@ -134,7 +139,7 @@ class MCSNull(MCSObject):
         if isinstance(other, (MCSNumber, MCSNull)):
             return MCSNumber(eval(f"0 {operator} other.get_value()"))
 
-        raise self.operation_error(other, f'"{operator}"')
+        raise self.operation_error(other, repr(operator))
 
     # ----------------- Miscellaneous ----------------- :
     def __repr__(self) -> str:
