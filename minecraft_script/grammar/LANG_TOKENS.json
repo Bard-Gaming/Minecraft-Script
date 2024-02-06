@@ -1,10 +1,11 @@
 {
   "TT_IGNORE"            : [{"char": " "}, {"char": "\t"}, {"char": "\n"}],
-  "TT_NEWLINE"           : [{"char":  ";"}],
+  "TT_NEWLINE"           : [{"char": ";"}],
   "TT_COMMENT"           : [{"char": "//"}],
 
   "TT_BINARY_OPERATOR"   : [{"char": "+", "variant": "ADD"}, {"char": "-", "variant": "SUBTRACT"}, {"char": "*", "variant": "MULTIPLY"}, {"char": "/", "variant": "DIVIDE"}, {"char": "%", "variant": "MODULUS"}],
-  "TT_COMPARATOR"           : [{"char": "==", "variant": "EQUALS"}, {"char": "<", "variant": "LESS_THAN"}, {"char": ">", "variant": "GREATER_THAN"}, {"char": "<=", "variant": "LESS_EQUALS_THAN"}, {"char": ">=", "variant": "GREATER_EQUALS_THAN"}],
+  "TT_COMPARATOR"        : [{"char": "==", "variant": "EQUALS"}, {"char": "<", "variant": "LESS_THAN"}, {"char": ">", "variant": "GREATER_THAN"}, {"char": "<=", "variant": "LESS_EQUALS_THAN"}, {"char": ">=", "variant": "GREATER_EQUALS_THAN"}],
+  "TT_CONNECTOR"         : [{"char": "&&", "variant": "AND"}, {"char": "||", "variant": "OR"}],
 
   "TT_PARENTHESIS"       : [{"char": "(", "variant": "LEFT"}, {"char": ")", "variant": "RIGHT"}],
   "TT_COMMA"             : [{"char": ","}],
@@ -16,7 +17,6 @@
   "TT_FUNCTION_ARROW"    : [{"char": "=>"}],
 
   "TT_LOGICAL_NOT"       : [{"char": "!"}],
-  "TT_LOGIC_CONNECTOR"   : [{"char": "&&", "variant": "LOGICAL_AND"}, {"char": "||", "variant": "LOGICAL_OR"}],
 
   "TT_QUOTE"             : [{"char": "\""}, {"char": "'"}, {"char": "`"}],
 
