@@ -178,5 +178,16 @@ class IfConditionNode(ParserNode):
         super().__init__(condition_list, position)
 
     def get_conditions(self) -> list[dict, ...]:
+        return self.get_determinant_value()  # NOQA
+
+
+class UnaryOperationNode(ParserNode):
+    def __init__(self, operator: str, root, position):
+        super().__init__(root, position)
+        self.operator: str = operator
+
+    def get_root(self) -> ParserNode:
         return self.get_determinant_value()
 
+    def get_operator(self) -> str:
+        return self.operator

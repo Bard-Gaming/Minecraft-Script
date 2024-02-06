@@ -151,7 +151,7 @@ class Interpreter:
             else:  # final 'else' statement (not 'else if') -> no expression to evaluate
                 return self.visit(condition.get('body'), local_context)
 
-    # --------------- Miscellaneous --------------- :
+    # --------------- Operations --------------- :
     def visit_BinaryOperationNode(self, node, context):
         left_operand = self.visit(node.get_left_node(), context)
         right_operand = self.visit(node.get_right_node(), context)
@@ -160,6 +160,13 @@ class Interpreter:
         value_method = getattr(left_operand, operator.variant.lower())
         return value_method(right_operand)
 
+    def visit_UnaryOperationNode(self, node, context: InterpreterContext):
+        root = self.visit(node.get_root(), context)
+        operator = node.get_operator()
+
+        return root.unary_operation(operator)
+
+    # --------------- Miscellaneous --------------- :
     def visit_CodeBlockNode(self, node, context: InterpreterContext):
         body = node.get_body()
         local_context = InterpreterContext(parent=context, top_level=context.top_level)

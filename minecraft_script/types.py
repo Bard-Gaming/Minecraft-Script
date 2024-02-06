@@ -47,6 +47,12 @@ class MCSObject:
     def modulus(self, other):
         return self._binary_operation(other, '%')
 
+    def unary_operation(self, operator: str):
+        if operator == 'not':
+            return MCSBool(not bool(self.get_value()))
+
+        raise MCSTypeError(f'Unsupported unary operand {operator !r} for type {self.class_name() !r}')
+
     def operation_error(self, other, operation):
         return MCSTypeError(
             f"Unsupported operand types for {operation if operation != '//' else '/' !r}: "
@@ -107,6 +113,14 @@ class MCSNumber(MCSObject):
 
     def get_value(self) -> int:
         return self.value
+
+    def unary_operation(self, operator: str):
+        if operator == 'add':
+            return self
+        elif operator == 'subtract':
+            return MCSNumber(-self.value)  # Number with opposite value
+
+        return super().unary_operation(operator)
 
     # ----------------- Miscellaneous ----------------- :
     def __repr__(self) -> str:

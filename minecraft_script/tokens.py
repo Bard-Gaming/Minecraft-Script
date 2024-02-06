@@ -11,5 +11,8 @@ class Token:
     def matches(self, token_type: str, variant: str = None) -> bool:
         return self.tt_type == token_type and (self.variant == variant if variant is not None else True)
 
+    def matches_variants(self, token_type: str, variants: iter) -> bool:
+        return self.tt_type == token_type and any(self.variant == variant for variant in variants)
+
     def __repr__(self):
         return f'Token({self.value !r}, {self.tt_type !r}{f", {self.position !r}" if self.position is not None else ""}{f", {self.variant !r}" if self.variant is not None else ""})'

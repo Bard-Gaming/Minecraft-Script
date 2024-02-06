@@ -66,6 +66,16 @@ class Parser:
             self.advance()
             return node
 
+        elif self.current_token.matches('TT_LOGICAL_NOT'):
+            position = self.current_token.get_position()  # save position for node
+            self.advance()  # skip "not"/"!" token (not needed)
+            return UnaryOperationNode('not', self.atom(), position)
+
+        elif self.current_token.matches_variants('TT_BINARY_OPERATOR', ('ADD', 'SUBTRACT')):
+            operator_token = self.current_token
+            self.advance()
+            return UnaryOperationNode(operator_token.variant.lower(), self.atom(), operator_token.get_position())
+
         elif self.current_token.matches('TT_NULL'):
             self.advance()
             return NullNode()
