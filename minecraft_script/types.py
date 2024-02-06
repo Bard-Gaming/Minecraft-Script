@@ -53,6 +53,31 @@ class MCSObject:
             f"{self.class_name() !r} and {other.class_name() !r}"
         )
 
+    # ----------------- Comparisons ----------------- :
+    def _comparison_operation(self, other, comparator: str):
+        return MCSBool(eval(f"self.get_value() {comparator} other.get_value()"))
+
+    def equals(self, other):
+        return self._comparison_operation(other, '==')
+
+    def lesser_than(self, other):
+        return self._comparison_operation(other, '<')
+
+    def greater_than(self, other):
+        return self._comparison_operation(other, '>')
+
+    def lesser_equals_than(self, other):
+        return self._comparison_operation(other, '<=')
+
+    def greater_equals_than(self, other):
+        return self._comparison_operation(other, '>=')
+
+    def comparison_error(self, other, comparator: str):
+        return MCSTypeError(
+            f"Unsupported operand types for {comparator !r}: "
+            f"{self.class_name() !r} and {other.class_name() !r}"
+        )
+
     # ----------------- Miscellaneous  ----------------- :
     def __bool__(self):
         return bool(self.get_value())

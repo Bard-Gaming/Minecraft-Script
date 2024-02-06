@@ -104,8 +104,15 @@ class Parser:
     def term(self):
         return self.binary_operation(self.factor, ['ADD', 'SUBTRACT'])
 
+    def logical_comparison(self):
+        return self.binary_operation(self.term, [
+            'EQUALS',
+            'LESS_THAN', 'GREATER_THAN',
+            'LESS_EQUALS_THAN', 'GREATER_EQUALS_THAN'
+        ])
+
     def expression(self):
-        return self.term()
+        return self.logical_comparison()
 
     def code_block_statement(self):
         if self.current_token.matches('TT_BRACE', 'LEFT'):
