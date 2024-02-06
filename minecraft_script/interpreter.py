@@ -157,6 +157,15 @@ class Interpreter:
             else:  # final 'else' statement (not 'else if') -> no expression to evaluate
                 return self.visit(condition.get('body'), local_context)
 
+    # --------------- Loops --------------- :
+    def visit_WhileLoopNode(self, node, context: InterpreterContext):
+        condition = node.get_condition()
+        body = node.get_body()
+
+        local_context = InterpreterContext(parent=context, top_level=context.top_level)
+        while bool(self.visit(condition, local_context)) is True:
+            self.visit(body, local_context)  # TODO: Make while loop stop if return encountered (RuntimeResult?)
+
     # --------------- Operations --------------- :
     def visit_BinaryOperationNode(self, node, context):
         left_operand = self.visit(node.get_left_node(), context)

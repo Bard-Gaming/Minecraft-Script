@@ -203,3 +203,15 @@ class UnaryOperationNode(ParserNode):
 
     def get_operator(self) -> str:
         return self.operator
+
+
+class WhileLoopNode(ParserNode):
+    def __init__(self, condition, body, position):
+        super().__init__(body, position)
+        self.condition = condition
+
+    def get_condition(self) -> ParserNode:
+        return self.condition
+
+    def get_body(self):
+        return self.get_determinant_value()

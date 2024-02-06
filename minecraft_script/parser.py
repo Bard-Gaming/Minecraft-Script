@@ -149,6 +149,9 @@ class Parser:
         elif self.current_token.matches('TT_IF_CONDITIONAL'):
             return self.if_condition()
 
+        elif self.current_token.matches('TT_WHILE_LOOP'):
+            return self.while_loop()
+
         return self.code_block_statement()
 
     def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
@@ -415,3 +418,22 @@ class Parser:
         condition_block['body'] = self.code_block_statement()
 
         return condition_block
+
+    def while_loop(self) -> WhileLoopNode:
+        position = self.current_token.get_position()  # keep track of position for Node
+        self.advance()  # skip "while" keyword
+
+        if not self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
+            self.raise_error(f"Expected '(', got {self.current_token.value !r}")
+        self.advance()
+
+        condition = self.expression()
+
+        if not self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
+            self.raise_error(f"Expected ')', got {self.current_token.value !r}")
+        self.advance()
+
+        body = self.code_block_statement()  # statement call already includes advance call, so don't advance
+
+        return WhileLoopNode(condition, body, position)
+
