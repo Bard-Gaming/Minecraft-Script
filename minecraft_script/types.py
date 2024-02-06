@@ -89,6 +89,13 @@ class MCSObject:
             f"{self.class_name() !r} and {other.class_name() !r}"
         )
 
+    # ----------------- Boolean Connectors ----------------- :
+    def boolean_and(self, other):
+        return MCSBool(self.get_value() and other.get_value())
+
+    def boolean_or(self, other):
+        return MCSBool(bool(self.get_value() or other.get_value()))  # have to call bool() here since "5 or 3 == 5"
+
     # ----------------- Miscellaneous  ----------------- :
     def __bool__(self):
         return bool(self.get_value())

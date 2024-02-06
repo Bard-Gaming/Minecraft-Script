@@ -121,8 +121,11 @@ class Parser:
             'LESS_EQUALS_THAN', 'GREATER_EQUALS_THAN'
         ])
 
+    def logical_connector(self):
+        return self.binary_operation(self.logical_comparison, ['BOOLEAN_AND', 'BOOLEAN_OR'])
+
     def expression(self):
-        return self.logical_comparison()
+        return self.logical_connector()
 
     def code_block_statement(self):
         if self.current_token.matches('TT_BRACE', 'LEFT'):
