@@ -71,13 +71,13 @@ class MCSObject:
     def equals(self, other):
         return self._comparison_operation(other, '==')
 
-    def lesser_than(self, other):
+    def less_than(self, other):
         return self._comparison_operation(other, '<')
 
     def greater_than(self, other):
         return self._comparison_operation(other, '>')
 
-    def lesser_equals_than(self, other):
+    def less_equals_than(self, other):
         return self._comparison_operation(other, '<=')
 
     def greater_equals_than(self, other):
