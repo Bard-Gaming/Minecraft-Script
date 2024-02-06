@@ -138,6 +138,12 @@ class Interpreter:
 
         context.declare(name, value)
 
+    def visit_VariableSetNode(self, node, context: InterpreterContext):
+        name = node.get_name()
+        value = self.visit(node.get_value(), context)
+
+        context.set(name, value)
+
     # --------------- Conditionals --------------- :
     def visit_IfConditionNode(self, node, context: InterpreterContext):
         conditions: list[dict, ...] = node.get_conditions()

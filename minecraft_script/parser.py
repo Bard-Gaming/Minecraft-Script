@@ -137,6 +137,9 @@ class Parser:
         if self.current_token.matches('TT_VAR_DEFINE'):
             return self.declare_variable()
 
+        elif self.current_token.matches('TT_SET_DEFINE'):
+            return self.set_variable()
+
         elif self.current_token.matches('TT_FUNC_DEFINE'):
             return self.define_function()
 
@@ -233,6 +236,25 @@ class Parser:
 
         value = self.expression()  # self.advance() call already in self.expression()
         return VariableDeclareNode(name, value)
+
+    def set_variable(self) -> VariableSetNode:
+        position = self.current_token.get_position()  # keep track of position for node
+        self.advance()  # skip "set" keyword (not needed)
+
+        if not self.current_token.matches('TT_NAME'):
+            self.raise_error(f"Expected name, got {self.current_token.value !r}")
+        name = self.current_token
+        self.advance()
+
+        if not self.current_token.matches('TT_EQUALS'):
+            self.raise_error(f"Expected '=', got {self.current_token.value !r}")
+        self.advance()
+
+        value = self.expression()  # Don't need to advance since .expression() already advances
+
+        return VariableSetNode(name, value, position)
+
+
 
     def get_key(self, atom: ParserNode) -> GetKeyNode:
         if not self.current_token.matches('TT_BRACKET', 'LEFT'):

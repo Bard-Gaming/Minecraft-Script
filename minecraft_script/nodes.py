@@ -86,6 +86,18 @@ class VariableDeclareNode(ParserNode):
         return self.repr_gen(self.get_determinant_value(), self.value)
 
 
+class VariableSetNode(ParserNode):
+    def __init__(self, name, value, position):
+        super().__init__(name, position)
+        self.value = value
+
+    def get_name(self) -> str:
+        return self.get_determinant_value().value
+
+    def get_value(self) -> ParserNode:
+        return self.value
+
+
 class BinaryOperationNode(ParserNode):
     def __init__(self, left_value, operator, right_value):
         super().__init__(operator)
@@ -134,7 +146,7 @@ class MultilineCodeNode(ParserNode):
         super().__init__(statements, position)
 
     def get_nodes(self) -> tuple[ParserNode, ...]:
-        return self.get_determinant_value()
+        return self.get_determinant_value()  # NOQA
 
 
 class ReturnNode(ParserNode):
