@@ -17,6 +17,9 @@ class Parser:
     def current_token(self) -> Token:
         return self.__current_token
 
+    def overwrite_current_token(self, __new: Token):
+        self.__current_token = __new
+
     def advance(self) -> None:
         if self.current_index >= len(self.token_input) - 1:
             self.__current_token = None
@@ -257,8 +260,6 @@ class Parser:
 
         return VariableSetNode(name, value, position)
 
-
-
     def get_key(self, atom: ParserNode) -> GetKeyNode:
         if not self.current_token.matches('TT_BRACKET', 'LEFT'):
             self.raise_error(f"Expected '[', got {self.current_token.value !r}")
@@ -296,7 +297,8 @@ class Parser:
 
         if not self.current_token.matches('TT_BRACE', 'RIGHT'):
             self.raise_error(f"Expected '{'}'}', got {self.current_token.value !r}")
-        self.advance()
+        # don't advance; overwrite instead since no new statement is to be expected after a brace
+        self.overwrite_current_token(Token(';', 'TT_NEWLINE'))
 
         return CodeBlockNode(body, position)
 
