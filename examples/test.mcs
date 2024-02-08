@@ -1,13 +1,11 @@
-var bob = "hello";
-var bob2 = [bob, "hihi", 3,];
+function main = () => {
+    log(range);
+    log(range(5));
 
-function test = (input) => {
-    var bob3 = "bobby car";
-    if (input == 3) {
-        log("yay");
-    } else {
-        log(bob2, bob3);
-    };
-};
+    for (num in range(10)) {
+        log(num);
+    }
 
-test(4);
+}
+
+main();

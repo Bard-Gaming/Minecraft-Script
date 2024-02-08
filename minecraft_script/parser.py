@@ -155,6 +155,9 @@ class Parser:
         elif self.current_token.matches('TT_WHILE_LOOP'):
             return self.while_loop()
 
+        elif self.current_token.matches('TT_FOR_LOOP'):
+            return self.for_loop()
+
         return self.code_block_statement()
 
     def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
@@ -438,4 +441,33 @@ class Parser:
         body = self.code_block_statement()  # statement call already includes advance call, so don't advance
 
         return WhileLoopNode(condition, body, position)
+
+    def for_loop(self) -> ForLoopNode:
+        position = self.current_token.get_position()  # keep track of position for node
+        self.advance()  # "for" token not needed anymore
+
+        if not self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
+            self.raise_error(f"Expected '(', got {self.current_token.value !r}")
+        self.advance()
+
+        if not self.current_token.matches('TT_NAME'):
+            self.raise_error(f"Expected name, got {self.current_token.value !r}")
+        child_name = self.current_token  # save name for node
+        self.advance()
+
+        if not self.current_token.matches('TT_IN'):
+            self.raise_error(f"Expected 'in' keyword, got {self.current_token.value !r}")
+        self.advance()  # "in" token not needed for node
+
+        iterable = self.expression()
+
+        if not self.current_token.matches('TT_PARENTHESIS', 'RIGHT'):
+            self.raise_error(f"Expected ')', got {self.current_token.value !r}")
+        self.advance()  # parenthesis only there to delimit the expression, so not needed
+
+        body = self.code_block_statement()
+
+        # advance call not needed since code_block_statement takes care of it
+        return ForLoopNode(iterable, child_name, body, position)
+
 

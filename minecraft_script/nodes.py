@@ -215,3 +215,19 @@ class WhileLoopNode(ParserNode):
 
     def get_body(self):
         return self.get_determinant_value()
+
+
+class ForLoopNode(ParserNode):
+    def __init__(self, iterable, child_name, body, position):
+        super().__init__(iterable, position)
+        self.child_name = child_name
+        self.body = body
+
+    def get_iterable(self) -> ParserNode:
+        return self.get_determinant_value()
+
+    def get_child_name(self) -> str:
+        return self.child_name.value
+
+    def get_body(self) -> ParserNode:
+        return self.body

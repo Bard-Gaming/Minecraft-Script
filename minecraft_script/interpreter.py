@@ -166,6 +166,16 @@ class Interpreter:
         while bool(self.visit(condition, local_context)) is True:
             self.visit(body, local_context)  # TODO: Make while loop stop if return encountered (RuntimeResult?)
 
+    def visit_ForLoopNode(self, node, context: InterpreterContext):
+        iterable = self.visit(node.get_iterable(), context)
+        child_name = node.get_child_name()
+        body = node.get_body()
+
+        local_context = InterpreterContext(parent=context, top_level=context.top_level)
+        for py_value in iterable.get_value():
+            local_context.declare(child_name, py_value)
+            self.visit(body, local_context)  # TODO: Make for loop stop if return encountered (RuntimeResult?)
+
     # --------------- Operations --------------- :
     def visit_BinaryOperationNode(self, node, context):
         left_operand = self.visit(node.get_left_node(), context)
@@ -207,4 +217,4 @@ class Interpreter:
 
     # --------------- Error --------------- :
     def visit_unknown(self, node, context):
-        raise MCSInterpreterError(f"Unknown node {node !r}")
+        raise MCSInterpreterError(f"Unknown node {node.__class__.__name__ !r}")
