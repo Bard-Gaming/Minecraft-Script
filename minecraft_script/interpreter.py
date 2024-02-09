@@ -12,8 +12,18 @@ class SymbolTable:
             self.load_builtins()
 
     def load_builtins(self) -> None:
-        for function in builtin_functions:
-            self.declare(function.name, function)
+        for py_function in builtin_functions:
+            function_name = py_function.__name__[7:]  # skip "custom_" part of name
+            mcs_function = MCSFunction(function_name, None, None)
+
+            # Update custom function call method
+            mcs_function.call = py_function
+
+            # Update function name (looks cooler having "builtin-" before function name)
+            mcs_function.print_value = lambda: f"<builtin-{function_name}>"
+
+            # Save function in local context's names
+            self.declare(function_name, mcs_function)
 
     def get(self, name, *, generate_error: bool = True) -> any:
         # Search for value in self
