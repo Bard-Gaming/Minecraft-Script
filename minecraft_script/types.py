@@ -25,6 +25,9 @@ class MCSObject:
     def repr_value(self) -> str:
         return repr(self.get_value())
 
+    def is_iterable(self) -> bool:
+        return False
+
     # ----------------- Operations  ----------------- :
     def _binary_operation(self, other, operator: str):
         if isinstance(other, self.__class__):
@@ -109,6 +112,9 @@ class MCSIterable(MCSObject):
             raise MCSTypeError(f'{self.class_name()} indices must be integers') from err
 
         return self.get_value()[index]
+
+    def is_iterable(self) -> bool:
+        return True
 
 
 class MCSNumber(MCSObject):
@@ -238,7 +244,7 @@ class MCSFunction(MCSObject):
         return self.print_value()
 
     def call(self, arg_list: list | None, context):
-        from .interpreter import Interpreter, InterpreterContext
+        from .interpreter import Interpreter, InterpreterContext, RuntimeResult
         local_interpreter = Interpreter()
         local_context = InterpreterContext(parent=context)  # top level always false here
 
@@ -249,9 +255,9 @@ class MCSFunction(MCSObject):
         for i in range(len(self.parameter_names)):
             local_context.declare(self.parameter_names[i], arg_list[i])
 
-        result = local_interpreter.visit(self.body, local_context)
+        result: RuntimeResult | None = local_interpreter.visit(self.body, local_context)
 
-        return result if result is not None else MCSNull()
+        return result if result is not None else RuntimeResult(return_value=MCSNull())
 
     def __repr__(self) -> str:
         return f"MCSFunction({self.name !r}, {self.parameter_names !r})"

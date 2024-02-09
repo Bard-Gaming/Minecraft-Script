@@ -1,11 +1,13 @@
-function main = () => {
-    log(range);
-    log(range(5));
+function element_in = (value, list) => {
+    for (element in list) {
+        log(element);
 
-    for (num in range(10)) {
-        log(num);
+        if (element == value) {
+            return true;
+        }
     }
 
+    return false;
 }
 
-main();
+log("is present:", element_in(11, range(10)));

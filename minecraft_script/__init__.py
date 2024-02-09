@@ -3,13 +3,16 @@ from .parser import Parser
 from .interpreter import Interpreter, InterpreterContext, SymbolTable
 
 
-def run_code(code_input: str) -> None:
+def run_code(code_input: str, *, print_variables: bool = False) -> None:
     lexer = Lexer(code_input)
     parser = Parser(lexer.tokenize())
 
     interpreter = Interpreter()
     context = InterpreterContext(top_level=True)
     interpreter.visit(parser.parse(), context)
+
+    if print_variables:
+        print(context.symbol_table.symbols)
 
 
 def run_shell():
