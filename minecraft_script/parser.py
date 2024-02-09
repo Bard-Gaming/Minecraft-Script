@@ -279,8 +279,8 @@ class Parser:
     def return_statement(self) -> ReturnNode:
         position = self.current_token.get_position()
 
-        if self.current_token.matches('TT_RETURN'):
-            self.raise_error(f'Expected "return" keyword, got {self.current_token.value !r}')
+        if not self.current_token.matches('TT_RETURN'):
+            self.raise_error(f"Expected 'return' keyword, got {self.current_token.value !r}")
         self.advance()
 
         if self.current_token.matches('TT_NEWLINE'):
