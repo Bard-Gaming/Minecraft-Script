@@ -13,23 +13,45 @@ class Builder:
         self.datapack_id = datapack_name.lower().replace(' ', '_')
 
     def make_init_file(self):
+        text = (
+            "#######################################################\n"
+            "#        Default generated init mcfunction file       #\n"
+            "#######################################################\n"
+            "\n"
+            "scoreboard objectives add mcs_math dummy {\"text\": \"MCS Math\"}\n"
+        )
+
         with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file:
-            init_file.write('# init file. This mcfunction file is run when the game loads.')
-            init_file.write('\nscoreboard objectives add mcs_math dummy {"text":"MCS Math"}')
+            init_file.write(text)
 
     def make_main_file(self):
+        text = (
+            f"#######################################################\n"
+            f"#        Default generated main mcfunction file       #\n"
+            f"#######################################################\n"
+            f"\n"
+        )
+
         with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file:
-            main_file.write('# main file. This mcfunction file is run every tick.')
+            main_file.write(text)
 
     def make_kill_file(self):
+        text = (
+            f"#######################################################\n"
+            f"#        Default generated kill mcfunction file       #\n"
+            f"#######################################################\n"
+            f"\n"
+            f"data remove storage minecraft:mcs_{self.datapack_id} variables\n"
+            f"data remove storage minecraft:mcs_{self.datapack_id} string\n"
+            f"data remove storage minecraft:mcs_{self.datapack_id} number\n"
+            f"data remove storage minecraft:mcs_{self.datapack_id} list\n"
+            f"data remove storage minecraft:mcs_{self.datapack_id} temporary\n"
+            f"scoreboard objectives remove mcs_math\n"
+            f"datapack disable \"file/{self.datapack_name}\""
+        )
+
         with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file:
-            kill_file.write('# kill file. This mcfunction file is used to disable the datapack.')
-            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} variables')
-            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} string')
-            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} number')
-            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} list')
-            kill_file.write(f'\ndata remove storage minecraft:mcs_{self.datapack_id} temporary')
-            kill_file.write(f'\nscoreboard objectives remove mcs_math\ndatapack disable "file/{self.datapack_name}"')
+            kill_file.write(text)
 
     def build(self, verbose: bool = True):
         start_time = time()
@@ -45,7 +67,7 @@ class Builder:
 
         # minecraft folders:
         if verbose:
-            print('Creating Folders...', end=" ")
+            print('Creating default folders...', end=" ")
 
         mkdir(f'{self.datapack_name}/data/minecraft')
         mkdir(f'{self.datapack_name}/data/minecraft/tags')
