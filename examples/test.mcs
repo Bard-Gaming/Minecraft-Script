@@ -10,4 +10,14 @@ function element_in = (value, list) => {
     return false;
 }
 
-log("is present:", element_in(11, range(10)));
+function recursive_loop = (current_loop, max_loop) => {
+    if (current_loop > max_loop) {
+        return;
+    }
+
+    log("current loop:", current_loop, "/", max_loop);
+    recursive_loop(current_loop + 1, max_loop);
+}
+
+// log("is present:", element_in(11, range(10)));
+recursive_loop(1, 10);
