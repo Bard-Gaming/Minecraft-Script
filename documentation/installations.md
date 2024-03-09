@@ -74,4 +74,4 @@ Sublime's console.
 
 ![img](resources/sublime_output.png)
 
-_Minecraft-Script during development_
+_Minecraft-Script during active programming_

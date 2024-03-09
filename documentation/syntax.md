@@ -121,21 +121,21 @@ if (true) log('hello')
 else log('goodbye')
 // logs "hello" since condition is true
 
-var age = 17
+var age = 17;
 if (age >= 18) {
-    log('You are an adult.')
+    log('You are an adult.');
 } else if (age < 18) {
-    log('You are a minor.')
+    log('You are a minor.');
 }
 // logs 'You are a minor.'
 
 function max = (value_1, value_2) => {
     if (value_1 > value_2) {
-        return value_1
+        return value_1;
     } else return value_2
 }
 
-log(max(11, 5))  // logs '11'
+log(max(11, 5));  // logs '11'
 ```
 
 ## Loops
@@ -150,13 +150,13 @@ they serve the purpose of running through iterables with the use of the ``in`` k
 Example as follows:
 ```js
 for (number in [5, 7, 3, 1, 9, 4, 6]) {
-    log(number)  // logs "5", then "7", then "3", etc...
+    log(number);  // logs "5", then "7", then "3", etc...
 }
 
 // works with any iterable:
-var string = "Hello"
+var string = "Hello";
 for (character in string) {
-    log(character)  // logs "H", then "e", then "l", etc...
+    log(character);  // logs "H", then "e", then "l", etc...
 }
 ```
 _Note: (legal) ``return`` statements inside ``for`` loops halt their execution._
@@ -169,24 +169,24 @@ which is automatically parsed to a boolean, is true.
 Example as follows:
 
 ```js
-var condition = 1
+var condition = 1;
 
 while (condition) {
-    log(condition)
-    set condition = condition + 1
+    log(condition);
+    set condition = condition + 1;
     
     if (condition > 10) {
-        set condition = false
+        set condition = false;
     }
 }
 // this logs "1", "2", "3", etc... until "10", then stops
 
 // alternative:
-var condition = 1
+var condition = 1;
 
 while (condition <= 10) {
-    log(condition)
-    set condition = condition + 1
+    log(condition);
+    set condition = condition + 1;
 }
 ```
 _Note: (legal) ``return`` statements inside ``while`` loops halt their execution._

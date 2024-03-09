@@ -9,10 +9,10 @@ An indefinite amount of arguments is allowed, to which the arguments' values wil
 
 Example as follows:
 ```js
-var hello1 = 500
+var hello1 = 500;
 
-log(400)  // logs "400" in console
-log(hello1, 300)  // logs "500, 300" in console
+log(400);  // logs "400" in console
+log(hello1, 300);  // logs "500, 300" in console
 ```
 
 ## Adding / Appending values to a list
@@ -25,13 +25,13 @@ It takes a **list** as its first argument, and any other data type as its second
 
 Example as follows:
 ```js
-var list = [3, 5, 4]
+var list = [3, 5, 4];
 
-append(list, 2)  // append 2 to the list
-var list2 = append(list, [3, 4])  // append [3, 4] to the list and put result in list2
+append(list, 2);  // append 2 to the list
+var list2 = append(list, [3, 4]);  // append [3, 4] to the list and put result in list2
 
-log(list)  // logs "[3, 5, 4, 2, [3, 4]]"
-log(list2)  // logs "[3, 5, 4, 2, [3, 4]]"
+log(list);  // logs "[3, 5, 4, 2, [3, 4]]"
+log(list2);  // logs "[3, 5, 4, 2, [3, 4]]"
 ```
 
 ## Extending a list
@@ -44,14 +44,14 @@ As such, both the first and second arguments have to be lists.
 
 Example as follows:
 ```js
-var list_1 = [5, 2]
-var list_2 = [2, 3]
+var list_1 = [5, 2];
+var list_2 = [2, 3];
 
-extend(list_1, list_2)
-var list_3 = extend(list_1, list_2)
+extend(list_1, list_2);
+var list_3 = extend(list_1, list_2);
 
-log(list_1)  // logs "[5, 2, 2, 3]"
-log(list_3)  // logs "[5, 2, 2, 3]"
+log(list_1);  // logs "[5, 2, 2, 3]"
+log(list_3);  // logs "[5, 2, 2, 3]"
 ```
 
 ## Number Ranges
@@ -68,11 +68,11 @@ _start:_ ``number``, _end:_ ``number``, _step:_ ``number`` <br><br>
 
 Example as follows:
 ```js
-var num_range = range(10)
-var num_range_1 = range(0, 10, 2)
+var num_range = range(10);
+var num_range_1 = range(0, 10, 2);
 
-log(num_range)  // logs "[0, 1, 2]"
-log(num_range_1)  // logs "[0, 2, 4, 6, 8]"
+log(num_range);  // logs "[0, 1, 2]"
+log(num_range_1);  // logs "[0, 2, 4, 6, 8]"
 ```
 
 ## Any of List
@@ -84,13 +84,13 @@ If it succeeds, true is returned, else false.
 
 Example as follows:
 ```js
-var false_list = [0, false, 0]
-var normal_list = [false, 52, 0]
-var contains_truthy = any([0, 0, 0, 1, 0])
+var false_list = [0, false, 0];
+var normal_list = [false, 52, 0];
+var contains_truthy = any([0, 0, 0, 1, 0]);
 
-log(any(false_list))  // logs "false", since 0 and false are considered faulty
-log(any(normal_list))  // logs "true", since 52 is truthy
-log(contains_truthy)  // logs "true", since 1 is truthy
+log(any(false_list));  // logs "false", since 0 and false are considered faulty
+log(any(normal_list));  // logs "true", since 52 is truthy
+log(contains_truthy);  // logs "true", since 1 is truthy
 ```
 
 ## Parsing
@@ -105,9 +105,9 @@ The ``parseNumber()`` function converts a String to a Number.
 
 Example as follows:
 ```js
-var e = '12345'
-log(e)  // logs: " '12345' " (String)
-log(parseNumber(e))  // logs: " 12345 " (Number)
+var e = '12345';
+log(e);  // logs: " '12345' " (String)
+log(parseNumber(e));  // logs: " 12345 " (Number)
 ```
 
 ### parseString

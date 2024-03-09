@@ -9,9 +9,9 @@ They originate in the parser, meaning that the code may never run after encounte
 
 Example:
 ```js
-function test = (num) => num + 1
+function test = (num) => num + 1;
 
-log(test(5)  // ")" missing -> results in Syntax Error
+log(test(5);  // ")" missing -> results in Syntax Error
 ```
 <br>
 
@@ -27,16 +27,16 @@ if the variable is assigned in a lower context.
 
 Example:
 ```js
-var hello2 = "hello!"
-log(hello)  // "hello" wasn't defined prior to this call -> results in Name Error
+var hello2 = "hello!";
+log(hello);  // "hello" wasn't defined prior to this call -> results in Name Error
 
 
 (function a = () => {
-    var bob = 3  // assign variable "bob" in lower context
-    log(bob)  // logs "3"
-})()
+    var bob = 3;  // assign variable "bob" in lower context
+    log(bob);  // logs "3"
+})();
 
-log(bob)  // "bob" only assigned in lower context -> results in Name Error
+log(bob);  // "bob" only assigned in lower context -> results in Name Error
 ```
 <br>
 
@@ -54,7 +54,7 @@ The code might or might not continue running as per usual afterward.
 Example:
 ```js
 // Unaccounted "," followed by ")":
-log(any([1, 0]),)
+log(any([1, 0]),);
 // not (yet) detected by parser, thus "No visit method" error
 // still runs; logs "true, None" (Note that 'None' should not exist in mcs)
 ```
