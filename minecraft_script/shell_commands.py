@@ -1,7 +1,12 @@
-from . import run_file
+from . import run_code
 from .minecraft_builder import build_file
 from .text_additions import text_error
 import os
+
+
+def _run_filename(name: str):
+    with open(name, 'rt', encoding='utf-8') as file:
+        run_code(file.read())
 
 
 def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = True, *args) -> None:
@@ -17,7 +22,7 @@ def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = Tru
 def sh_run_file_iteration(filename: str, *args) -> None:
     parse_confirm = input(f'Do you wish to parse {filename}? [y/n]: ')
     if parse_confirm.lower() in ['y', 'yes']:
-        run_file(filename)
+        _run_filename(filename)
 
     elif parse_confirm.lower() in ['n', 'no']:
         pass
@@ -31,8 +36,8 @@ def sh_run(*filenames) -> None:
         for file in valid_files:
             sh_run_file_iteration(file)
     else:
-        for file in filenames:
-            run_file(file)
+        for name in filenames:
+            _run_filename(name)
 
 
 def sh_help(*args) -> None:
