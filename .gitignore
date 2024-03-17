@@ -1,4 +1,7 @@
 .idea/
 test_file.py
 minecraft_script/__pycache__/
-minecraft_script/minecraft_builder/__pycache__/
+minecraft_script/lexer/__pycache__/
+minecraft_script/parser/__pycache__/
+minecraft_script/interpreter/__pycache__/
+minecraft_script/compiler/__pycache__/
