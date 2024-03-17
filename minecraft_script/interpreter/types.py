@@ -1,4 +1,4 @@
-from .errors import *
+from ..errors import *
 
 operation_lookup_table = {
     "&&": "logical_and",

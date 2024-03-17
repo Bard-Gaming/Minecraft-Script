@@ -1,5 +1,5 @@
 from .types import MCSFunction, MCSNull, MCSString, MCSNumber, MCSList
-from .errors import MCSValueError, MCSTypeError
+from ..errors import MCSValueError, MCSTypeError
 
 
 def custom_log(args, context):
