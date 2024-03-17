@@ -105,6 +105,7 @@ class CompileInterpreter:
     def __init__(self, datapack_id):
         self.datapack_id = datapack_id
         self.commands = CompileCommands()
+        self.used_context_ids = set()
 
     def add_command(self, mcfunction: str, command: str) -> None:
         self.commands.add_command(mcfunction, command)
@@ -120,6 +121,9 @@ class CompileInterpreter:
         return self.commands.get_mcs_functions()
 
     def visit(self, node, context: CompileContext) -> CompileResult:
+        if context.uuid not in self.used_context_ids:
+            self.used_context_ids.add(context.uuid)
+
         method = getattr(self, f"visit_{type(node).__name__}", self.visit_unknown)
         return method(node, context)
 
@@ -148,7 +152,7 @@ class CompileInterpreter:
         commands = (
             variable_value.set_to_current_cmd(),
 
-            f"data modify storage mcs_{context.uuid} variables.{variable_name} "
+            f"data modify storage mcs_{context.uuid} variable.{variable_name} "
             f"set from storage mcs_{context.uuid} current"
         )
         self.add_commands(context.mcfunction_name, commands)
@@ -177,7 +181,7 @@ class CompileInterpreter:
         local_context = CompileContext(f':cb_{generate_uuid()}', context)
         return_value: CompileResult = self.visit(node.get_body(), local_context)
 
-        command = f"function {self.datapack_id}{local_context.mcfunction_name}"  # ":" included in mcfunction_name
+        command = f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}"
         self.add_command(context.mcfunction_name, command)  # call code block in parent context
 
         return return_value
@@ -216,6 +220,15 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
     interpreter = CompileInterpreter(datapack_id)
 
     interpreter.visit(ast, context)
+
+    for context_id in interpreter.used_context_ids:
+        commands = (
+            f"data remove storage mcs_{context_id} current",
+            f"data remove storage mcs_{context_id} variable",
+            f"data remove storage mcs_{context_id} number",
+        )
+        interpreter.add_commands('kill', commands)
+
     for fnc_name in interpreter.get_mcs_functions():
         mcfunction_path = (
             f"{functions_dir}/user_functions/{fnc_name}.mcfunction"  # if it's a function
