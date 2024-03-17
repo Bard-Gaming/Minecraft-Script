@@ -42,4 +42,8 @@ class MCSNumber(MCSObject):
         return f"MCSNumber({self.uuid !r})"
 
 
-mcs_type = MCSNull | MCSNumber
+class MCSFunction:
+    pass
+
+
+mcs_type = MCSNull | MCSNumber | MCSFunction

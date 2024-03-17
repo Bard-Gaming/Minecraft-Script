@@ -1,10 +1,18 @@
+from .builtin_functions import builtin_functions
 from .compile_types import *
 
 
 class CompileSymbols:
-    def __init__(self, parent: "CompileSymbols" = None):
+    def __init__(self, parent: "CompileSymbols" = None, *, load_builtins: bool = False):
         self.symbols: dict[str, mcs_type] = {}
         self.parent = parent
+
+        if load_builtins:
+            self.load_builtins()
+
+    def load_builtins(self) -> None:
+        for fnc in builtin_functions:
+            pass
 
     def get(self, name: str, *, raise_error=True) -> mcs_type:
         value = self.symbols.get(name, None)
@@ -38,7 +46,7 @@ class CompileSymbols:
 class CompileContext:
     def __init__(self, mcfunction_name: str = 'init', parent: "CompileContext" = None, *, top_level: bool = False):
         self.parent = parent
-        self.symbols = CompileSymbols(parent.symbols if parent is not None else None)  # NOQA
+        self.symbols = CompileSymbols(parent.symbols if parent is not None else None,  load_builtins=top_level)  # NOQA
         self.top_level = top_level
         self.mcfunction_name = mcfunction_name
         self.uuid = generate_uuid()
@@ -49,7 +57,7 @@ class CompileContext:
     def set(self, name: str, value: mcs_type):
         return self.symbols.set(name, value)
 
-    def declare(self, name: str, value: mcs_type) -> tuple[str, str]:
+    def declare(self, name: str, value: mcs_type) -> None:
         self.symbols.declare(name, value)
 
     def __repr__(self) -> str:
@@ -154,6 +162,26 @@ class CompileInterpreter:
 
         return CompileResult(value)
 
+    # ------------------ scope nodes ------------------ :
+    def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
+        for statement in node.get_nodes():
+            return_value: CompileResult = self.visit(statement, context)
+
+            # if a "return" statement is encountered:
+            if return_value.get_return() is not None:
+                return return_value
+
+        return CompileResult(MCSNull(context.uuid))  # if no return statement is encountered
+
+    def visit_CodeBlockNode(self, node, context: CompileContext) -> CompileResult:
+        local_context = CompileContext(f':cb_{generate_uuid()}', context)
+        return_value: CompileResult = self.visit(node.get_body(), local_context)
+
+        command = f"function {self.datapack_id}{local_context.mcfunction_name}"  # ":" included in mcfunction_name
+        self.add_command(context.mcfunction_name, command)  # call code block in parent context
+
+        return return_value
+
     # ------------------ miscellaneous ------------------ :
     def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:
         left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
@@ -175,16 +203,6 @@ class CompileInterpreter:
 
         return CompileResult(result)
 
-    def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
-        for statement in node.get_nodes():
-            return_value: CompileResult = self.visit(statement, context)
-
-            # if a "return" statement is encountered:
-            if return_value.get_return() is not None:
-                return return_value
-
-        return CompileResult(MCSNull(context.uuid))  # if no return statement is encountered
-
     @staticmethod
     def visit_unknown(node, context):
         raise ValueError(f'Unknown node {node !r}')
@@ -193,13 +211,19 @@ class CompileInterpreter:
         return "CompileInterpreter()"
 
 
-def mcs_compile(ast, user_function_dir: str, datapack_id):
+def mcs_compile(ast, functions_dir: str, datapack_id):
     context = CompileContext(top_level=True)
     interpreter = CompileInterpreter(datapack_id)
 
     interpreter.visit(ast, context)
     for fnc_name in interpreter.get_mcs_functions():
-        with open(f"{user_function_dir}/{fnc_name}.mcfunction", "xt") as mcfunction_file:
+        mcfunction_path = (
+            f"{functions_dir}/user_functions/{fnc_name}.mcfunction"  # if it's a function
+            if fnc_name[0:3] != ':cb' else
+            f"{functions_dir}/code_blocks/{fnc_name[1:]}.mcfunction"  # if code block (skip char 0 since it's invalid)
+        )
+
+        with open(mcfunction_path, "xt") as mcfunction_file:
             mcfunction_file.write(interpreter.get_file_content(fnc_name))
 
 

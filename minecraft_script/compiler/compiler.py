@@ -146,7 +146,7 @@ class Compiler:
 
         mcs_compile(
             self.ast,
-            f'{self.datapack_name}/data/{self.datapack_id}/functions/user_functions',
+            f'{self.datapack_name}/data/{self.datapack_id}/functions',
             self.datapack_id
         )
 
