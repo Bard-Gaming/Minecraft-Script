@@ -153,8 +153,8 @@ class CompileInterpreter:
         # TODO: node.get_parameter_names()
 
         function = MCSFunction(fnc_name, fnc_body)
+        function.generate_function(self, context)
         context.declare(fnc_name, function)
-        self.add_command(fnc_name, "")  # add empty command to create function file
 
         return CompileResult(function)
 
@@ -223,9 +223,10 @@ class CompileInterpreter:
 
     def visit_FunctionCallNode(self, node, context: CompileContext) -> CompileResult:
         fnc: MCSFunction = self.visit(node.get_root(), context).get_value()
-        result: CompileResult = fnc.call(self, context)
 
-        return result
+        self.add_command(context.mcfunction_name, fnc.call(self))
+
+        return CompileResult()
 
     # ------------------ miscellaneous ------------------ :
     def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:

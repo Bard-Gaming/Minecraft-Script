@@ -53,15 +53,14 @@ class MCSFunction:
         self.name = name
         self.body = body
 
-    def call(self, interpreter, context):
+    def generate_function(self, interpreter, context) -> None:
         from .compile_interpreter import CompileContext, CompileResult
         local_context = CompileContext(self.name, context)
 
-        command = f"function {interpreter.datapack_id}:user_functions/{self.name}"
-        interpreter.add_command(context.mcfunction_name, command)
+        interpreter.visit(self.body, local_context)  # generate all commands inside body
 
-        function_result: CompileResult = interpreter.visit(self.body, local_context)
-        return CompileResult(function_result.get_return())  # return value as normal value
+    def call(self, interpreter) -> str:
+        return f"function {interpreter.datapack_id}:user_functions/{self.name}"
 
 
 mcs_type = MCSNull | MCSNumber | MCSFunction | MCSVariable
