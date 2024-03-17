@@ -150,10 +150,10 @@ class CompileInterpreter:
     def visit_DefineFunctionNode(self, node, context: CompileContext) -> CompileResult:
         fnc_name = node.get_name()
         fnc_body = node.get_body()
-        # TODO: node.get_parameter_names()
+        fnc_parameter_names: list[str, ...] = node.get_parameter_names()
 
-        function = MCSFunction(fnc_name, fnc_body)
-        function.generate_function(self, context)
+        function = MCSFunction(fnc_name, fnc_body, fnc_parameter_names, context)
+        function.generate_function(self)
         context.declare(fnc_name, function)
 
         return CompileResult(function)
@@ -163,7 +163,7 @@ class CompileInterpreter:
         variable_name = node.get_name()
         variable_value = node.get_value()
         if variable_value is None:
-            context.declare(variable_name, None)
+            context.declare(variable_name, MCSNull(context.uuid))
             return CompileResult()
 
         variable_value = self.visit(variable_value, context).get_value()
@@ -223,8 +223,9 @@ class CompileInterpreter:
 
     def visit_FunctionCallNode(self, node, context: CompileContext) -> CompileResult:
         fnc: MCSFunction = self.visit(node.get_root(), context).get_value()
+        arguments: tuple[mcs_type, ...] = tuple(map(lambda x: self.visit(x, context).get_value(), node.get_arguments()))
 
-        self.add_command(context.mcfunction_name, fnc.call(self))
+        self.add_commands(context.mcfunction_name, fnc.call(self, arguments))
 
         return CompileResult()
 

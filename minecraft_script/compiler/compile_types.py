@@ -27,11 +27,11 @@ class MCSNull(MCSObject):
         super().__init__(context_id)
 
     @staticmethod
-    def save_to_storage_cmd():  # NOQA
+    def save_to_storage_cmd(output_context):  # NOQA
         return ""
 
-    def set_to_current_cmd(self) -> str:  # NOQA
-        return f"data modify storage mcs_{self.context_id} current set value \":null:\""
+    def set_to_current_cmd(self, output_context) -> str:  # NOQA
+        return f"data modify storage mcs_{self.context_id} current set value 0b"
 
 
 class MCSNumber(MCSObject):
@@ -49,18 +49,32 @@ class MCSNumber(MCSObject):
 
 
 class MCSFunction:
-    def __init__(self, name: str, body):
+    def __init__(self, name: str, body, parameter_names: list[str, ...], context):
+        from .compile_interpreter import CompileContext
+
         self.name = name
         self.body = body
+        self.parameter_names = parameter_names
+        self.local_context = CompileContext(self.name, context)
 
-    def generate_function(self, interpreter, context) -> None:
-        from .compile_interpreter import CompileContext, CompileResult
-        local_context = CompileContext(self.name, context)
+    def generate_function(self, interpreter) -> None:
+        for name in self.parameter_names:
+            self.local_context.declare(name, MCSVariable(name, self.local_context.uuid))
 
-        interpreter.visit(self.body, local_context)  # generate all commands inside body
+        interpreter.visit(self.body, self.local_context)  # generate all commands inside body
 
-    def call(self, interpreter) -> str:
-        return f"function {interpreter.datapack_id}:user_functions/{self.name}"
+    def call(self, interpreter, arguments) -> list[str, ...]:
+        commands = []
+
+        for name, argument in zip(self.parameter_names, arguments):
+            commands.extend([
+                argument.set_to_current_cmd(self.local_context),
+                f"data modify storage mcs_{self.local_context.uuid} variable.{name} set from storage mcs_{self.local_context.uuid} current",  # NOQA
+            ])
+
+        commands.append(f"function {interpreter.datapack_id}:user_functions/{self.name}")
+
+        return commands  # NOQA
 
 
 mcs_type = MCSNull | MCSNumber | MCSFunction | MCSVariable

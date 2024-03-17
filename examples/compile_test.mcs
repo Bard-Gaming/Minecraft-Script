@@ -3,8 +3,9 @@ var chiller = 4;
 var result = 2*(bob + chiller + 1);  // should be 16
 
 
-function increment_five = () => {
-    set result = result + 5;
+function increment_result = (value) => {
+    set result = result + value;
 }
 
-increment_five();
+increment_result(15);  // should be 31
+increment_result(2);  // should be 33
