@@ -1,4 +1,4 @@
-from .compile_interpreter import compile
+from .compile_interpreter import mcs_compile
 from ..common import module_folder
 from ..text_additions import text_error
 from os import mkdir, listdir
@@ -21,6 +21,7 @@ class Compiler:
             "################################################################\n"
             "\n"
             "scoreboard objectives add mcs_math dummy \"Minecraft-Script Math\"\n"
+            f"function {self.datapack_id}:user_functions/init\n"  # call user-defined init
         )
 
         with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file:
@@ -34,6 +35,7 @@ class Compiler:
             "#                                                              #\n"
             "################################################################\n"
             "\n"
+            f"function {self.datapack_id}:user_functions/main\n"
         )
 
         with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file:
@@ -53,7 +55,8 @@ class Compiler:
             f"data remove storage minecraft:mcs_{self.datapack_id} list\n"
             f"data remove storage minecraft:mcs_{self.datapack_id} temporary\n"
             f"scoreboard objectives remove mcs_math\n"
-            f"datapack disable \"file/{self.datapack_name}\""
+            f"function {self.datapack_id}:user_functions/kill\n"
+            f"datapack disable \"file/{self.datapack_name}\"\n"
         )
 
         with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file:
@@ -113,6 +116,7 @@ class Compiler:
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}')
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions')
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/code_blocks')
+        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/user_functions')
 
         # default stuff
         if verbose:
@@ -145,7 +149,7 @@ class Compiler:
         if verbose:
             print("Compiling program...")
 
-        compile(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/', self.datapack_id)
+        mcs_compile(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/', self.datapack_id)
 
         if verbose:
             print("Done!")

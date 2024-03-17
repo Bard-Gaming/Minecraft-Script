@@ -1,0 +1,2 @@
+var bob = 3;
+log(bob);
