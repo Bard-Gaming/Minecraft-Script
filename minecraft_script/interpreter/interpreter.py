@@ -1,4 +1,4 @@
-from .errors import *
+from ..errors import *
 from .types import *
 from .builtin_functions import builtin_functions
 

@@ -1,5 +1,5 @@
 from . import run_code
-from .minecraft_builder import build_file
+from .compiler import build_datapack_from_file
 from .text_additions import text_error
 import os
 
@@ -16,7 +16,7 @@ def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = Tru
     datapack_name = datapack_name if datapack_name else mcs_file.split('/')[-1].split('.')[0].replace('_', ' ').replace('-', ' ').title()
     mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
 
-    build_file(mcs_file, datapack_name, verbose)
+    build_datapack_from_file(mcs_file, datapack_name, verbose)
 
 
 def sh_run_file_iteration(filename: str, *args) -> None:

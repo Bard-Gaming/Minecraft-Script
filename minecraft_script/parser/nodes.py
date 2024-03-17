@@ -1,4 +1,4 @@
-from .tokens import Token
+from ..lexer.tokens import Token
 
 
 class ParserNode:

@@ -15,4 +15,8 @@ class Token:
         return self.tt_type == token_type and any(self.variant == variant for variant in variants)
 
     def __repr__(self):
-        return f'Token({self.value !r}, {self.tt_type !r}{f", {self.position !r}" if self.position is not None else ""}{f", {self.variant !r}" if self.variant is not None else ""})'
+        return (
+            f'Token({self.value !r}, {self.tt_type !r}'
+            f'{f", {self.position !r}" if self.position is not None else ""}'
+            f'{f", {self.variant !r}" if self.variant is not None else ""})'
+        )

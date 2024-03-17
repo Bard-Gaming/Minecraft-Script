@@ -32,3 +32,6 @@ If you want to simplify the usage of shell commands, you can check out [the inst
 [**Link to GitHub Repository**](https://github.com/Bard-Gaming/Minecraft-Script)
 
 Source code, documentation, and examples, can all be found on the GitHub.
+
+## Compatibility
+This python package **does not work on Linux / macOS**.

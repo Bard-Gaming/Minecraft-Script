@@ -1,6 +1,6 @@
-from .lexer import Lexer
-from .parser import Parser
-from .interpreter import Interpreter, InterpreterContext, SymbolTable
+from .lexer.lexer import Lexer
+from .parser.parser import Parser
+from .interpreter.interpreter import Interpreter, InterpreterContext, SymbolTable
 
 
 def run_code(code_input: str, *, print_variables: bool = False) -> None:
@@ -16,7 +16,7 @@ def run_code(code_input: str, *, print_variables: bool = False) -> None:
 
 
 def run_shell():
-    global_symbol_table = SymbolTable()
+    context = InterpreterContext(top_level=True)
 
     while True:
         text = input('> ')
@@ -30,7 +30,6 @@ def run_shell():
         ast = run_parser.parse()
 
         run_interpreter = Interpreter()
-        context = Context('main', global_symbol_table)
         print(run_interpreter.visit(ast, context)[0])
 
 

@@ -1,4 +1,4 @@
-from .build_interpreter import build
+from .compile_interpreter import compile
 from ..common import module_folder
 from ..text_additions import text_error
 from os import mkdir, listdir
@@ -6,7 +6,7 @@ from time import time
 from shutil import copyfile
 
 
-class Builder:
+class Compiler:
     def __init__(self, ast: list, datapack_name: str):
         self.ast = ast
         self.datapack_name = datapack_name
@@ -145,7 +145,7 @@ class Builder:
         if verbose:
             print("Compiling program...")
 
-        build(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/', self.datapack_id)
+        compile(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/', self.datapack_id)
 
         if verbose:
             print("Done!")
