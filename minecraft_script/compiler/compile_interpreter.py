@@ -46,7 +46,7 @@ class CompileSymbols:
 class CompileContext:
     def __init__(self, mcfunction_name: str = 'init', parent: "CompileContext" = None, *, top_level: bool = False):
         self.parent = parent
-        self.symbols = CompileSymbols(parent.symbols if parent is not None else None,  load_builtins=top_level)  # NOQA
+        self.symbols = CompileSymbols(parent.symbols if parent is not None else None, load_builtins=top_level)  # NOQA
         self.top_level = top_level
         self.mcfunction_name = mcfunction_name
         self.uuid = generate_uuid()
@@ -59,6 +59,15 @@ class CompileContext:
 
     def declare(self, name: str, value: mcs_type) -> None:
         self.symbols.declare(name, value)
+
+    def get_context_ownership(self, var_name: str) -> "CompileContext":
+        if self.symbols.symbols.get(var_name, None) is not None:
+            return self
+
+        if self.parent is not None:
+            return self.parent.get_context_ownership(var_name)
+
+        raise NameError(f"name {var_name} is not defined")
 
     def __repr__(self) -> str:
         return f'CompileContext({self.mcfunction_name !r}, {self.parent !r}, {self.top_level !r})'
@@ -138,6 +147,17 @@ class CompileInterpreter:
         result = CompileResult(obj)
         return result
 
+    def visit_DefineFunctionNode(self, node, context: CompileContext) -> CompileResult:
+        fnc_name = node.get_name()
+        fnc_body = node.get_body()
+        # TODO: node.get_parameter_names()
+
+        function = MCSFunction(fnc_name, fnc_body)
+        context.declare(fnc_name, function)
+        self.add_command(fnc_name, "")  # add empty command to create function file
+
+        return CompileResult(function)
+
     # ------------------ variables ------------------ :
     def visit_VariableDeclareNode(self, node, context: CompileContext) -> CompileResult:
         variable_name = node.get_name()
@@ -150,10 +170,8 @@ class CompileInterpreter:
             return CompileResult()
 
         commands = (
-            variable_value.set_to_current_cmd(),
-
-            f"data modify storage mcs_{context.uuid} variable.{variable_name} "
-            f"set from storage mcs_{context.uuid} current"
+            variable_value.set_to_current_cmd(context),
+            f"data modify storage mcs_{context.uuid} variable.{variable_name} set from storage mcs_{context.uuid} current"  # NOQA
         )
         self.add_commands(context.mcfunction_name, commands)
 
@@ -165,6 +183,21 @@ class CompileInterpreter:
         value = context.get(variable_name)
 
         return CompileResult(value)
+
+    def visit_VariableSetNode(self, node, context: CompileContext) -> CompileResult:
+        var_name = node.get_name()
+        new_value: mcs_type = self.visit(node.get_value(), context).get_value()
+
+        context.set(var_name, new_value)
+        owner_context = context.get_context_ownership(var_name)
+
+        commands = (
+            new_value.set_to_current_cmd(context),
+            f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage mcs_{context.uuid} current",  # NOQA
+        )
+        self.add_commands(context.mcfunction_name, commands)
+
+        return CompileResult()
 
     # ------------------ scope nodes ------------------ :
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
@@ -186,6 +219,12 @@ class CompileInterpreter:
 
         return return_value
 
+    def visit_FunctionCallNode(self, node, context: CompileContext) -> CompileResult:
+        fnc: MCSFunction = self.visit(node.get_root(), context).get_value()
+        result: CompileResult = fnc.call(self, context)
+
+        return result
+
     # ------------------ miscellaneous ------------------ :
     def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:
         left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
@@ -194,14 +233,12 @@ class CompileInterpreter:
         result: mcs_type = MCSNumber(context.uuid)
 
         commands = (
-            left_value.set_to_current_cmd(),
+            left_value.set_to_current_cmd(context),
             f"execute store result score .a mcs_math run data get storage mcs_{context.uuid} current",
-            right_value.set_to_current_cmd(),
+            right_value.set_to_current_cmd(context),
             f"execute store result score .b mcs_math run data get storage mcs_{context.uuid} current",
             f"function {self.datapack_id}:math/{operation}",
-
-            f"execute store result storage mcs_{context.uuid} number.{result.uuid} int 1 "
-            "run scoreboard players get .out mcs_math"
+            f"execute store result storage mcs_{context.uuid} number.{result.uuid} int 1 run scoreboard players get .out mcs_math",  # NOQA
         )
         self.add_commands(context.mcfunction_name, commands)
 
@@ -238,5 +275,3 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
 
         with open(mcfunction_path, "xt") as mcfunction_file:
             mcfunction_file.write(interpreter.get_file_content(fnc_name))
-
-
