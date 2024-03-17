@@ -77,6 +77,9 @@ class CompileCommands:
     def get_file_content(self, mcfunction_file_name: str) -> str:
         return "\n".join(self.commands.get(mcfunction_file_name, []))
 
+    def get_mcs_functions(self) -> tuple[str, ...]:
+        return tuple(self.commands.keys())
+
     def __repr__(self) -> str:
         return "CompileCommands()"
 
@@ -107,6 +110,12 @@ class CompileInterpreter:
         for command in commands:
             self.add_command(mcfunction, command)
 
+    def get_file_content(self, mcfunction):
+        return self.commands.get_file_content(mcfunction)
+
+    def get_mcs_functions(self) -> tuple[str, ...]:
+        return self.commands.get_mcs_functions()
+
     def visit(self, node, context: CompileContext) -> CompileResult:
         method = getattr(self, f"visit_{type(node).__name__}", "visit_unknown")
         return method(node, context)
@@ -134,6 +143,16 @@ class CompileInterpreter:
         return CompileResult()
 
     # ------------------ miscellaneous ------------------ :
+    def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
+        for statement in node.get_nodes():
+            return_value: CompileResult = self.visit(statement, context)
+
+            # if a "return" statement is encountered:
+            if return_value.get_return() is not None:
+                return return_value
+
+        return CompileResult(MCSNull(context.uuid))  # if no return statement is encountered
+
     @staticmethod
     def visit_unknown(node, context):
         raise ValueError(f'Unknown node {node !r}')
@@ -142,5 +161,13 @@ class CompileInterpreter:
         return "CompileInterpreter()"
 
 
-def mcs_compile(*args, **kwargs):
-    pass
+def mcs_compile(ast, user_function_dir: str):
+    context = CompileContext(top_level=True)
+    interpreter = CompileInterpreter()
+
+    interpreter.visit(ast, context)
+    for fnc_name in interpreter.get_mcs_functions():
+        with open(f"{user_function_dir}/{fnc_name}.mcfunction", "xt") as mcfunction_file:
+            mcfunction_file.write(interpreter.get_file_content(fnc_name))
+
+

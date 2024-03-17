@@ -147,9 +147,9 @@ class Compiler:
         self.generate_builtin_functions(verbose)
 
         if verbose:
-            print("Compiling program...")
+            print("Compiling program...", end=" ")
 
-        mcs_compile(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/', self.datapack_id)
+        mcs_compile(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/user_functions')
 
         if verbose:
             print("Done!")
@@ -157,5 +157,4 @@ class Compiler:
         elapsed_time = time() - start_time
 
         if verbose:
-            print('Done!')
-            print(f'Finished Building {self.datapack_name}! Time Elapsed:{elapsed_time: 0.3f}s')
+            print(f'Finished compiling {self.datapack_name}! Time Elapsed: {elapsed_time: 0.3f}s')
