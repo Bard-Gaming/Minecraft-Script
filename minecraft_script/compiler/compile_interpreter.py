@@ -162,12 +162,11 @@ class CompileInterpreter:
     def visit_VariableDeclareNode(self, node, context: CompileContext) -> CompileResult:
         variable_name = node.get_name()
         variable_value = node.get_value()
-        if variable_value is not None:
-            variable_value = self.visit(variable_value, context).get_value()
-
-        context.declare(variable_name, variable_value)  # declare variable in local context
         if variable_value is None:
+            context.declare(variable_name, None)
             return CompileResult()
+
+        variable_value = self.visit(variable_value, context).get_value()
 
         commands = (
             variable_value.set_to_current_cmd(context),
@@ -175,12 +174,15 @@ class CompileInterpreter:
         )
         self.add_commands(context.mcfunction_name, commands)
 
+        variable = MCSVariable(variable_name, context.uuid)  # variable_value no longer needed since it's in variable
+        context.declare(variable_name, variable)  # declare variable in local context
+
         return CompileResult()
 
     @staticmethod
     def visit_VariableAccessNode(node, context: CompileContext) -> CompileResult:
         variable_name: str = node.get_name()
-        value = context.get(variable_name)
+        value: MCSVariable = context.get(variable_name)
 
         return CompileResult(value)
 

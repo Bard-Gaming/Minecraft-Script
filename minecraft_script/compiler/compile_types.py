@@ -13,6 +13,15 @@ class MCSObject:
         return f"data modify storage mcs_{output_context.uuid} current set from storage mcs_{self.context_id} {storage_compartment}.{self.uuid}"  # NOQA
 
 
+class MCSVariable:
+    def __init__(self, name: str, context_id):
+        self.name = name
+        self.context_id = context_id
+
+    def set_to_current_cmd(self, output_context) -> str:
+        return f"data modify storage mcs_{output_context.uuid} current set from storage mcs_{self.context_id} variable.{self.name}"  # NOQA
+
+
 class MCSNull(MCSObject):
     def __init__(self, context_id):
         super().__init__(context_id)
@@ -55,4 +64,4 @@ class MCSFunction:
         return CompileResult(function_result.get_return())  # return value as normal value
 
 
-mcs_type = MCSNull | MCSNumber | MCSFunction
+mcs_type = MCSNull | MCSNumber | MCSFunction | MCSVariable
