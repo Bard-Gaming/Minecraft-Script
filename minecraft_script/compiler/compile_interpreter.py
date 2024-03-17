@@ -1,5 +1,6 @@
 from .builtin_functions import builtin_functions
 from .compile_types import *
+from ..common import generate_uuid
 
 
 class CompileSymbols:
@@ -137,14 +138,10 @@ class CompileInterpreter:
         return method(node, context)
 
     # ------------------ value nodes ------------------ :
-    def visit_NumberNode(self, node, context: CompileContext) -> CompileResult:
-        value = int(node.get_value())
-        obj = MCSNumber(context.uuid)
-
-        # add value creation command to compiled commands
-        self.add_command(context.mcfunction_name, obj.save_to_storage_cmd(value))
-
-        result = CompileResult(obj)
+    @staticmethod
+    def visit_NumberNode(node, context: CompileContext) -> CompileResult:
+        value = MCSValue(node.get_value())  # node's value is string of number
+        result = CompileResult(value)
         return result
 
     def visit_DefineFunctionNode(self, node, context: CompileContext) -> CompileResult:
@@ -162,12 +159,11 @@ class CompileInterpreter:
     def visit_VariableDeclareNode(self, node, context: CompileContext) -> CompileResult:
         variable_name = node.get_name()
         variable_value = node.get_value()
-        if variable_value is not None:
-            variable_value = self.visit(variable_value, context).get_value()
-
-        context.declare(variable_name, variable_value)  # declare variable in local context
         if variable_value is None:
+            context.declare(variable_name, None)
             return CompileResult()
+
+        variable_value = self.visit(variable_value, context).get_value()
 
         commands = (
             variable_value.set_to_current_cmd(context),
@@ -175,20 +171,22 @@ class CompileInterpreter:
         )
         self.add_commands(context.mcfunction_name, commands)
 
+        variable = MCSObject(variable_name, context.uuid)
+        context.declare(variable_name, variable)
+
         return CompileResult()
 
     @staticmethod
     def visit_VariableAccessNode(node, context: CompileContext) -> CompileResult:
         variable_name: str = node.get_name()
-        value = context.get(variable_name)
+        var_obj: MCSObject = context.get(variable_name)
 
-        return CompileResult(value)
+        return CompileResult(var_obj)
 
     def visit_VariableSetNode(self, node, context: CompileContext) -> CompileResult:
         var_name = node.get_name()
         new_value: mcs_type = self.visit(node.get_value(), context).get_value()
 
-        context.set(var_name, new_value)
         owner_context = context.get_context_ownership(var_name)
 
         commands = (
@@ -208,7 +206,7 @@ class CompileInterpreter:
             if return_value.get_return() is not None:
                 return return_value
 
-        return CompileResult(MCSNull(context.uuid))  # if no return statement is encountered
+        return CompileResult(None, MCSValue("0"))  # if no return statement is encountered, return False/None/0
 
     def visit_CodeBlockNode(self, node, context: CompileContext) -> CompileResult:
         local_context = CompileContext(f':cb_{generate_uuid()}', context)
@@ -230,7 +228,7 @@ class CompileInterpreter:
         left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
         right_value: mcs_type = self.visit(node.get_right_node(), context).get_value()
         operation: str = node.get_operator().variant.lower()  # 'add', 'subtract', etc...
-        result: mcs_type = MCSNumber(context.uuid)
+        result: mcs_type = MCSValue(context.uuid)
 
         commands = (
             left_value.set_to_current_cmd(context),
@@ -261,8 +259,7 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
     for context_id in interpreter.used_context_ids:
         commands = (
             f"data remove storage mcs_{context_id} current",
-            f"data remove storage mcs_{context_id} variable",
-            f"data remove storage mcs_{context_id} number",
+            f"data remove storage mcs_{context_id} variables",
         )
         interpreter.add_commands('kill', commands)
 
