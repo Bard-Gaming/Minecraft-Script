@@ -1,6 +1,10 @@
-{
-    var bob = 3;
-    var chiller = 4;
+var bob = 3;
+var chiller = 4;
+var result = 2*(bob + chiller + 1);  // should be 16
 
-    var result = 2*(bob + chiller + 1);  // should be 16
+
+function increment_five = () => {
+    set result = result + 5;
 }
+
+increment_five();
