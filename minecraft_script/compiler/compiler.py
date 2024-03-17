@@ -49,11 +49,6 @@ class Compiler:
             "#                                                              #\n"
             "################################################################\n"
             "\n"
-            f"data remove storage minecraft:mcs_{self.datapack_id} variables\n"
-            f"data remove storage minecraft:mcs_{self.datapack_id} string\n"
-            f"data remove storage minecraft:mcs_{self.datapack_id} number\n"
-            f"data remove storage minecraft:mcs_{self.datapack_id} list\n"
-            f"data remove storage minecraft:mcs_{self.datapack_id} temporary\n"
             f"scoreboard objectives remove mcs_math\n"
             f"function {self.datapack_id}:user_functions/kill\n"
             f"datapack disable \"file/{self.datapack_name}\"\n"
@@ -149,7 +144,11 @@ class Compiler:
         if verbose:
             print("Compiling program...", end=" ")
 
-        mcs_compile(self.ast, f'{self.datapack_name}/data/{self.datapack_id}/functions/user_functions')
+        mcs_compile(
+            self.ast,
+            f'{self.datapack_name}/data/{self.datapack_id}/functions/user_functions',
+            self.datapack_id
+        )
 
         if verbose:
             print("Done!")

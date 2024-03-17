@@ -51,12 +51,6 @@ class CompileContext:
 
     def declare(self, name: str, value: mcs_type) -> tuple[str, str]:
         self.symbols.declare(name, value)
-        commands = (
-            value.set_to_current_cmd(),
-            f"data modify storage mcs_{self.uuid} variables.{name} set from storage mcs_{self.uuid} current"
-        )
-
-        return commands
 
     def __repr__(self) -> str:
         return f'CompileContext({self.mcfunction_name !r}, {self.parent !r}, {self.top_level !r})'
@@ -100,7 +94,8 @@ class CompileResult:
 
 
 class CompileInterpreter:
-    def __init__(self):
+    def __init__(self, datapack_id):
+        self.datapack_id = datapack_id
         self.commands = CompileCommands()
 
     def add_command(self, mcfunction: str, command: str) -> None:
@@ -117,17 +112,18 @@ class CompileInterpreter:
         return self.commands.get_mcs_functions()
 
     def visit(self, node, context: CompileContext) -> CompileResult:
-        method = getattr(self, f"visit_{type(node).__name__}", "visit_unknown")
+        method = getattr(self, f"visit_{type(node).__name__}", self.visit_unknown)
         return method(node, context)
 
     # ------------------ value nodes ------------------ :
     def visit_NumberNode(self, node, context: CompileContext) -> CompileResult:
-        value = MCSNumber(int(node.get_value()), context.uuid)  # extract value from node and create MCSNumber obj
+        value = int(node.get_value())
+        obj = MCSNumber(context.uuid)
 
         # add value creation command to compiled commands
-        self.add_command(context.mcfunction_name, value.save_to_storage_cmd())
+        self.add_command(context.mcfunction_name, obj.save_to_storage_cmd(value))
 
-        result = CompileResult(value)
+        result = CompileResult(obj)
         return result
 
     # ------------------ variables ------------------ :
@@ -137,12 +133,48 @@ class CompileInterpreter:
         if variable_value is not None:
             variable_value = self.visit(variable_value, context).get_value()
 
-        commands = context.declare(variable_name, variable_value)  # declare variable in local context
+        context.declare(variable_name, variable_value)  # declare variable in local context
+        if variable_value is None:
+            return CompileResult()
+
+        commands = (
+            variable_value.set_to_current_cmd(),
+
+            f"data modify storage mcs_{context.uuid} variables.{variable_name} "
+            f"set from storage mcs_{context.uuid} current"
+        )
         self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult()
 
+    @staticmethod
+    def visit_VariableAccessNode(node, context: CompileContext) -> CompileResult:
+        variable_name: str = node.get_name()
+        value = context.get(variable_name)
+
+        return CompileResult(value)
+
     # ------------------ miscellaneous ------------------ :
+    def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:
+        left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
+        right_value: mcs_type = self.visit(node.get_right_node(), context).get_value()
+        operation: str = node.get_operator().variant.lower()  # 'add', 'subtract', etc...
+        result: mcs_type = MCSNumber(context.uuid)
+
+        commands = (
+            left_value.set_to_current_cmd(),
+            f"execute store result score .a mcs_math run data get storage mcs_{context.uuid} current",
+            right_value.set_to_current_cmd(),
+            f"execute store result score .b mcs_math run data get storage mcs_{context.uuid} current",
+            f"function {self.datapack_id}:math/{operation}",
+
+            f"execute store result storage mcs_{context.uuid} number.{result.uuid} int 1 "
+            "run scoreboard players get .out mcs_math"
+        )
+        self.add_commands(context.mcfunction_name, commands)
+
+        return CompileResult(result)
+
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
         for statement in node.get_nodes():
             return_value: CompileResult = self.visit(statement, context)
@@ -161,9 +193,9 @@ class CompileInterpreter:
         return "CompileInterpreter()"
 
 
-def mcs_compile(ast, user_function_dir: str):
+def mcs_compile(ast, user_function_dir: str, datapack_id):
     context = CompileContext(top_level=True)
-    interpreter = CompileInterpreter()
+    interpreter = CompileInterpreter(datapack_id)
 
     interpreter.visit(ast, context)
     for fnc_name in interpreter.get_mcs_functions():

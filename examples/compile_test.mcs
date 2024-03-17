@@ -1,1 +1,4 @@
 var bob = 3;
+var chiller = 4;
+
+var result = 2*(bob + chiller + 1);  // should be 16

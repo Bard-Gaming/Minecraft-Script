@@ -24,23 +24,22 @@ class MCSNull(MCSObject):
     def save_to_storage_cmd():  # NOQA
         return ""
 
-    def set_to_current_cmd(self) -> str:
+    def set_to_current_cmd(self) -> str:  # NOQA
         return f"data modify storage mcs_{self.context_id} current set value \":null:\""
 
 
 class MCSNumber(MCSObject):
-    def __init__(self, value: int, context_id):
+    def __init__(self, context_id):
         super().__init__(context_id)
-        self.value = value
 
-    def save_to_storage_cmd(self) -> str:  # NOQA
-        return super().save_to_storage_cmd("number", f"{self.value}b")  # save number as byte (b)
+    def save_to_storage_cmd(self, value: int) -> str:  # NOQA
+        return super().save_to_storage_cmd("number", value)
 
     def set_to_current_cmd(self) -> str:  # NOQA
         return super().set_to_current_cmd("number")
 
     def __repr__(self) -> str:
-        return f"MCSNumber({self.value !r})"
+        return f"MCSNumber({self.uuid !r})"
 
 
 mcs_type = MCSNull | MCSNumber
