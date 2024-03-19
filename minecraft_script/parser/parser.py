@@ -259,7 +259,7 @@ class Parser:
         name = self.current_token
         self.advance()
 
-        if self.current_token.matches('TT_BRACE', 'LEFT'):
+        if self.current_token.matches('TT_BRACKET', 'LEFT'):
             return self.set_key(name)
 
         if not self.current_token.matches('TT_EQUALS'):
@@ -276,7 +276,7 @@ class Parser:
 
         key = self.expression()
 
-        if not self.current_token.matches('TT_BRACE', 'RIGHT'):
+        if not self.current_token.matches('TT_BRACKET', 'RIGHT'):
             self.raise_error(f"Expected ']', got {self.current_token.value !r}")
         self.advance()
 

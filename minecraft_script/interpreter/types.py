@@ -105,13 +105,24 @@ class MCSObject:
 
 
 class MCSIterable(MCSObject):
-    def get_key(self, key: str):
+    def get_key(self, key: str) -> any:
         try:
             index = int(key)
         except ValueError as err:
             raise MCSTypeError(f'{self.class_name()} indices must be integers') from err
 
         return self.get_value()[index]
+
+    def set_key(self, key: str, value: any) -> None:
+        try:
+            index = int(key)
+        except ValueError as err:
+            raise MCSTypeError(f'{self.class_name()} indices must be integers') from err
+
+        if index < len(self.get_value()):
+            self.get_value()[index] = value
+        else:
+            self.get_value().insert(index, value)
 
     def is_iterable(self) -> bool:
         return True

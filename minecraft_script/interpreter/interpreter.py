@@ -160,6 +160,16 @@ class Interpreter:
         context.set(name, value)
         return RuntimeResult()
 
+    def visit_SetKeyNode(self, node, context: InterpreterContext) -> RuntimeResult:
+        name: str = node.get_name()
+        key = self.visit(node.get_key(), context).get_value()
+        value = self.visit(node.get_value(), context).get_value()
+
+        iterable: MCSIterable = context.get(name)
+        iterable.set_key(key, value)
+
+        return RuntimeResult()
+
     # --------------- Functions --------------- :
     def visit_DefineFunctionNode(self, node, context: InterpreterContext) -> RuntimeResult:
         name: str = node.get_name()

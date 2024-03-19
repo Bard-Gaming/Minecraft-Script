@@ -10,6 +10,10 @@
     - [x] Parser Implementation
 
 ## Interpreter
+  - [x] SetKeyNode
+    - [x] Iterable implementation
+    - [x] Interpreter implementation
+
   - [ ] Attributes/methods
     - [ ] List
       - [ ] .append()

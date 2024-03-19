@@ -139,8 +139,8 @@ class SetKeyNode(ParserNode):
         self.key = key  # node
         self.value = value  # node
 
-    def get_name(self) -> Token:
-        return self.get_determinant_value()
+    def get_name(self) -> str:
+        return self.get_determinant_value().value
 
     def get_key(self) -> ParserNode:
         return self.key
