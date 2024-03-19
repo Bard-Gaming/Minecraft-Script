@@ -136,6 +136,9 @@ class MCSNumber(MCSObject):
         return super().unary_operation(operator)
 
     # ----------------- Miscellaneous ----------------- :
+    def __int__(self) -> int:
+        return self.get_value()
+
     def __repr__(self) -> str:
         return f'MCSNumber({self.value !r})'
 
@@ -160,6 +163,9 @@ class MCSBool(MCSObject):
 class MCSNull(MCSObject):
     def get_value(self) -> None:
         return
+
+    def print_value(self) -> str:
+        return f"null"
 
     # ----------------- Operations ----------------- :
     def _binary_operation(self, other, operator: str):
@@ -255,9 +261,9 @@ class MCSFunction(MCSObject):
         for i in range(len(self.parameter_names)):
             local_context.declare(self.parameter_names[i], arg_list[i])
 
-        result: RuntimeResult | None = local_interpreter.visit(self.body, local_context)
+        result: RuntimeResult = local_interpreter.visit(self.body, local_context)
 
-        return result if result is not None else RuntimeResult(return_value=MCSNull())
+        return result if result.get_return_value() is not None else RuntimeResult(return_value=MCSNull())
 
     def __repr__(self) -> str:
         return f"MCSFunction({self.name !r}, {self.parameter_names !r})"
