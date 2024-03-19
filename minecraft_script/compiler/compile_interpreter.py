@@ -201,6 +201,14 @@ class CompileInterpreter:
 
         return CompileResult()
 
+    # ------------------ conditions & loops ------------------ :
+    def visit_IfConditionNode(self, node, context: CompileContext) -> CompileResult:
+        conditions: list[dict] = node.get_conditions()
+
+        for condition in conditions:
+            if condition.get('type') == 'if':
+                pass
+
     # ------------------ scope nodes ------------------ :
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
         for statement in node.get_nodes():

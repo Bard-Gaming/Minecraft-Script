@@ -7,5 +7,11 @@ function increment_result = (value) => {
     set result = result + value;
 }
 
+function increment_by_five = () => {
+    increment_result(5);
+}
+
+
+
 increment_result(15);  // should be 31
 increment_result(2);  // should be 33
