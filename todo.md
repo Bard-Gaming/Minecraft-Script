@@ -1,9 +1,9 @@
 # MCS Todo list
 
 ## Parser
-  - [ ] Rework ParserNode parent class
-    - [ ] Rework every parser node to fit new parent class
-    - [ ] Make sure everything still has the same functionality
+  - [x] Rework ParserNode parent class
+    - [x] Rework every parser node to fit new parent class
+    - [x] Make sure everything still has the same functionality
 
   - [x] SetKeyNode
     - [x] Node

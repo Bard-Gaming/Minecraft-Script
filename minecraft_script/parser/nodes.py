@@ -2,59 +2,72 @@ from ..lexer.tokens import Token
 
 
 class ParserNode:
-    def __init__(self, determinant_value, position=None):
-        self.__determinant_value: ParserNode | Token = determinant_value
-        self.__position = position if position is not None else self.__determinant_value.get_position()
-
-    def get_determinant_value(self):
-        return self.__determinant_value
-
-    def get_position(self):
-        return self.__position
-
-    def repr_gen(self, *values) -> str:
-        return f'{self.__class__.__name__}({", ".join(repr(value) for value in values)})'
-
-    def __repr__(self) -> str:
-        return self.repr_gen(self.__determinant_value)
+    """
+    ParserNode class that implements all parser nodes.
+    Purely used for encapsulation/categorising.
+    """
+    pass
 
 
 class NumberNode(ParserNode):
     def __init__(self, value: Token):
-        super().__init__(value)
+        self.value = value
 
     def get_value(self) -> str:
-        value_token: Token = self.get_determinant_value()
-        return value_token.value  # extract value of token
+        return self.value.value  # extract value of token
+
+    def get_position(self) -> tuple[int, int]:
+        return self.value.get_position()
+
+    def __repr__(self) -> str:
+        return f"NumberNode({self.value !r})"
 
 
 class StringNode(ParserNode):
     def __init__(self, value: Token):
-        super().__init__(value)
+        self.value = value
 
     def get_value(self) -> str:
-        value_token: Token = self.get_determinant_value()
-        return value_token.value  # extract value of token
+        return self.value.value  # extract value of token
+
+    def get_position(self) -> tuple[int, int]:
+        return self.value.get_position()
+
+    def __repr__(self) -> str:
+        return f"StringNode({self.value !r})"
 
 
 class ListNode(ParserNode):
-    def __init__(self, node_list, position):
-        super().__init__(node_list, position)
+    def __init__(self, node_list: list[ParserNode, ...], position: tuple[int, int]):
+        self.node_list = node_list
+        self.position = position
 
     def get_node_list(self) -> list[ParserNode, ...]:
-        return self.get_determinant_value()  # NOQA needed since there is no problem with det_val here
+        return self.node_list
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"ListNode({self.node_list !r}, {self.position !r})"
 
 
 class BooleanNode(ParserNode):
-    def __init__(self, value):
-        super().__init__(value)
+    def __init__(self, value: Token):
+        self.value = value
 
     def get_value(self) -> bool:
-        return self.get_determinant_value().value == 'true'
+        return self.value.value == 'true'
+
+    def get_position(self) -> tuple[int, int]:
+        return self.value.get_position()
+
+    def __repr__(self) -> str:
+        return f"BooleanNode({self.value !r})"
 
 
 class NullNode(ParserNode):
-    def __init__(self):  # NOQA override ParserNode's init
+    def __init__(self):
         pass
 
     def __repr__(self):
@@ -63,84 +76,97 @@ class NullNode(ParserNode):
 
 class VariableAccessNode(ParserNode):
     def __init__(self, name: Token):
-        super().__init__(name)
+        self.name = name
 
     def get_name(self) -> str:
-        name_token = self.get_determinant_value()
-        return name_token.value  # extract value from token
+        return self.name.value  # extract value from token
+
+    def get_position(self) -> tuple[int, int]:
+        return self.name.get_position()
+
+    def __repr__(self) -> str:
+        return f"VariableAccessNode({self.name !r})"
 
 
 class VariableDeclareNode(ParserNode):
-    def __init__(self, name: Token, value: any = None):
-        super().__init__(name)  # set name to determinant value
+    def __init__(self, name: Token, value: ParserNode = None):
+        self.name = name
         self.value = value  # Node or None
 
     def get_name(self) -> str:
-        name_token = self.get_determinant_value()
-        return name_token.value  # extract value from token
+        return self.name.value  # extract value from token
 
-    def get_value(self) -> any:
+    def get_value(self) -> ParserNode | None:
         return self.value  # is a node or none
 
-    def __repr__(self):
-        return self.repr_gen(self.get_determinant_value(), self.value)
+    def __repr__(self) -> str:
+        return f"VariableDeclareNode({self.name !r}, {self.value !r})"
 
 
 class VariableSetNode(ParserNode):
-    def __init__(self, name, value, position):
-        super().__init__(name, position)
+    def __init__(self, name: Token, value: ParserNode, position: tuple[int, int]):
+        self.name = name
+        self.position = position
         self.value = value
 
     def get_name(self) -> str:
-        return self.get_determinant_value().value
+        return self.name.value  # extract value out of name
 
     def get_value(self) -> ParserNode:
         return self.value
+
+    def get_position(self) -> tuple[int, int]:
+        return self.name.get_position()
+
+    def __repr__(self) -> str:
+        return f"VariableSetNode({self.name !r}, {self.value !r})"
 
 
 class BinaryOperationNode(ParserNode):
-    def __init__(self, left_value, operator, right_value):
-        super().__init__(operator)
-
+    def __init__(self, left_value: ParserNode, operator: Token, right_value: ParserNode):
         self.left_value = left_value  # Node
+        self.operator = operator  # Token
         self.right_value = right_value  # Node
 
-    def get_left_node(self):
+    def get_left_node(self) -> ParserNode:
         return self.left_value
 
-    def get_right_node(self):
+    def get_right_node(self) -> ParserNode:
         return self.right_value
 
     def get_operator(self) -> Token:
-        return self.get_determinant_value()  # don't extract token value (can be used to determine type of operator)
+        return self.operator  # don't extract token value (type can be used to determine type of operator)
+
+    def get_position(self) -> tuple[int, int]:
+        return self.operator.get_position()
 
     def __repr__(self):
-        return self.repr_gen(self.left_value, self.get_determinant_value(), self.right_value)
+        return f"BinaryOperationNode({self.left_value !r}, {self.operator !r}, {self.right_value !r})"
 
 
 class GetKeyNode(ParserNode):
-    def __init__(self, atom, key):
-        super().__init__(atom)
+    def __init__(self, atom: ParserNode, key: ParserNode):
+        self.atom = atom
         self.key = key
 
     def get_atom(self) -> ParserNode:
-        return self.get_determinant_value()
+        return self.atom
 
     def get_key(self) -> ParserNode:
         return self.key
 
     def __repr__(self):
-        return self.repr_gen(self.get_determinant_value(), self.key)
+        return f"GetKeyNode({self.atom !r}, {self.key !r})"
 
 
 class SetKeyNode(ParserNode):
-    def __init__(self, name, key, value):
-        super().__init__(name)  # Token
-        self.key = key  # node
-        self.value = value  # node
+    def __init__(self, name: Token, key: ParserNode, value: ParserNode):
+        self.name = name  # Token
+        self.key = key  # Node
+        self.value = value  # Node
 
     def get_name(self) -> str:
-        return self.get_determinant_value().value
+        return self.name.value
 
     def get_key(self) -> ParserNode:
         return self.key
@@ -148,105 +174,171 @@ class SetKeyNode(ParserNode):
     def get_value(self) -> ParserNode:
         return self.value
 
+    def get_position(self) -> tuple[int, int]:
+        return self.name.get_position()
+
     def __repr__(self) -> str:
-        return self.repr_gen(self.get_determinant_value(), self.key, self.value)
+        return f"SetKeyNode({self.name !r}, {self.key !r}, {self.value !r})"
 
 
 class CodeBlockNode(ParserNode):
-    def __init__(self, body, position):
-        super().__init__(body, position)
+    def __init__(self, body: ParserNode, position: tuple[int, int]):
+        self.body = body
+        self.position = position
 
     def get_body(self):
-        return self.get_determinant_value()
+        return self.body
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"CodeBlockNode({self.body !r}, {self.position !r})"
 
 
 class MultilineCodeNode(ParserNode):
-    def __init__(self, statements: tuple, position: tuple):
-        super().__init__(statements, position)
+    def __init__(self, statements: tuple[ParserNode, ...], position: tuple[int, int]):
+        self.statements = statements
+        self.position = position
 
     def get_nodes(self) -> tuple[ParserNode, ...]:
-        return self.get_determinant_value()  # NOQA
+        return self.statements
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"MultilineCodeNode({self.statements !r}, {self.position !r})"
 
 
 class ReturnNode(ParserNode):
-    def __init__(self, value: any, position: tuple):
-        super().__init__(value, position)
+    def __init__(self, value: ParserNode, position: tuple[int, int]):
+        self.value = value
+        self.position = position
 
-    def get_value(self):
-        return self.get_determinant_value()
+    def get_value(self) -> ParserNode:
+        return self.value
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"ReturnNode({self.value !r}, {self.position !r})"
 
 
 class DefineFunctionNode(ParserNode):
-    def __init__(self, name: Token, body: ParserNode, parameter_names, position):
-        super().__init__(name, position)
+    def __init__(self, name: Token, body: ParserNode, parameter_names: list[Token, ...], position: tuple[int, int]):
+        self.name = name
         self.body = body
         self.parameter_names = parameter_names
+        self.position = position
 
     def get_name(self) -> str:
-        return self.get_determinant_value().value  # extract string from token
+        return self.name.value  # extract string from token
 
     def get_body(self) -> ParserNode:
         return self.body
 
-    def get_parameter_names(self) -> list:
-        return [token.value for token in self.parameter_names]
+    def get_parameter_names(self) -> list[str, ...]:
+        return list(map(lambda param: param.value, self.parameter_names))  # NOQA extract value out of parameter tokens
+
+    def get_position(self) -> tuple[int, int]:
+        return self.name.get_position()
+
+    def __repr__(self) -> str:
+        return f"DefineFunctionNode({self.name !r}, {self.body !r}, {self.parameter_names !r}, {self.position !r})"
 
 
 class FunctionCallNode(ParserNode):
-    def __init__(self, root_node, arguments, position):
-        super().__init__(root_node, position)
-        self.arguments: list = arguments  # list of nodes
+    def __init__(self, root_node: ParserNode, arguments: list[ParserNode, ...], position: tuple[int, int]):
+        self.root_node = root_node
+        self.arguments = arguments
+        self.position = position
 
-    def get_root(self):
-        return self.get_determinant_value()
+    def get_root(self) -> ParserNode:
+        return self.root_node
 
     def get_arguments(self) -> tuple[ParserNode, ...]:
         return tuple(self.arguments)
 
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"FunctionCallNode({self.root_node !r}, {self.arguments !r}, {self.position !r})"
+
 
 class IfConditionNode(ParserNode):
-    def __init__(self, condition_list, position):
-        super().__init__(condition_list, position)
+    def __init__(self, condition_list: list[dict, ...], position: tuple[int, int]):
+        self.condition_list = condition_list
+        self.position = position
 
     def get_conditions(self) -> list[dict, ...]:
-        return self.get_determinant_value()  # NOQA
+        return self.condition_list
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"IfConditionNode({self.condition_list !r}, {self.position !r})"
 
 
 class UnaryOperationNode(ParserNode):
-    def __init__(self, operator: str, root, position):
-        super().__init__(root, position)
+    def __init__(self, operator: str, root: ParserNode, position: tuple[int, int]):
         self.operator: str = operator
+        self.root = root
+        self.position = position
 
     def get_root(self) -> ParserNode:
-        return self.get_determinant_value()
+        return self.root
 
     def get_operator(self) -> str:
         return self.operator
 
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"UnaryOperationNode({self.operator !r}, {self.root !r}, {self.position !r})"
+
 
 class WhileLoopNode(ParserNode):
-    def __init__(self, condition, body, position):
-        super().__init__(body, position)
+    def __init__(self, condition: ParserNode, body: ParserNode, position: tuple[int, int]):
         self.condition = condition
+        self.body = body
+        self.position = position
 
     def get_condition(self) -> ParserNode:
         return self.condition
 
-    def get_body(self):
-        return self.get_determinant_value()
+    def get_body(self) -> ParserNode:
+        return self.body
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"WhileLoopNode({self.condition !r}, {self.body !r}, {self.position !r})"
 
 
 class ForLoopNode(ParserNode):
-    def __init__(self, iterable, child_name, body, position):
-        super().__init__(iterable, position)
+    def __init__(self, iterable: ParserNode, child_name: Token, body: ParserNode, position: tuple[int, int]):
+        self.iterable = iterable
         self.child_name = child_name
         self.body = body
+        self.position = position
 
     def get_iterable(self) -> ParserNode:
-        return self.get_determinant_value()
+        return self.iterable
 
     def get_child_name(self) -> str:
-        return self.child_name.value
+        return self.child_name.value  # extract value of token
 
     def get_body(self) -> ParserNode:
         return self.body
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"ForLoopNode({self.iterable !r}, {self.child_name !r}, {self.body !r}, {self.position !r})"
