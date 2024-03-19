@@ -26,16 +26,17 @@ whilst the actual Python package is written with an underscore ``_``._
 To debug your program, you can first run your file like any other programming language.
 To do this, use the following command:
 ```commandline
-python -m minecraft_script run [filename]
+python -m minecraft_script run [file]
 ```
-_where [filename] is a relative or absolute path to your mcs file_
+_where [file] is a relative or absolute path to your mcs file_
 
 ### Building your datapack
 To actually build your minecraft datapack, which you can then simply drag & drop into your
 minecraft worlds, use the following command:
 ```commandline
-python -m minecraft_script build [filename]
+python -m minecraft_script build [file]
 ```
+_where [file] is a relative or absolute path to your mcs file_
 
 ### More info
 For a list of all shell commands, you can use the following command:
