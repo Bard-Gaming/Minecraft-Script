@@ -28,6 +28,10 @@ class Parser:
         self.current_index += 1
         self.__current_token = self.token_input[self.current_index]
 
+    def revert(self) -> None:
+        self.current_index -= 2
+        self.advance()
+
     def raise_error(self, details: str, *, error=MCSSyntaxError, token: Token = None, include_pos: bool = True) -> None:
         token = self.current_token if token is None else token
 
@@ -130,9 +134,9 @@ class Parser:
     def expression(self):
         return self.logical_connector()
 
-    def code_block_statement(self):
+    def code_block_statement(self, *, insert_newline: bool = True):
         if self.current_token.matches('TT_BRACE', 'LEFT'):
-            return self.code_block()
+            return self.code_block(insert_newline=insert_newline)
 
         return self.expression()
 
@@ -288,7 +292,7 @@ class Parser:
         else:
             return ReturnNode(self.expression(), position)
 
-    def code_block(self) -> CodeBlockNode:
+    def code_block(self, *, insert_newline: bool = True) -> CodeBlockNode:
         position = self.current_token.get_position()
         self.advance()  # skip left brace (not needed)
 
@@ -300,8 +304,12 @@ class Parser:
 
         if not self.current_token.matches('TT_BRACE', 'RIGHT'):
             self.raise_error(f"Expected '{'}'}', got {self.current_token.value !r}")
+
         # don't advance; overwrite instead since no new statement is to be expected after a brace
-        self.overwrite_current_token(Token(';', 'TT_NEWLINE'))
+        if insert_newline:
+            self.overwrite_current_token(Token(';', 'TT_NEWLINE'))
+        else:
+            self.advance()
 
         return CodeBlockNode(body, position)
 
@@ -391,6 +399,9 @@ class Parser:
 
             conditions.append(self.if_condition_block())
 
+        # code block advances automatically, revert back by a single token to overwrite it to newline
+        self.revert()
+        self.overwrite_current_token(Token(";", "TT_NEWLINE"))
         return IfConditionNode(conditions, position)
 
     def if_condition_block(self) -> dict:
@@ -402,7 +413,7 @@ class Parser:
             # No expression needed since standalone "else" is the default fallback
             condition_block = {
                 "type": "else",
-                "body": self.code_block_statement()
+                "body": self.code_block_statement(insert_newline=False)
             }
 
             return condition_block
@@ -420,7 +431,7 @@ class Parser:
             self.raise_error(f"Expected ')', got {self.current_token.value !r}")
         self.advance()
 
-        condition_block['body'] = self.code_block_statement()
+        condition_block['body'] = self.code_block_statement(insert_newline=False)
 
         return condition_block
 
