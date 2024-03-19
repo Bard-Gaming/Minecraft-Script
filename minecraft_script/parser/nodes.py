@@ -133,6 +133,25 @@ class GetKeyNode(ParserNode):
         return self.repr_gen(self.get_determinant_value(), self.key)
 
 
+class SetKeyNode(ParserNode):
+    def __init__(self, name, key, value):
+        super().__init__(name)  # Token
+        self.key = key  # node
+        self.value = value  # node
+
+    def get_name(self) -> Token:
+        return self.get_determinant_value()
+
+    def get_key(self) -> ParserNode:
+        return self.key
+
+    def get_value(self) -> ParserNode:
+        return self.value
+
+    def __repr__(self) -> str:
+        return self.repr_gen(self.get_determinant_value(), self.key, self.value)
+
+
 class CodeBlockNode(ParserNode):
     def __init__(self, body, position):
         super().__init__(body, position)

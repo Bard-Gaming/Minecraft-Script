@@ -250,7 +250,7 @@ class Parser:
         value = self.expression()  # self.advance() call already in self.expression()
         return VariableDeclareNode(name, value)
 
-    def set_variable(self) -> VariableSetNode:
+    def set_variable(self) -> VariableSetNode | SetKeyNode:
         position = self.current_token.get_position()  # keep track of position for node
         self.advance()  # skip "set" keyword (not needed)
 
@@ -259,6 +259,9 @@ class Parser:
         name = self.current_token
         self.advance()
 
+        if self.current_token.matches('TT_BRACE', 'LEFT'):
+            return self.set_key(name)
+
         if not self.current_token.matches('TT_EQUALS'):
             self.raise_error(f"Expected '=', got {self.current_token.value !r}")
         self.advance()
@@ -266,6 +269,24 @@ class Parser:
         value = self.expression()  # Don't need to advance since .expression() already advances
 
         return VariableSetNode(name, value, position)
+
+    def set_key(self, name: Token) -> SetKeyNode:
+        # skip left brace (already checked in .set_variable())
+        self.advance()
+
+        key = self.expression()
+
+        if not self.current_token.matches('TT_BRACE', 'RIGHT'):
+            self.raise_error(f"Expected ']', got {self.current_token.value !r}")
+        self.advance()
+
+        if not self.current_token.matches('TT_EQUALS'):
+            self.raise_error(f"Expected '=', got {self.current_token.value !r}")
+        self.advance()
+
+        value = self.expression()  # Don't need to advance since .expression() already advances
+
+        return SetKeyNode(name, key, value)
 
     def get_key(self, atom: ParserNode) -> GetKeyNode:
         if not self.current_token.matches('TT_BRACKET', 'LEFT'):
