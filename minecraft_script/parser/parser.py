@@ -113,6 +113,9 @@ class Parser:
         elif self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
             return self.atom(self.call_function(atom))
 
+        elif self.current_token.matches('TT_DOT'):
+            return self.atom(self.get_attribute(atom))
+
         return atom
 
     def factor(self):
@@ -501,5 +504,15 @@ class Parser:
 
         # advance call not needed since code_block_statement takes care of it
         return ForLoopNode(iterable, child_name, body, position)
+
+    def get_attribute(self, root: ParserNode) -> AttributeGetNode:
+        self.advance()  # skip TT_DOT Token
+
+        if not self.current_token.matches('TT_NAME'):
+            self.raise_error(f"Expected name, got {self.current_token.value !r}")
+        name = self.current_token
+
+        self.advance()
+        return AttributeGetNode(root, name)
 
 

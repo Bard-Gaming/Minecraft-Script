@@ -342,3 +342,21 @@ class ForLoopNode(ParserNode):
 
     def __repr__(self) -> str:
         return f"ForLoopNode({self.iterable !r}, {self.child_name !r}, {self.body !r}, {self.position !r})"
+
+
+class AttributeGetNode(ParserNode):
+    def __init__(self, root: ParserNode, name: Token):
+        self.root = root
+        self.name = name
+
+    def get_root(self) -> ParserNode:
+        return self.root
+
+    def get_name(self) -> str:
+        return self.name.value
+
+    def get_position(self) -> tuple[int, int]:
+        return self.name.get_position()
+
+    def __repr__(self) -> str:
+        return f"AttributeGetNode({self.root !r}, {self.name !r})"

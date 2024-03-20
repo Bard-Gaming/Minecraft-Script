@@ -7,9 +7,10 @@
   "TT_COMPARATOR"        : [{"char": "==", "variant": "EQUALS"}, {"char": "<", "variant": "LESS_THAN"}, {"char": ">", "variant": "GREATER_THAN"}, {"char": "<=", "variant": "LESS_EQUALS_THAN"}, {"char": ">=", "variant": "GREATER_EQUALS_THAN"}],
   "TT_CONNECTOR"         : [{"char": "&&", "variant": "BOOLEAN_AND"}, {"char": "||", "variant": "BOOLEAN_OR"}],
 
-  "TT_PARENTHESIS"       : [{"char": "(", "variant": "LEFT"}, {"char": ")", "variant": "RIGHT"}],
+  "TT_DOT"               : [{"char": "."}],
   "TT_COMMA"             : [{"char": ","}],
 
+  "TT_PARENTHESIS"       : [{"char": "(", "variant": "LEFT"}, {"char": ")", "variant": "RIGHT"}],
   "TT_BRACE"             : [{"char": "{", "variant": "LEFT"}, {"char": "}", "variant": "RIGHT"}],
   "TT_BRACKET"           : [{"char": "[", "variant": "LEFT"}, {"char": "]", "variant": "RIGHT"}],
 
