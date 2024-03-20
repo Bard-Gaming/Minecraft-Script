@@ -25,6 +25,10 @@ class MCSNameError(NameError):
     pass
 
 
+class MCSAttributeError(AttributeError):
+    pass
+
+
 # --------------- Language Errors --------------- :
 class MCSIllegalCharacterError(Exception):
     def __init__(self, value: str, position: tuple[int, int]):

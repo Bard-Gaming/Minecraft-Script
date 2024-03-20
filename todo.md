@@ -8,24 +8,20 @@
   - [x] SetKeyNode
     - [x] Node
     - [x] Parser Implementation
-  - [ ] AttributeGetNode
-    - [ ] Node
-    - [ ] Parser implementation
-  - [ ] MethodGetNode
-    - [ ] Node
-    - [ ] Parser implementation
+  - [x] AttributeGetNode
+    - [x] Node
+    - [x] Parser implementation
 
 ## Interpreter
   - [x] SetKeyNode
     - [x] Iterable implementation
     - [x] Interpreter implementation
 
-  - [ ] Attributes/methods
-    - [ ] AttributeGetNode
-    - [ ] MethodGetNode
-    - [ ] List
+  - [x] Attributes/methods
+    - [x] AttributeGetNode
+    - [x] List
       - [ ] .append()
-      - [ ] .length()
+      - [x] .length
 
 ## Compiler
   - [ ] IfConditionNode
@@ -35,6 +31,8 @@
   - [ ] WhileLoopNode
     - [ ] Make function macro file
     - [ ] Copy function macro file when building datapack
+  - [ ] SetKeyNode
+  - [ ] AttributeGetNode
 
 
   - [ ] List implementation

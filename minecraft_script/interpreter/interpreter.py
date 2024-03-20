@@ -141,6 +141,25 @@ class Interpreter:
 
         return RuntimeResult(value=root_object.get_key(key))
 
+    def visit_SetKeyNode(self, node, context: InterpreterContext) -> RuntimeResult:
+        name: str = node.get_name()
+        key = self.visit(node.get_key(), context).get_value()
+        value = self.visit(node.get_value(), context).get_value()
+
+        iterable: MCSIterable = context.get(name)
+        iterable.set_key(key, value)
+
+        return RuntimeResult()
+
+    def visit_AttributeGetNode(self, node, context: InterpreterContext) -> RuntimeResult:
+        root = self.visit(node.get_root(), context).get_value()
+        attribute_name: str = node.get_name()
+
+        attribute = getattr(root, f"attribute_{attribute_name}", lambda: root.attribute_not_present(attribute_name))
+        attribute_value = attribute()
+
+        return RuntimeResult(value=attribute_value)
+
     # --------------- Variables --------------- :
     def visit_VariableAccessNode(self, node, context: InterpreterContext) -> RuntimeResult:
         name = node.get_name()
@@ -158,16 +177,6 @@ class Interpreter:
         value = self.visit(node.get_value(), context).get_value()
 
         context.set(name, value)
-        return RuntimeResult()
-
-    def visit_SetKeyNode(self, node, context: InterpreterContext) -> RuntimeResult:
-        name: str = node.get_name()
-        key = self.visit(node.get_key(), context).get_value()
-        value = self.visit(node.get_value(), context).get_value()
-
-        iterable: MCSIterable = context.get(name)
-        iterable.set_key(key, value)
-
         return RuntimeResult()
 
     # --------------- Functions --------------- :

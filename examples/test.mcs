@@ -20,4 +20,8 @@ function recursive_loop = (current_loop, max_loop) => {
 }
 
 // log("is present:", element_in(11, range(10)));
+var a = [1, 2, 3, 4, 5];
+log(a);
+a.append("test");
+log(a);
 recursive_loop(1, 10);

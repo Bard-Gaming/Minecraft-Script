@@ -28,6 +28,10 @@ class MCSObject:
     def is_iterable(self) -> bool:
         return False
 
+    # ----------------- Attributes  ----------------- :
+    def attribute_not_present(self, name: str):
+        raise MCSAttributeError(f"Type {self.class_name() !r} has no attribute {name !r}")
+
     # ----------------- Operations  ----------------- :
     def _binary_operation(self, other, operator: str):
         if isinstance(other, self.__class__):
@@ -126,6 +130,10 @@ class MCSIterable(MCSObject):
 
     def is_iterable(self) -> bool:
         return True
+
+    # ----------------- Attributes ----------------- :
+    def attribute_length(self) -> "MCSNumber":
+        return MCSNumber(len(self.get_value()))
 
 
 class MCSNumber(MCSObject):
@@ -229,6 +237,22 @@ class MCSList(MCSIterable, MCSObject):
 
     def print_value(self) -> str:
         return f"[{', '.join(value.repr_value() for value in self.value)}]"
+
+    # ----------------- Attributes ----------------- :
+    def attribute_append(self) -> "MCSFunction":
+        def fnc_call(call_args: list, context):
+            from .interpreter import RuntimeResult
+            if len(call_args) != 1:
+                raise MCSTypeError(f"Function <List.append> takes 1 argument, got {len(call_args)}")
+
+            self.value.append(call_args[0])  # append value to list
+
+            return RuntimeResult(return_value=MCSNull())
+
+        fnc = MCSFunction("List.append", None, None)
+        fnc.call = fnc_call
+
+        return fnc
 
     # ----------------- Operations ----------------- :
     def _binary_operation(self, other, operator: str):
