@@ -20,7 +20,7 @@
   - [x] Attributes/methods
     - [x] AttributeGetNode
     - [x] List
-      - [ ] .append()
+      - [x] .append()
       - [x] .length
 
 ## Compiler
