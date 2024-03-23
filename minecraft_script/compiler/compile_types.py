@@ -41,6 +41,28 @@ class MCSVariable:
         return f"MCSVariable({self.name !r}, {self.context.uuid !r})"
 
 
+class MCSList(MCSObject):
+    def __init__(self, context):
+        super().__init__(context, "list")
+
+    def save_to_storage_cmd(self, values: list["mcs_type"]) -> list[str]:
+        commands = [
+            # add length (since value is (for now) set in stone)
+            f"data modify storage {self.get_storage()} {self.get_nbt()}.length set value {len(values)}"
+        ]
+
+        for i, value in enumerate(values):
+            commands.extend((
+                value.set_to_current_cmd(self.context),
+                f"data modify storage {self.get_storage()} {self.get_nbt()}.{i} set from storage {self.get_storage()} current"  # NOQA
+            ))
+
+        return commands
+
+    def __repr__(self) -> str:
+        return f"MCSList({self.uuid})"
+
+
 class MCSNull(MCSObject):
     def __init__(self, context):
         super().__init__(context, "")

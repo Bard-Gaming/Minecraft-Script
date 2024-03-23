@@ -160,6 +160,16 @@ class CompileInterpreter:
         result = CompileResult(mcs_obj)
         return result
 
+    def visit_ListNode(self, node, context: CompileContext) -> CompileResult:
+        value_list: list[mcs_type] = list(map(lambda x: self.visit(x, context).get_value(), node.get_node_list()))
+        mcs_obj = MCSList(context)
+
+        # add value creation commands to compiled commands
+        self.add_commands(context.mcfunction_name, mcs_obj.save_to_storage_cmd(value_list))
+
+        result = CompileResult(mcs_obj)
+        return result
+
     def visit_DefineFunctionNode(self, node, context: CompileContext) -> CompileResult:
         fnc_name = node.get_name()
         fnc_body = node.get_body()
@@ -295,6 +305,8 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
             f"data remove storage mcs_{context_id} variable",
             f"data remove storage mcs_{context_id} number",
             f"data remove storage mcs_{context_id} string",
+            f"data remove storage mcs_{context_id} list",
+            ""  # add newline to separate contexts (only visual)
         )
         interpreter.add_commands('kill', commands)
 

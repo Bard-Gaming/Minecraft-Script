@@ -2,6 +2,7 @@ var bob = 3;
 var chiller = 4;
 var result = 2*(bob + chiller + 1);  // should be 16
 var current_tick = 0;
+var test_list = [1, "test", result];
 
 function increment_result = (value) => {
     set result = result + value;
@@ -14,6 +15,10 @@ function increment_by_five = () => {
 
 function get_tick = () => {
     log(current_tick);
+}
+
+function get_list = () => {
+    log(test_list);
 }
 
 function kill = () => {
