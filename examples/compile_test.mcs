@@ -12,6 +12,10 @@ function increment_by_five = () => {
     log(result);
 }
 
+function kill = () => {
+    log("Successfully uninstalled and disabled datapack.")
+}
+
 
 
 increment_result(15);  // should be 31

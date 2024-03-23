@@ -150,6 +150,16 @@ class CompileInterpreter:
         result = CompileResult(obj)
         return result
 
+    def visit_StringNode(self, node, context: CompileContext) -> CompileResult:
+        value = f'"{node.get_value()}"'  # include quote symbols in command
+        mcs_obj = MCSString(context.uuid)
+
+        # add value creation command to compiled commands
+        self.add_command(context.mcfunction_name, mcs_obj.save_to_storage_cmd(value))
+
+        result = CompileResult(mcs_obj)
+        return result
+
     def visit_DefineFunctionNode(self, node, context: CompileContext) -> CompileResult:
         fnc_name = node.get_name()
         fnc_body = node.get_body()
@@ -281,6 +291,7 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
             f"data remove storage mcs_{context_id} current",
             f"data remove storage mcs_{context_id} variable",
             f"data remove storage mcs_{context_id} number",
+            f"data remove storage mcs_{context_id} string",
         )
         interpreter.add_commands('kill', commands)
 

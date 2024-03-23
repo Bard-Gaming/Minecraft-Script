@@ -57,14 +57,16 @@ class MCSNumber(MCSObject):
     def __init__(self, context_id):
         super().__init__(context_id, "number")
 
-    def save_to_storage_cmd(self, value: int) -> str:  # NOQA
-        return super().save_to_storage_cmd(value)
-
-    def set_to_current_cmd(self, output_context) -> str:  # NOQA
-        return super().set_to_current_cmd(output_context)
-
     def __repr__(self) -> str:
         return f"MCSNumber({self.uuid !r})"
+
+
+class MCSString(MCSObject):
+    def __init__(self, context_id):
+        super().__init__(context_id, "string")
+
+    def __repr__(self) -> str:
+        return f"MCSString({self.uuid !r})"
 
 
 class MCSFunction:
