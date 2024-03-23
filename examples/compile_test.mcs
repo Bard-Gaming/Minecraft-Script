@@ -30,3 +30,5 @@ function main = () => {
 
 increment_result(15);  // should be 31
 increment_result(2);  // should be 33
+
+log(5 < 3);  // should be 0
