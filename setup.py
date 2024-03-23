@@ -22,7 +22,7 @@ setup(
     packages=find_packages(),
     package_data={'minecraft_script': [
             'grammar/LANG_TOKENS.json', 'grammar/LANG_KEYWORDS.json',
-            'build_templates/function_tags.json', 'build_templates/pack.mcmeta', 'build_templates/pack.png',
+            'build_templates/',
     ]},
     install_requires=[],
     keywords=['minecraft', 'mc', 'script', 'language'],

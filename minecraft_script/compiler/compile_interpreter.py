@@ -12,7 +12,10 @@ class CompileSymbols:
 
     def load_builtins(self) -> None:
         for fnc in builtin_functions:
-            pass
+            mcs_fnc = MCSFunction(None, None, None, None)
+            mcs_fnc.call = fnc
+
+            self.declare(fnc.__name__, mcs_fnc)
 
     def get(self, name: str, *, raise_error=True) -> mcs_type:
         value = self.symbols.get(name, None)
@@ -190,7 +193,6 @@ class CompileInterpreter:
         var_name = node.get_name()
         new_value: mcs_type = self.visit(node.get_value(), context).get_value()
 
-        context.set(var_name, new_value)
         owner_context = context.get_context_ownership(var_name)
 
         commands = (
@@ -224,8 +226,12 @@ class CompileInterpreter:
         local_context = CompileContext(f':cb_{generate_uuid()}', context)
         return_value: CompileResult = self.visit(node.get_body(), local_context)
 
-        command = f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}"
-        self.add_command(context.mcfunction_name, command)  # call code block in parent context
+        # import parent context's variables and execute code block:
+        commands = (
+            f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
+            f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}"
+        )
+        self.add_commands(context.mcfunction_name, commands)  # add commands to parent context
 
         return return_value
 
@@ -250,7 +256,7 @@ class CompileInterpreter:
             right_value.set_to_current_cmd(context),
             f"execute store result score .b mcs_math run data get storage mcs_{context.uuid} current",
             f"function {self.datapack_id}:math/{operation}",
-            f"execute store result storage mcs_{context.uuid} number.{result.uuid} int 1 run scoreboard players get .out mcs_math",  # NOQA
+            f"execute store result storage mcs_{context.uuid} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",  # NOQA
         )
         self.add_commands(context.mcfunction_name, commands)
 

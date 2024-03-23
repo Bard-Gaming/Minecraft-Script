@@ -2,15 +2,22 @@ from ..common import generate_uuid
 
 
 class MCSObject:
-    def __init__(self, context_id):
+    def __init__(self, context_id, storage_compartment: str):
         self.context_id = context_id
         self.uuid = generate_uuid()
+        self.storage_compartment = storage_compartment
 
-    def save_to_storage_cmd(self, storage_compartment: str, value: any) -> str:
-        return f"data modify storage mcs_{self.context_id} {storage_compartment}.{self.uuid} set value {value}"
+    def get_nbt(self) -> str:
+        return f"{self.storage_compartment}.{self.uuid}"
 
-    def set_to_current_cmd(self, storage_compartment: str, output_context) -> str:
-        return f"data modify storage mcs_{output_context.uuid} current set from storage mcs_{self.context_id} {storage_compartment}.{self.uuid}"  # NOQA
+    def get_storage(self) -> str:
+        return f"mcs_{self.context_id}"
+
+    def save_to_storage_cmd(self, value: any) -> str:
+        return f"data modify storage {self.get_storage()} {self.get_nbt()} set value {value}"
+
+    def set_to_current_cmd(self, output_context) -> str:
+        return f"data modify storage mcs_{output_context.uuid} current set from storage {self.get_storage()} {self.get_nbt()}"  # NOQA
 
 
 class MCSVariable:
@@ -18,13 +25,22 @@ class MCSVariable:
         self.name = name
         self.context_id = context_id
 
+    def get_nbt(self) -> str:
+        return f"variable.{self.name}"
+
+    def get_storage(self) -> str:
+        return f"mcs_{self.context_id}"
+
     def set_to_current_cmd(self, output_context) -> str:
-        return f"data modify storage mcs_{output_context.uuid} current set from storage mcs_{self.context_id} variable.{self.name}"  # NOQA
+        return f"data modify storage mcs_{output_context.uuid} current set from storage {self.get_storage()} {self.get_nbt()}"  # NOQA
+
+    def __repr__(self) -> str:
+        return f"MCSVariable({self.name !r}, {self.context_id !r})"
 
 
 class MCSNull(MCSObject):
     def __init__(self, context_id):
-        super().__init__(context_id)
+        super().__init__(context_id, "")
 
     @staticmethod
     def save_to_storage_cmd(output_context):  # NOQA
@@ -33,16 +49,19 @@ class MCSNull(MCSObject):
     def set_to_current_cmd(self, output_context) -> str:  # NOQA
         return f"data modify storage mcs_{self.context_id} current set value 0b"
 
+    def __repr__(self) -> str:
+        return "MCSNull()"
+
 
 class MCSNumber(MCSObject):
     def __init__(self, context_id):
-        super().__init__(context_id)
+        super().__init__(context_id, "number")
 
     def save_to_storage_cmd(self, value: int) -> str:  # NOQA
-        return super().save_to_storage_cmd("number", value)
+        return super().save_to_storage_cmd(value)
 
     def set_to_current_cmd(self, output_context) -> str:  # NOQA
-        return super().set_to_current_cmd("number", output_context)
+        return super().set_to_current_cmd(output_context)
 
     def __repr__(self) -> str:
         return f"MCSNumber({self.uuid !r})"
@@ -75,6 +94,9 @@ class MCSFunction:
         commands.append(f"function {interpreter.datapack_id}:user_functions/{self.name}")
 
         return commands  # NOQA
+
+    def __repr__(self) -> str:
+        return f"MCSFunction({self.name !r})"
 
 
 mcs_type = MCSNull | MCSNumber | MCSFunction | MCSVariable

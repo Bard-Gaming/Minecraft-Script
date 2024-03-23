@@ -41,7 +41,7 @@
 
 
   - [ ] Builtin functions
-    - [ ] log() -> ``tellraw @a {"storage":"mcs_context_id", "nbt":"variable.name"}``
+    - [x] log() -> ``tellraw @a {"storage":"mcs_context_id", "nbt":"variable.name"}``
 
 ## Documentation
   - [ ] Add page on customizing the language

@@ -1,0 +1,1 @@
+$tellraw @a {"storage": "$(storage)", "nbt": "$(nbt)"}

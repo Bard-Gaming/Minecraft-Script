@@ -1,5 +1,10 @@
-def log(args, context) -> str:
-    return 'tellraw @a {' f'"storage":"{context.uuid}", "nbt":"{args[0].uuid}"' '}'
+def log(interpreter, args) -> tuple[str]:
+    value = args[0]
+
+    return (
+        f'function {interpreter.datapack_id}:builtins/log' ' {'
+        f'"storage":"{value.get_storage()}", "nbt":"{value.get_nbt()}"' '}',
+    )
 
 
 builtin_functions = (

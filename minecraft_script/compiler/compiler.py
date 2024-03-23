@@ -65,23 +65,35 @@ class Compiler:
                 f'{self.datapack_name}/data/{self.datapack_id}/functions/math/{filename}'
             )
 
+    def import_builtins_file(self):
+        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins')
+        for filename in listdir(f'{module_folder}/build_templates/builtins'):
+            copyfile(
+                f'{module_folder}/build_templates/builtins/{filename}',
+                f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins/{filename}'
+            )
+
     def generate_builtin_functions(self, verbose: bool):
         if verbose:
             print('\rBuilding built-in functions...', end="")
 
         self.make_init_file()
         if verbose:
-            print('\rBuilding built-in functions... 25%', end="")
+            print('\rBuilding built-in functions... 20%', end="")
 
         self.make_main_file()
         if verbose:
-            print('\rBuilding built-in functions... 50%', end="")
+            print('\rBuilding built-in functions... 40%', end="")
 
         self.make_kill_file()
         if verbose:
-            print('\rBuilding built-in functions... 75%', end="")
+            print('\rBuilding built-in functions... 60%', end="")
 
         self.import_math_file()
+        if verbose:
+            print('\rBuilding built-in functions... 80%', end="")
+
+        self.import_builtins_file()
         if verbose:
             print('\rBuilding built-in functions... Done!')
 

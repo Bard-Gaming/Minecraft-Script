@@ -9,6 +9,7 @@ function increment_result = (value) => {
 
 function increment_by_five = () => {
     increment_result(5);
+    log(result);
 }
 
 
