@@ -1,7 +1,7 @@
 var bob = 3;
 var chiller = 4;
 var result = 2*(bob + chiller + 1);  // should be 16
-
+var current_tick = 0;
 
 function increment_result = (value) => {
     set result = result + value;
@@ -12,8 +12,16 @@ function increment_by_five = () => {
     log(result);
 }
 
+function get_tick = () => {
+    log(current_tick);
+}
+
 function kill = () => {
     log("Successfully uninstalled and disabled datapack.")
+}
+
+function main = () => {
+    set current_tick = current_tick + 1;
 }
 
 

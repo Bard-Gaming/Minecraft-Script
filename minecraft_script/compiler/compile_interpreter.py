@@ -142,7 +142,7 @@ class CompileInterpreter:
     # ------------------ value nodes ------------------ :
     def visit_NumberNode(self, node, context: CompileContext) -> CompileResult:
         value = int(node.get_value())
-        obj = MCSNumber(context.uuid)
+        obj = MCSNumber(context)
 
         # add value creation command to compiled commands
         self.add_command(context.mcfunction_name, obj.save_to_storage_cmd(value))
@@ -152,7 +152,7 @@ class CompileInterpreter:
 
     def visit_StringNode(self, node, context: CompileContext) -> CompileResult:
         value = f'"{node.get_value()}"'  # include quote symbols in command
-        mcs_obj = MCSString(context.uuid)
+        mcs_obj = MCSString(context)
 
         # add value creation command to compiled commands
         self.add_command(context.mcfunction_name, mcs_obj.save_to_storage_cmd(value))
@@ -176,7 +176,7 @@ class CompileInterpreter:
         variable_name = node.get_name()
         variable_value = node.get_value()
         if variable_value is None:
-            context.declare(variable_name, MCSNull(context.uuid))
+            context.declare(variable_name, MCSNull(context))
             return CompileResult()
 
         variable_value = self.visit(variable_value, context).get_value()
@@ -187,7 +187,7 @@ class CompileInterpreter:
         )
         self.add_commands(context.mcfunction_name, commands)
 
-        variable = MCSVariable(variable_name, context.uuid)  # variable_value no longer needed since it's in variable
+        variable = MCSVariable(variable_name, context)  # variable_value no longer needed since it's in variable
         context.declare(variable_name, variable)  # declare variable in local context
 
         return CompileResult()
@@ -230,7 +230,7 @@ class CompileInterpreter:
             if return_value.get_return() is not None:
                 return return_value
 
-        return CompileResult(MCSNull(context.uuid))  # if no return statement is encountered
+        return CompileResult(MCSNull(context))  # if no return statement is encountered
 
     def visit_CodeBlockNode(self, node, context: CompileContext) -> CompileResult:
         local_context = CompileContext(f':cb_{generate_uuid()}', context)
@@ -258,7 +258,7 @@ class CompileInterpreter:
         left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
         right_value: mcs_type = self.visit(node.get_right_node(), context).get_value()
         operation: str = node.get_operator().variant.lower()  # 'add', 'subtract', etc...
-        result: mcs_type = MCSNumber(context.uuid)
+        result: mcs_type = MCSNumber(context)
 
         commands = (
             left_value.set_to_current_cmd(context),

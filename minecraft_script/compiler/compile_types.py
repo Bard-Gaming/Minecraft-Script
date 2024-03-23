@@ -2,8 +2,8 @@ from ..common import generate_uuid
 
 
 class MCSObject:
-    def __init__(self, context_id, storage_compartment: str):
-        self.context_id = context_id
+    def __init__(self, context, storage_compartment: str):
+        self.context = context
         self.uuid = generate_uuid()
         self.storage_compartment = storage_compartment
 
@@ -11,7 +11,7 @@ class MCSObject:
         return f"{self.storage_compartment}.{self.uuid}"
 
     def get_storage(self) -> str:
-        return f"mcs_{self.context_id}"
+        return f"mcs_{self.context.uuid}"
 
     def save_to_storage_cmd(self, value: any) -> str:
         return f"data modify storage {self.get_storage()} {self.get_nbt()} set value {value}"
@@ -21,49 +21,49 @@ class MCSObject:
 
 
 class MCSVariable:
-    def __init__(self, name: str, context_id):
+    def __init__(self, name: str, context):
         self.name = name
-        self.context_id = context_id
+        self.context = context
 
     def get_nbt(self) -> str:
         return f"variable.{self.name}"
 
     def get_storage(self) -> str:
-        return f"mcs_{self.context_id}"
+        return f"mcs_{self.context.uuid}"
 
     def set_to_current_cmd(self, output_context) -> str:
         return f"data modify storage mcs_{output_context.uuid} current set from storage {self.get_storage()} {self.get_nbt()}"  # NOQA
 
     def __repr__(self) -> str:
-        return f"MCSVariable({self.name !r}, {self.context_id !r})"
+        return f"MCSVariable({self.name !r}, {self.context.uuid !r})"
 
 
 class MCSNull(MCSObject):
-    def __init__(self, context_id):
-        super().__init__(context_id, "")
+    def __init__(self, context):
+        super().__init__(context, "")
 
     @staticmethod
     def save_to_storage_cmd(output_context):  # NOQA
         return ""
 
     def set_to_current_cmd(self, output_context) -> str:  # NOQA
-        return f"data modify storage mcs_{self.context_id} current set value 0b"
+        return f"data modify storage mcs_{self.context.uuid} current set value 0b"
 
     def __repr__(self) -> str:
         return "MCSNull()"
 
 
 class MCSNumber(MCSObject):
-    def __init__(self, context_id):
-        super().__init__(context_id, "number")
+    def __init__(self, context):
+        super().__init__(context, "number")
 
     def __repr__(self) -> str:
         return f"MCSNumber({self.uuid !r})"
 
 
 class MCSString(MCSObject):
-    def __init__(self, context_id):
-        super().__init__(context_id, "string")
+    def __init__(self, context):
+        super().__init__(context, "string")
 
     def __repr__(self) -> str:
         return f"MCSString({self.uuid !r})"
@@ -101,4 +101,4 @@ class MCSFunction:
         return f"MCSFunction({self.name !r})"
 
 
-mcs_type = MCSNull | MCSNumber | MCSFunction | MCSVariable
+mcs_type = MCSNull | MCSNumber | MCSString | MCSFunction | MCSVariable
