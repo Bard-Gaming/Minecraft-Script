@@ -80,7 +80,7 @@ class MCSFunction:
 
     def generate_function(self, interpreter) -> None:
         for name in self.parameter_names:
-            self.local_context.declare(name, MCSVariable(name, self.local_context.uuid))
+            self.local_context.declare(name, MCSVariable(name, self.local_context))
 
         interpreter.visit(self.body, self.local_context)  # generate all commands inside body
 
