@@ -173,21 +173,24 @@ class CompileInterpreter:
 
     # ------------------ variables ------------------ :
     def visit_VariableDeclareNode(self, node, context: CompileContext) -> CompileResult:
-        variable_name = node.get_name()
-        variable_value = node.get_value()
+        variable_name: str = node.get_name()
+        variable_value: mcs_type = node.get_value()
         if variable_value is None:
             context.declare(variable_name, MCSNull(context))
             return CompileResult()
 
         variable_value = self.visit(variable_value, context).get_value()
 
-        commands = (
+        commands = [
             variable_value.set_to_current_cmd(context),
             f"data modify storage mcs_{context.uuid} variable.{variable_name} set from storage mcs_{context.uuid} current"  # NOQA
-        )
-        self.add_commands(context.mcfunction_name, commands)
+        ]
+        # garbage collect variable_value if it's not a variable (was only used to define current variable):
+        if not isinstance(variable_value, MCSVariable):
+            commands.append(variable_value.delete_from_storage_cmd())
+        self.add_commands(context.mcfunction_name, commands)  # actually put the commands in the context file
 
-        variable = MCSVariable(variable_name, context)  # variable_value no longer needed since it's in variable
+        variable = MCSVariable(variable_name, context)  # create variable object to save in context
         context.declare(variable_name, variable)  # declare variable in local context
 
         return CompileResult()

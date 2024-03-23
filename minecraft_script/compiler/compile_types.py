@@ -16,6 +16,9 @@ class MCSObject:
     def save_to_storage_cmd(self, value: any) -> str:
         return f"data modify storage {self.get_storage()} {self.get_nbt()} set value {value}"
 
+    def delete_from_storage_cmd(self) -> str:
+        return f"data remove storage {self.get_storage()} {self.get_nbt()}"
+
     def set_to_current_cmd(self, output_context) -> str:
         return f"data modify storage mcs_{output_context.uuid} current set from storage {self.get_storage()} {self.get_nbt()}"  # NOQA
 
