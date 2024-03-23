@@ -24,7 +24,7 @@
       - [x] .length
 
 ## Compiler
-  - [ ] IfConditionNode
+  - [x] IfConditionNode
   - [ ] ForLoopNode
     - [ ] Make function macro file
     - [ ] Copy function macro file when building datapack
@@ -35,13 +35,14 @@
   - [ ] AttributeGetNode
 
 
-  - [ ] List implementation
-    - [ ] Data mcjson dict
-    - [ ] "length" (key) element for list length
+  - [x] List implementation
+    - [x] Data mcjson dict
+    - [x] "length" (key) element for list length
 
 
-  - [ ] Builtin functions
+  - [x] Builtin functions
     - [x] log() -> ``tellraw @a {"storage":"mcs_context_id", "nbt":"variable.name"}``
+    - [x] command() function to run raw minecraft commands
 
 ## Documentation
   - [ ] Add page on customizing the language

@@ -24,17 +24,5 @@ function kill = () => {
 
 function main = () => {
     set current_tick = current_tick + 1;
-    if (current_tick % 100 == 20) {
-        log("1/5 seconds have passed");
-    } else if (current_tick % 100 == 40) {
-        log("2/5 seconds have passed");
-    } else if (current_tick % 100 == 60) {
-        log("3/5 seconds have passed");
-    } else if (current_tick % 100 == 80) {
-        log("4/5 seconds have passed");
-    } else if (current_tick % 100 == 0) {
-        log("5/5 seconds have passed");
-    } else {
-        log();
-    }
+    command("execute as @a at @s run say hi");
 }
