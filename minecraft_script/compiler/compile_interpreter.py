@@ -232,7 +232,28 @@ class CompileInterpreter:
 
         for condition in conditions:
             if condition.get('type') == 'if':
-                pass
+                # create local context with all parent variables and create all body commands there
+                local_context = CompileContext(f':cb_{generate_uuid()}', context)
+                out: CompileResult = self.visit(condition.get('body'), local_context)
+
+                expression: MCSNumber = self.visit(condition.get('expression'), context).get_value()
+                commands = (
+                    expression.set_to_current_cmd(context),
+                    f"execute store result score .out mcs_math run data get storage mcs_{context.uuid} current 1",
+                    f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
+                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}"  # NOQA
+                )
+                self.add_commands(context.mcfunction_name, commands)
+
+                if out.get_return() is not None:
+                    return out
+
+            else:
+                out: CompileResult = self.visit(condition.get('body'), context)
+                if out.get_return() is not None:
+                    return out
+
+        return CompileResult()
 
     # ------------------ scope nodes ------------------ :
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
