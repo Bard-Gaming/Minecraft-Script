@@ -13,12 +13,9 @@ function increment_by_five = () => {
     log(result);
 }
 
-function get_tick = () => {
-    log(current_tick);
-}
-
-function get_list = () => {
-    log(test_list);
+function get_info = () => {
+    log("current_tick: ", current_tick);
+    log("test_list: ", test_list);
 }
 
 function kill = () => {
