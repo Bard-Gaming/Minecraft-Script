@@ -151,7 +151,7 @@ class CompileInterpreter:
         return result
 
     def visit_StringNode(self, node, context: CompileContext) -> CompileResult:
-        value = f'"{node.get_value()}"'  # include quote symbols in command
+        value = repr(node.get_value())  # repr to turn double quotes into single quotes if double quotes are used in str
         mcs_obj = MCSString(context)
 
         # add value creation command to compiled commands

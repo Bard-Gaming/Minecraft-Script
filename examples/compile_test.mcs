@@ -24,5 +24,7 @@ function kill = () => {
 
 function main = () => {
     set current_tick = current_tick + 1;
-    command("execute as @a at @s run say hi");
+    if (current_tick % 20 == 0) {
+        command(`execute as @a at @s if block ~ ~-1 ~ minecraft:lime_concrete run tellraw @s {"text":"On lime", "color":"green"}`);
+    }
 }
