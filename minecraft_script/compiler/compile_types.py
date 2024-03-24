@@ -65,14 +65,13 @@ class MCSList(MCSObject):
 
 class MCSNull(MCSObject):
     def __init__(self, context):
-        super().__init__(context, "")
+        super().__init__(context, "null")
 
-    @staticmethod
-    def save_to_storage_cmd(output_context):  # NOQA
-        return ""
+    def save_to_storage_cmd(self) -> str:  # NOQA
+        return f"data modify storage {self.get_storage()} {self.get_nbt()} set value 0b"
 
     def set_to_current_cmd(self, output_context) -> str:  # NOQA
-        return f"data modify storage mcs_{self.context.uuid} current set value 0b"
+        return f"data modify storage mcs_{output_context.uuid} current set value 0b"
 
     def __repr__(self) -> str:
         return "MCSNull()"
@@ -92,6 +91,14 @@ class MCSString(MCSObject):
 
     def __repr__(self) -> str:
         return f"MCSString({self.uuid !r})"
+
+
+class MCSBoolean(MCSObject):
+    def __init__(self, context):
+        super().__init__(context, "boolean")
+
+    def __repr__(self) -> str:
+        return f"MCSBoolean({self.uuid !r})"
 
 
 class MCSFunction:

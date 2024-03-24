@@ -25,14 +25,15 @@
 
 ## Compiler
   - [x] IfConditionNode
-  - [ ] ForLoopNode
-    - [ ] Make function macro file
-    - [ ] Copy function macro file when building datapack
+  - [x] ForLoopNode
   - [ ] WhileLoopNode
-    - [ ] Make function macro file
-    - [ ] Copy function macro file when building datapack
+  - [x] NullNode
+  - [x] BooleanNode
+  - [ ] GetKeyNode
   - [ ] SetKeyNode
   - [ ] AttributeGetNode
+  - [ ] ReturnNode
+  - [ ] UnaryOperationNode
 
 
   - [x] List implementation

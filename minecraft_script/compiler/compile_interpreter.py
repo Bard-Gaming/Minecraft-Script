@@ -170,6 +170,23 @@ class CompileInterpreter:
         result = CompileResult(mcs_obj)
         return result
 
+    def visit_BooleanNode(self, node, context: CompileContext) -> CompileResult:
+        boolean: bool = node.get_value()
+        mcs_obj = MCSBoolean(context)
+        value = "1b" if boolean is True else "0b"
+
+        # add value creation command to compiled commands
+        self.add_command(context.mcfunction_name, mcs_obj.save_to_storage_cmd(value))
+
+        result = CompileResult(mcs_obj)
+        return result
+
+    @staticmethod
+    def visit_NullNode(node, context: CompileContext) -> CompileResult:
+        mcs_obj = MCSNull(context)
+        # Don't add any commands since null node is always 0b
+        return CompileResult(mcs_obj)
+
     def visit_DefineFunctionNode(self, node, context: CompileContext) -> CompileResult:
         fnc_name = node.get_name()
         fnc_body = node.get_body()
