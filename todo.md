@@ -44,6 +44,7 @@
   - [x] Builtin functions
     - [x] log() -> ``tellraw @a {"storage":"mcs_context_id", "nbt":"variable.name"}``
     - [x] command() function to run raw minecraft commands
+    - [x] get_block() function to get block located at given x, y, z coordinates
 
 ## Documentation
   - [ ] Add page on customizing the language

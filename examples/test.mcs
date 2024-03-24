@@ -1,27 +1,11 @@
-function element_in = (value, list) => {
-    for (element in list) {
-        log(element);
+var coordinates = [1, 2, 3, 4, 5, 6];
 
-        if (element == value) {
-            return true;
+function get_block_info = () => {
+    for (x in coordinates) {
+        for (z in coordinates) {
+            log("block: ", get_block(x, 52, z));
+            log("");
+            log(x, "; ", 52, "; ", z);
         }
     }
-
-    return false;
 }
-
-function recursive_loop = (current_loop, max_loop) => {
-    if (current_loop > max_loop) {
-        return;
-    }
-
-    log("current loop:", current_loop, "/", max_loop);
-    recursive_loop(current_loop + 1, max_loop);
-}
-
-// log("is present:", element_in(11, range(10)));
-var a = [1, 2, 3, 4, 5];
-log(a);
-a.append("test");
-log(a);
-recursive_loop(1, 10);

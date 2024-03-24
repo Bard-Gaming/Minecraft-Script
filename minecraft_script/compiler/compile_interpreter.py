@@ -342,9 +342,12 @@ class CompileInterpreter:
         fnc: MCSFunction = self.visit(node.get_root(), context).get_value()
         arguments: tuple[mcs_type, ...] = tuple(map(lambda x: self.visit(x, context).get_value(), node.get_arguments()))
 
-        self.add_commands(context.mcfunction_name, fnc.call(self, arguments))
+        commands, return_value = fnc.call(self, arguments, context)
 
-        return CompileResult()
+        if commands is not None:
+            self.add_commands(context.mcfunction_name, commands)
+
+        return CompileResult(return_value)
 
     # ------------------ miscellaneous ------------------ :
     def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:

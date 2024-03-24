@@ -116,7 +116,7 @@ class MCSFunction:
 
         interpreter.visit(self.body, self.local_context)  # generate all commands inside body
 
-    def call(self, interpreter, arguments) -> list[str, ...]:
+    def call(self, interpreter, arguments, context) -> tuple[list, "mcs_type"]:
         commands = []
 
         for name, argument in zip(self.parameter_names, arguments):
@@ -127,10 +127,10 @@ class MCSFunction:
 
         commands.append(f"function {interpreter.datapack_id}:user_functions/{self.name}")
 
-        return commands  # NOQA
+        return commands, MCSNull(context)
 
     def __repr__(self) -> str:
         return f"MCSFunction({self.name !r})"
 
 
-mcs_type = MCSNull | MCSNumber | MCSString | MCSFunction | MCSVariable
+mcs_type = MCSNull | MCSNumber | MCSString | MCSBoolean | MCSList | MCSFunction | MCSVariable
