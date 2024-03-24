@@ -15,7 +15,11 @@ function increment_by_five = () => {
 
 function get_info = () => {
     log("current_tick: ", current_tick);
-    log("test_list: ", test_list);
+    log("list: ", test_list);
+    log("contains values:");
+    for (value in test_list) {
+        log("    ", value);
+    }
 }
 
 function kill = () => {

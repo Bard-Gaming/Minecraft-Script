@@ -97,6 +97,7 @@ class Compiler:
         if verbose:
             print('\rBuilding built-in functions... Done!')
 
+
     def build(self, verbose: bool = True):
         start_time = time()  # keep track of start time
 

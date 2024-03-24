@@ -255,6 +255,48 @@ class CompileInterpreter:
 
         return CompileResult()
 
+    def visit_ForLoopNode(self, node, context: CompileContext) -> CompileResult:
+        iterable: MCSList = self.visit(node.get_iterable(), context).get_value()
+        element_name: str = node.get_child_name()
+        body = node.get_body()
+
+        local_context = CompileContext(f':cb_{generate_uuid()}', context)
+        macro_context = CompileContext(f':cb_{generate_uuid()}', context)
+        loop_id = f"{generate_uuid()}"
+
+        init_commands = (
+            f"scoreboard players set .loop_iter_{loop_id} mcs_math 0",
+            iterable.set_to_current_cmd(context),
+            f"execute store result score .loop_end_{loop_id} mcs_math run data get storage mcs_{context.uuid} current.length 1",  # NOQA
+            f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+            f"scoreboard players reset .loop_iter_{loop_id} mcs_math",  # remove to avoid clutter
+            f"scoreboard players reset .loop_end_{loop_id} mcs_math",
+        )
+        self.add_commands(context.mcfunction_name, init_commands)
+
+        macro_cmd = f"$data modify storage mcs_{local_context.uuid} variable.{element_name} set from storage {iterable.get_storage()} {iterable.get_nbt()}.$(index)"  # NOQA
+        self.add_command(macro_context.mcfunction_name, macro_cmd)
+
+        loop_init_commands = (
+            f"execute store result storage mcs_{local_context.uuid} current.index int 1 run scoreboard players get .loop_iter_{loop_id} mcs_math",  # NOQA
+            f"function {self.datapack_id}:code_blocks/{macro_context.mcfunction_name[1:]} with storage mcs_{local_context.uuid} current",  # NOQA
+        )
+        self.add_commands(local_context.mcfunction_name, loop_init_commands)
+        local_context.declare(element_name, MCSVariable(element_name, local_context))
+
+        out: CompileResult = self.visit(body, local_context)  # add commands to code block
+
+        loop_end_commands = (
+            f"scoreboard players add .loop_iter_{loop_id} mcs_math 1",
+            f"execute if score .loop_iter_{loop_id} mcs_math < .loop_end_{loop_id} mcs_math run function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        )
+        self.add_commands(local_context.mcfunction_name, loop_end_commands)
+
+        if out.get_return() is not None:
+            return out
+
+        return CompileResult()
+
     # ------------------ scope nodes ------------------ :
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
         for statement in node.get_nodes():
