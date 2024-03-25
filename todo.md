@@ -26,7 +26,7 @@
 ## Compiler
   - [x] IfConditionNode
   - [x] ForLoopNode
-  - [ ] WhileLoopNode
+  - [x] WhileLoopNode
   - [x] NullNode
   - [x] BooleanNode
   - [ ] GetKeyNode

@@ -314,6 +314,23 @@ class CompileInterpreter:
 
         return CompileResult()
 
+    def visit_WhileLoopNode(self, node, context: CompileContext) -> CompileResult:
+        condition: mcs_type = self.visit(node.get_condition(), context).get_value()
+        loop_context = CompileContext(f':cb_{generate_uuid()}', context)
+
+        out: CompileResult = self.visit(node.get_body(), loop_context)  # add commands to loop context file
+
+        loop_commands = (
+            condition.set_to_current_cmd(loop_context),
+            f"execute store result score .out mcs_math run data get storage mcs_{loop_context.uuid} current 1",
+            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:code_blocks/{loop_context.mcfunction_name[1:]}",  # NOQA
+        )
+        self.add_commands(loop_context.mcfunction_name, loop_commands)
+
+        self.add_command(context.mcfunction_name, f"function {self.datapack_id}:code_blocks/{loop_context.mcfunction_name[1:]}")  # NOQA
+
+        return out if out.get_return() is not None else CompileResult()
+
     # ------------------ scope nodes ------------------ :
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:
         for statement in node.get_nodes():
