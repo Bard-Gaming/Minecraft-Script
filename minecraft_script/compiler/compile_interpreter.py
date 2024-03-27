@@ -366,6 +366,21 @@ class CompileInterpreter:
 
         return CompileResult(return_value)
 
+    # ------------------ minecraft stuff ------------------ :
+    def visit_EntitySelectorNode(self, node, context: CompileContext) -> CompileResult:
+        selector: str = node.get_selector()
+        local_context = CompileContext(f":cb_{generate_uuid()}", context)
+
+        out: CompileResult = self.visit(node.get_statement(), local_context)  # add commands to local context
+
+        setup_commands = (
+            f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
+            f"execute as @{selector} at @s run function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
+        )
+        self.add_commands(context.mcfunction_name, setup_commands)
+
+        return out if out.get_return() is not None else CompileResult()
+
     # ------------------ miscellaneous ------------------ :
     def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:
         left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
