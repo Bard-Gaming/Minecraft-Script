@@ -9,6 +9,12 @@ def custom_log(args, context):
     return RuntimeResult(return_value=MCSNull())
 
 
+def custom_get_block(args, context):
+    from .interpreter import RuntimeResult
+
+    return RuntimeResult(return_value=MCSString("<Minecraft block ID>"))
+
+
 def custom_repr(args, context):
     from .interpreter import RuntimeResult
 
@@ -35,7 +41,6 @@ def custom_range(args, context):
 
 
 builtin_functions = [
-    custom_log,
-    custom_repr,
-    custom_range,
+    custom_log, custom_get_block,
+    custom_repr, custom_range,
 ]
