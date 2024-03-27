@@ -9,6 +9,7 @@
 
   "TT_DOT"               : [{"char": "."}],
   "TT_COMMA"             : [{"char": ","}],
+  "TT_AT"                : [{"char": "@"}],
 
   "TT_PARENTHESIS"       : [{"char": "(", "variant": "LEFT"}, {"char": ")", "variant": "RIGHT"}],
   "TT_BRACE"             : [{"char": "{", "variant": "LEFT"}, {"char": "}", "variant": "RIGHT"}],
