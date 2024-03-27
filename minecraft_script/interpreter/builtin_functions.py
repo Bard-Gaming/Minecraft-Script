@@ -12,13 +12,25 @@ def custom_log(args, context):
 def custom_get_block(args, context):
     from .interpreter import RuntimeResult
 
+    if len(args) != 3:
+        raise MCSValueError(f"Function <builtin-get_block> takes 3 arguments, got {len(args)}")
+
     return RuntimeResult(return_value=MCSString("<Minecraft block ID>"))
+
+
+def custom_command(args, context):
+    from .interpreter import RuntimeResult
+
+    if len(args) != 1:
+        raise MCSValueError(f"Function <builtin-command> takes 1 argument, got {len(args)}")
+
+    return RuntimeResult(return_value=MCSNull())
 
 
 def custom_repr(args, context):
     from .interpreter import RuntimeResult
 
-    if len(args) > 1:
+    if len(args) != 1:
         raise MCSValueError(f"Function <builtin-repr> takes 1 argument, got {len(args)}")
     value = args[0]
 
@@ -28,7 +40,7 @@ def custom_repr(args, context):
 def custom_range(args, context):
     from .interpreter import RuntimeResult
 
-    if len(args) > 1:
+    if len(args) != 1:
         raise MCSValueError(f"Function <builtin-range> takes 1 argument, got {len(args)}")
     range_length = args[0]
 
@@ -41,6 +53,6 @@ def custom_range(args, context):
 
 
 builtin_functions = [
-    custom_log, custom_get_block,
+    custom_log, custom_get_block, custom_command,
     custom_repr, custom_range,
 ]
