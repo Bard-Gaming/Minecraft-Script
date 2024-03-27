@@ -37,6 +37,7 @@ def get_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     mcs_obj = MCSString(context)
 
     fnc_commands = (
+        f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set value \"\"",
         "summon armor_stand ~ ~5 ~ {Invisible:1b, NoBasePlate:1b, NoGravity:1b, Tags:[\"mcs_get_block_temp\"]}",
         "$loot replace entity @e[type=armor_stand, limit=1, sort=nearest, tag=mcs_get_block_temp] armor.head mine $(x) $(y) $(z) netherite_pickaxe{Enchantments:[{id:\"minecraft:silk_touch\", lvl:1s}]}",  # NOQA
         f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set from entity @e[type=minecraft:armor_stand, limit=1] ArmorItems[3].id",  # NOQA
