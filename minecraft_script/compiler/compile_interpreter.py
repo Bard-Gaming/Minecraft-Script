@@ -315,11 +315,11 @@ class CompileInterpreter:
         return CompileResult()
 
     def visit_WhileLoopNode(self, node, context: CompileContext) -> CompileResult:
-        condition: mcs_type = self.visit(node.get_condition(), context).get_value()
         loop_context = CompileContext(f':cb_{generate_uuid()}', context)
 
         out: CompileResult = self.visit(node.get_body(), loop_context)  # add commands to loop context file
 
+        condition: mcs_type = self.visit(node.get_condition(), loop_context).get_value()
         loop_commands = (
             condition.set_to_current_cmd(loop_context),
             f"execute store result score .out mcs_math run data get storage mcs_{loop_context.uuid} current 1",
