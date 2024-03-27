@@ -165,6 +165,9 @@ class Parser:
         elif self.current_token.matches('TT_FOR_LOOP'):
             return self.for_loop()
 
+        elif self.current_token.matches('TT_AT'):
+            return self.entity_selector()
+
         return self.code_block_statement()
 
     def multiline_code(self, *, expect_end: bool = False) -> MultilineCodeNode:
@@ -515,4 +518,23 @@ class Parser:
         self.advance()
         return AttributeGetNode(root, name)
 
+    def entity_selector(self) -> EntitySelectorNode:
+        position = self.current_token.get_position()
+        self.advance()  # skip '@'
 
+        if not self.current_token.matches('TT_NAME'):
+            self.raise_error(f"Expected name, got {self.current_token.value !r}")
+        selector = self.current_token.value  # save string, not token
+        self.advance()
+
+        if self.current_token.matches('TT_BRACKET', 'LEFT'):
+            while not self.current_token.matches('TT_BRACKET', 'RIGHT'):
+                selector += self.current_token.value
+                self.advance()
+
+            selector += self.current_token.value  # add "]" to selector
+            self.advance()
+
+        statement = self.statement()
+
+        return EntitySelectorNode(selector, statement, position)

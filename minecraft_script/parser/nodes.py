@@ -360,3 +360,22 @@ class AttributeGetNode(ParserNode):
 
     def __repr__(self) -> str:
         return f"AttributeGetNode({self.root !r}, {self.name !r})"
+
+
+class EntitySelectorNode(ParserNode):
+    def __init__(self, selector: str, statement: ParserNode, position: tuple[int, int]):
+        self.selector = selector
+        self.statement = statement
+        self.position = position
+
+    def get_selector(self) -> str:
+        return self.selector
+
+    def get_statement(self) -> ParserNode:
+        return self.statement
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"EntitySelectorNode({self.selector !r}, {self.statement !r})"
