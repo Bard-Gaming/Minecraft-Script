@@ -3,10 +3,10 @@ from .tokens import Token
 from ..errors import MCSIllegalCharacterError, MCSSyntaxError
 from ..common import module_folder
 
-with open(f'{module_folder}/grammar/LANG_TOKENS.json') as file:
+with open(f'{module_folder}/lexer/grammar/LANG_TOKENS.json') as file:
     LANG_TOKENS = loads(file.read())
 
-with open(f'{module_folder}/grammar/LANG_KEYWORDS.json') as file:
+with open(f'{module_folder}/lexer/grammar/LANG_KEYWORDS.json') as file:
     LANG_KEYWORDS = loads(file.read())
 
 token_lookup_table = {}
