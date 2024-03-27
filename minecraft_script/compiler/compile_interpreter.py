@@ -48,7 +48,7 @@ class CompileSymbols:
 
 class CompileContext:
     def __init__(self, mcfunction_name: str = 'init', parent: "CompileContext" = None, *, top_level: bool = False):
-        self.parent = parent
+        self.parent: CompileContext = parent
         self.symbols = CompileSymbols(parent.symbols if parent is not None else None, load_builtins=top_level)  # NOQA
         self.top_level = top_level
         self.mcfunction_name = mcfunction_name

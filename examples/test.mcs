@@ -1,3 +1,12 @@
+function log_block = () => {
+    command("particle minecraft:end_rod ~ ~ ~");
+    log(get_block("~", "~", "~"));
+}
+
 function main = () => {
-    @a[tag=show_block] log(get_block("~", "~-1", "~"));
+    @a[tag=show_block] raycast(log_block, 10);
+}
+
+function kill = () => {
+    @a[tag=show_block] command("tag @s remove show_block");
 }
