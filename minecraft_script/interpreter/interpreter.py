@@ -290,6 +290,10 @@ class Interpreter:
         return_value: RuntimeResult = self.visit(node.get_value(), context)
         return RuntimeResult(return_value=return_value.get_value())  # turn value into return value
 
+    def visit_EntitySelectorNode(self, node, context: InterpreterContext) -> RuntimeResult:
+        # only relevant for compiler, so ignore everything but statement
+        return self.visit(node.get_statement(), context)  # return only statement, skip everything else
+
     # --------------- Error --------------- :
     def visit_unknown(self, node, context: InterpreterContext):
         raise MCSInterpreterError(f"Unknown node {node.__class__.__name__ !r}")
