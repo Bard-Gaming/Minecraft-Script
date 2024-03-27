@@ -59,17 +59,17 @@ class Compiler:
 
     def import_math_file(self):
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/math')
-        for filename in listdir(f'{module_folder}/build_templates/math'):
+        for filename in listdir(f'{module_folder}/compiler/build_templates/math'):
             copyfile(
-                f'{module_folder}/build_templates/math/{filename}',
+                f'{module_folder}/compiler/build_templates/math/{filename}',
                 f'{self.datapack_name}/data/{self.datapack_id}/functions/math/{filename}'
             )
 
     def import_builtins_file(self):
         mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins')
-        for filename in listdir(f'{module_folder}/build_templates/builtins'):
+        for filename in listdir(f'{module_folder}/compiler/build_templates/builtins'):
             copyfile(
-                f'{module_folder}/build_templates/builtins/{filename}',
+                f'{module_folder}/compiler/build_templates/builtins/{filename}',
                 f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins/{filename}'
             )
 
@@ -132,16 +132,16 @@ class Compiler:
             print('Building Templates...', end=" ")
 
         with (
-            open(f'{module_folder}/build_templates/pack.mcmeta', 'rt') as template_file,
+            open(f'{module_folder}/compiler/build_templates/pack.mcmeta', 'rt') as template_file,
             open(f'{self.datapack_name}/pack.mcmeta', 'xt') as output_file
         ):
             output_file.write(template_file.read())
-        copyfile(f'{module_folder}/build_templates/pack.png', f'{self.datapack_name}/pack.png')
+        copyfile(f'{module_folder}/compiler/build_templates/pack.png', f'{self.datapack_name}/pack.png')
 
         # minecraft function tags
 
         with (
-            open(f'{module_folder}/build_templates/function_tags.json', 'rt') as template_file,
+            open(f'{module_folder}/compiler/build_templates/function_tags.json', 'rt') as template_file,
             open(f'{self.datapack_name}/data/minecraft/tags/functions/tick.json', 'xt') as tick_file,
             open(f'{self.datapack_name}/data/minecraft/tags/functions/load.json', 'xt') as load_file
         ):
