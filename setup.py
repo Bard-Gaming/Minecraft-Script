@@ -21,8 +21,7 @@ setup(
     long_description=long_description,
     packages=find_packages(),
     package_data={'minecraft_script': [
-            'grammar/LANG_TOKENS.json', 'grammar/LANG_KEYWORDS.json',
-            'build_templates/',
+            'lexer/grammar/', 'compiler/build_templates/',
     ]},
     install_requires=[],
     keywords=['minecraft', 'mc', 'script', 'language'],
