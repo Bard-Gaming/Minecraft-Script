@@ -100,11 +100,11 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
     raycast_range: mcs_type = args[1]  # get raycast range
 
     fnc_commands = (
-        # Check if not colliding with block
-        f"execute unless entity @e[distance=..0.25, tag=!raycast_{raycast_id}] run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",  # NOQA
+        # Check if entity is found
+        f"execute positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 if entity @s[dx=0] run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",  # NOQA
 
         # Call function if at end of raycast
-        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math as @e[distance=..0.25, tag=!raycast_{raycast_id}, limit=1, sort=nearest] at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
+        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",

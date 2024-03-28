@@ -1,12 +1,11 @@
 function log_block = () => {
-    command("particle minecraft:end_rod ~ ~ ~");
-    log(get_block("~", "~", "~"));
+    command("effect give @s minecraft:glowing 1 0 true");
 }
 
 function main = () => {
-    @a[tag=show_block] raycast(log_block, 10);
+    @a[tag=entity_stare] raycast_entity(log_block, 10);
 }
 
 function kill = () => {
-    @a[tag=show_block] command("tag @s remove show_block");
+    @a[tag=entity_stare] command("tag @s remove entity_stare");
 }
