@@ -1,13 +1,13 @@
 function main = () => {
-    @a[tag=block_info] raycast_block(log_block, 10, particle);
+    @a[tag=block_info] raycast_block(update_center_block, 10);
 }
 
 function particle = () => {
     command("particle minecraft:end_rod ~ ~ ~ 0 0 0 0 1 force");
 }
 
-function log_block = () => {
-    log(get_block("~", "~", "~"));
+function update_center_block = () => {
+    set_block(0, 54, 0, get_block("~", "~", "~"));
 }
 
 function kill = () => {

@@ -55,6 +55,20 @@ def get_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return setup_commands, mcs_obj
 
 
+def set_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+    x, y, z, block_name, *_ = args
+
+    commands = (
+        f"data modify storage mcs_{context.uuid} current.x set from storage {x.get_storage()} {x.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.y set from storage {y.get_storage()} {y.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.z set from storage {z.get_storage()} {z.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.block set from storage {block_name.get_storage()} {block_name.get_nbt()}",  # NOQA
+        f"function {interpreter.datapack_id}:builtins/set_block with storage mcs_{context.uuid} current",
+    )
+
+    return commands, MCSNull(context)
+
+
 def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     from .compile_interpreter import CompileContext
     local_context = CompileContext(f":cb_{generate_uuid()}", context)
@@ -140,6 +154,6 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
 
 
 builtin_functions = (
-    log, command, get_block,
+    log, command, get_block, set_block,
     raycast_block, raycast_entity
 )
