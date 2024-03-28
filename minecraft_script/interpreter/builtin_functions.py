@@ -18,6 +18,15 @@ def custom_get_block(args, context):
     return RuntimeResult(return_value=MCSString("<Minecraft block ID>"))
 
 
+def custom_set_block(args, context):
+    from .interpreter import RuntimeResult
+
+    if len(args) != 4:
+        raise MCSValueError(f"Function <builtin-set_block> takes 4 arguments, got {len(args)}")
+
+    return RuntimeResult(return_value=MCSNull())
+
+
 def custom_raycast_block(args, context):
     from .interpreter import RuntimeResult
 
