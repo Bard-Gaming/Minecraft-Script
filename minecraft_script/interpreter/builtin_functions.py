@@ -26,6 +26,7 @@ def custom_raycast_block(args, context):
 
     return RuntimeResult(return_value=MCSNull())
 
+
 def custom_raycast_entity(args, context):
     from .interpreter import RuntimeResult
 
@@ -33,6 +34,7 @@ def custom_raycast_entity(args, context):
         raise MCSValueError(f"Function <builtin-raycast_entity> takes 2 arguments, got {len(args)}")
 
     return RuntimeResult(return_value=MCSNull())
+
 
 def custom_command(args, context):
     from .interpreter import RuntimeResult

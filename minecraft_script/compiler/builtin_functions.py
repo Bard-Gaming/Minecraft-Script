@@ -55,7 +55,7 @@ def get_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return setup_commands, mcs_obj
 
 
-def raycast(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     from .compile_interpreter import CompileContext
     local_context = CompileContext(f":cb_{generate_uuid()}", context)
     raycast_id = generate_uuid()
@@ -92,7 +92,46 @@ def raycast(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return setup_commands, MCSNull(context)
 
 
+def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+    from .compile_interpreter import CompileContext
+    local_context = CompileContext(f":cb_{generate_uuid()}", context)
+    raycast_id = generate_uuid()
+    raycast_function: MCSFunction = args[0]
+    raycast_range: mcs_type = args[1]  # get raycast range
+
+    fnc_commands = (
+        # Check if not colliding with block
+        f"execute unless entity @e[distance=..0.25, tag=!raycast_{raycast_id}] run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",  # NOQA
+
+        # Call function if at end of raycast
+        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math as @e[distance=..0.25, tag=!raycast_{raycast_id}, limit=1, sort=nearest] at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
+
+        # Start next loop
+        f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
+        f"execute if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
+    )
+    interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
+
+    setup_commands = (
+        # Initialize values
+        raycast_range.set_to_current_cmd(context),
+        f"execute store result score .raycast_end_{raycast_id} mcs_math run data get storage mcs_{context.uuid} current 2",  # NOQA
+        f"scoreboard players set .raycast_iter_{raycast_id} mcs_math 0",
+        f"tag @s add raycast_{raycast_id}",
+
+        # Call raycast
+        f"execute anchored eyes run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+
+        # Reset used scoreboards
+        f"tag @s remove raycast_{raycast_id}",
+        f"scoreboard players reset .raycast_iter_{raycast_id} mcs_math",
+        f"scoreboard players reset .raycast_end_{raycast_id} mcs_math",
+    )
+
+    return setup_commands, MCSNull(context)
+
+
 builtin_functions = (
-    log, command,
-    get_block, raycast,
+    log, command, get_block,
+    raycast_block, raycast_entity
 )
