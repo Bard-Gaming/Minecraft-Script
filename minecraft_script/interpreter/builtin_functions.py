@@ -21,8 +21,8 @@ def custom_get_block(args, context):
 def custom_raycast_block(args, context):
     from .interpreter import RuntimeResult
 
-    if len(args) != 2:
-        raise MCSValueError(f"Function <builtin-raycast_block> takes 2 arguments, got {len(args)}")
+    if not 2 <= len(args) <= 3:
+        raise MCSValueError(f"Function <builtin-raycast_block> takes 2 to 3 arguments, got {len(args)}")
 
     return RuntimeResult(return_value=MCSNull())
 
@@ -30,8 +30,8 @@ def custom_raycast_block(args, context):
 def custom_raycast_entity(args, context):
     from .interpreter import RuntimeResult
 
-    if len(args) != 2:
-        raise MCSValueError(f"Function <builtin-raycast_entity> takes 2 arguments, got {len(args)}")
+    if not 2 <= len(args) <= 3:
+        raise MCSValueError(f"Function <builtin-raycast_entity> takes 2 to 3 arguments, got {len(args)}")
 
     return RuntimeResult(return_value=MCSNull())
 
