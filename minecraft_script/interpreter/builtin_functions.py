@@ -18,14 +18,21 @@ def custom_get_block(args, context):
     return RuntimeResult(return_value=MCSString("<Minecraft block ID>"))
 
 
-def custom_raycast(args, context):
+def custom_raycast_block(args, context):
     from .interpreter import RuntimeResult
 
     if len(args) != 2:
-        raise MCSValueError(f"Function <builtin-raycast> takes 2 arguments, got {len(args)}")
+        raise MCSValueError(f"Function <builtin-raycast_block> takes 2 arguments, got {len(args)}")
 
     return RuntimeResult(return_value=MCSNull())
 
+def custom_raycast_entity(args, context):
+    from .interpreter import RuntimeResult
+
+    if len(args) != 2:
+        raise MCSValueError(f"Function <builtin-raycast_entity> takes 2 arguments, got {len(args)}")
+
+    return RuntimeResult(return_value=MCSNull())
 
 def custom_command(args, context):
     from .interpreter import RuntimeResult
@@ -63,5 +70,6 @@ def custom_range(args, context):
 
 builtin_functions = [
     custom_log, custom_get_block, custom_command,
+    custom_raycast_block, custom_raycast_entity,
     custom_repr, custom_range,
 ]
