@@ -59,8 +59,9 @@ def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type
     from .compile_interpreter import CompileContext
     local_context = CompileContext(f":cb_{generate_uuid()}", context)
     raycast_id = generate_uuid()
-    raycast_function: MCSFunction = args[0]
+    raycast_function: MCSFunction = args[0]  # get function to play on block (at raycast end)
     raycast_range: mcs_type = args[1]  # get raycast range
+    raycast_loop_function: MCSFunction | None = args[2] if len(args) > 2 else None  # get function to play on each loop
 
     fnc_commands = (
         # Check if not colliding with block
@@ -68,6 +69,9 @@ def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type
 
         # Call function if at end of raycast
         f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
+
+        # Call loop function if it exists
+        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "",  # NOQA
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
@@ -82,7 +86,7 @@ def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type
         f"scoreboard players set .raycast_iter_{raycast_id} mcs_math 0",
 
         # Call raycast
-        f"execute anchored eyes run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute anchored eyes positioned ^ ^ ^.00001 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
 
         # Reset used scoreboards
         f"scoreboard players reset .raycast_iter_{raycast_id} mcs_math",
@@ -98,6 +102,7 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
     raycast_id = generate_uuid()
     raycast_function: MCSFunction = args[0]
     raycast_range: mcs_type = args[1]  # get raycast range
+    raycast_loop_function: MCSFunction | None = args[2] if len(args) > 2 else None  # get function to play on each loop
 
     fnc_commands = (
         # Check if entity is found
@@ -106,9 +111,12 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
         # Call function if at end of raycast
         f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
 
+        # Call loop function if it exists
+        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "", # NOQA
+
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
-        f"execute if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
+        f"execute if block ~ ~ ~ minecraft:air if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 
@@ -120,7 +128,7 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
         f"tag @s add raycast_{raycast_id}",
 
         # Call raycast
-        f"execute anchored eyes run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute anchored eyes positioned ^ ^ ^.00001 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
 
         # Reset used scoreboards
         f"tag @s remove raycast_{raycast_id}",
