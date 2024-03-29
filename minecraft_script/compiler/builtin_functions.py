@@ -164,11 +164,24 @@ def give_item(interpreter, args, context) -> function_output:
     count: MCSString = args[2] if len(args) > 2 else None
 
     commands = (
-        f"data modify storage mcs_{context.uuid} current set value " "{}",
-        f"data modify storage mcs_{context.uuid} current.item set from storage {item.get_storage()} {item.get_nbt()}",
-        f"data modify storage mcs_{context.uuid} current.nbt set from storage {nbt.get_storage()} {nbt.get_nbt()}",
-        f"data modify storage mcs_{context.uuid} current.count set from storage {count.get_storage()} {count.get_nbt()}",
 
+        # ------ Setup ------
+        f"data modify storage mcs_{context.uuid} current set value " "{}",
+
+        # --- Item ---
+        f"data modify storage mcs_{context.uuid} current.item set from storage {item.get_storage()} {item.get_nbt()}",
+
+        # --- NBT ---
+        f"data modify storage mcs_{context.uuid} current.nbt set from storage {nbt.get_storage()} {nbt.get_nbt()}"
+        if nbt is not None else
+        f"data modify storage mcs_{context.uuid} current.nbt set value " '"{}"',  # set value to default
+
+        # --- Count ---
+        f"data modify storage mcs_{context.uuid} current.count set from storage {count.get_storage()} {count.get_nbt()}"
+        if count is not None else
+        f"data modify storage mcs_{context.uuid} current.count set value 1",  # set value to default
+
+        # ------ Call Function ------
         f"function {interpreter.datapack_id}:builtins/give_item with storage mcs_{context.uuid} current",
     )
 
