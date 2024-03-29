@@ -1,0 +1,22 @@
+var saved_block = "";
+
+function save_current_block = () => {
+    set saved_block = get_block("~", "~", "~");
+}
+
+function set_current_block = () => {
+    set_block("~", "~", "~", saved_block);
+}
+
+function copy_block = () => {
+    raycast_block(save_current_block, 10);
+}
+
+function paste_block = () => {
+    raycast_block(set_current_block, 10);
+}
+
+function get_stick = (count) => {
+    give_item("minecraft:stick", `{display:{Name:'{"text":"Copy Stick", "italic":false, "color":"light_purple"}'}}`, count);
+}
+

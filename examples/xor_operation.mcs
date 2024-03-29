@@ -1,8 +1,0 @@
-function xor = (bool_1, bool_2) => {
-    return (bool_1 && !bool_2) || (!bool_1 && bool_2)
-}
-
-log(xor(false, false))
-log(xor(false, true))
-log(xor(true, false))
-log(xor(true, true))
