@@ -81,13 +81,13 @@ def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type
 
     fnc_commands = (
         # Check if not colliding with block
-        f"execute unless block ~ ~ ~ minecraft:air run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",
+        f"execute unless block ~ ~ ~ #{interpreter.datapack_id}:no_collision run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",
 
         # Call function if at end of raycast
         f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",
 
         # Call loop function if it exists
-        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "",
+        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else None,
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
@@ -128,11 +128,11 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
         f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",
 
         # Call loop function if it exists
-        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "",
+        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else None,
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
-        f"execute if block ~ ~ ~ minecraft:air if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute if block ~ ~ ~ #{interpreter.datapack_id}:no_collision if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 

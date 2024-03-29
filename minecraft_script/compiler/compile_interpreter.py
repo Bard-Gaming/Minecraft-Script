@@ -120,8 +120,9 @@ class CompileInterpreter:
         self.used_context_ids = set()
         self.functions_to_generate = set()
 
-    def add_command(self, mcfunction: str, command: str) -> None:
-        self.commands.add_command(mcfunction, command)
+    def add_command(self, mcfunction: str, command: str | None) -> None:
+        if command is not None:  # only add command if it's not nothing (makes it easier for dynamic commands)
+            self.commands.add_command(mcfunction, command)
 
     def add_commands(self, mcfunction: str, commands: iter) -> None:
         for command in commands:
