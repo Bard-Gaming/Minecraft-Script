@@ -20,7 +20,7 @@ def command(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     value = args[0]
 
     commands = (
-        f"data modify storage {value.get_storage()} current set value " "{\"cmd\": 0}",
+        f"data modify storage {value.get_storage()} current set value " "{}",  # set current to object to store values
         f"data modify storage {value.get_storage()} current.cmd set from storage {value.get_storage()} {value.get_nbt()}",
         f"function {interpreter.datapack_id}:builtins/command with storage {value.get_storage()} current",
     )
@@ -46,6 +46,7 @@ def get_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 
     setup_commands = (
+        f"data modify storage mcs_{context.uuid} current set value " "{}",  # set current to an object to store values
         f"data modify storage mcs_{context.uuid} current.x set from storage {x.get_storage()} {x.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.y set from storage {y.get_storage()} {y.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.z set from storage {z.get_storage()} {z.get_nbt()}",
@@ -59,10 +60,11 @@ def set_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     x, y, z, block_name, *_ = args
 
     commands = (
+        f"data modify storage mcs_{context.uuid} current set value " "{}",  # set current to an object to store values
         f"data modify storage mcs_{context.uuid} current.x set from storage {x.get_storage()} {x.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.y set from storage {y.get_storage()} {y.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.z set from storage {z.get_storage()} {z.get_nbt()}",
-        f"data modify storage mcs_{context.uuid} current.block set from storage {block_name.get_storage()} {block_name.get_nbt()}",  # NOQA
+        f"data modify storage mcs_{context.uuid} current.block set from storage {block_name.get_storage()} {block_name.get_nbt()}",
         f"function {interpreter.datapack_id}:builtins/set_block with storage mcs_{context.uuid} current",
     )
 
@@ -79,24 +81,24 @@ def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type
 
     fnc_commands = (
         # Check if not colliding with block
-        f"execute unless block ~ ~ ~ minecraft:air run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",  # NOQA
+        f"execute unless block ~ ~ ~ minecraft:air run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",
 
         # Call function if at end of raycast
-        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
+        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",
 
         # Call loop function if it exists
-        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "",  # NOQA
+        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "",
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
-        f"execute if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
+        f"execute if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 
     setup_commands = (
         # Initialize values
         raycast_range.set_to_current_cmd(context),
-        f"execute store result score .raycast_end_{raycast_id} mcs_math run data get storage mcs_{context.uuid} current 2",  # NOQA
+        f"execute store result score .raycast_end_{raycast_id} mcs_math run data get storage mcs_{context.uuid} current 2",
         f"scoreboard players set .raycast_iter_{raycast_id} mcs_math 0",
 
         # Call raycast
@@ -120,24 +122,24 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
 
     fnc_commands = (
         # Check if entity is found
-        f"execute positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 if entity @s[dx=0] run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",  # NOQA
+        f"execute positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 if entity @s[dx=0] run scoreboard players operation .raycast_iter_{raycast_id} mcs_math = .raycast_end_{raycast_id} mcs_math",
 
         # Call function if at end of raycast
-        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",  # NOQA
+        f"execute if score .raycast_iter_{raycast_id} mcs_math >= .raycast_end_{raycast_id} mcs_math positioned ~-0.1 ~-0.1 ~-0.1 as @e[tag=!raycast_{raycast_id}, dx=0] positioned ~-0.7 ~-0.7 ~-0.7 at @s run function {interpreter.datapack_id}:user_functions/{raycast_function.name}",
 
         # Call loop function if it exists
-        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "", # NOQA
+        f"function {interpreter.datapack_id}:user_functions/{raycast_loop_function.name}" if raycast_loop_function is not None else "",
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
-        f"execute if block ~ ~ ~ minecraft:air if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
+        f"execute if block ~ ~ ~ minecraft:air if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 
     setup_commands = (
         # Initialize values
         raycast_range.set_to_current_cmd(context),
-        f"execute store result score .raycast_end_{raycast_id} mcs_math run data get storage mcs_{context.uuid} current 2",  # NOQA
+        f"execute store result score .raycast_end_{raycast_id} mcs_math run data get storage mcs_{context.uuid} current 2",
         f"scoreboard players set .raycast_iter_{raycast_id} mcs_math 0",
         f"tag @s add raycast_{raycast_id}",
 
