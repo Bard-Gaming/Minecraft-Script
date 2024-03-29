@@ -1,7 +1,10 @@
 from .compile_types import *
 
 
-def log(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+function_output = tuple[tuple[str, ...], mcs_type]
+
+
+def log(interpreter, args, context) -> function_output:
     max_length = 5
 
     values = list(map(lambda arg: (arg.get_storage(), arg.get_nbt()), args))
@@ -16,7 +19,7 @@ def log(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return commands, MCSNull(context)
 
 
-def command(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+def command(interpreter, args, context) -> function_output:
     value = args[0]
 
     commands = (
@@ -28,7 +31,7 @@ def command(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return commands, MCSNull(context)
 
 
-def get_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+def get_block(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
     x, y, z, *_ = args
 
@@ -56,7 +59,7 @@ def get_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return setup_commands, mcs_obj
 
 
-def set_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+def set_block(interpreter, args, context) -> function_output:
     x, y, z, block_name, *_ = args
 
     commands = (
@@ -71,7 +74,7 @@ def set_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
     return commands, MCSNull(context)
 
 
-def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+def raycast_block(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
     local_context = CompileContext(f":cb_{generate_uuid()}", context)
     raycast_id = generate_uuid()
@@ -112,7 +115,7 @@ def raycast_block(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type
     return setup_commands, MCSNull(context)
 
 
-def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_type]:
+def raycast_entity(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
     local_context = CompileContext(f":cb_{generate_uuid()}", context)
     raycast_id = generate_uuid()
@@ -155,7 +158,25 @@ def raycast_entity(interpreter, args, context) -> tuple[tuple[str, ...], mcs_typ
     return setup_commands, MCSNull(context)
 
 
+def give_item(interpreter, args, context) -> function_output:
+    item: MCSString = args[0]  # item name
+    nbt: MCSString = args[1] if len(args) > 1 else None  # item nbt (optional)
+    count: MCSString = args[2] if len(args) > 2 else None
+
+    commands = (
+        f"data modify storage mcs_{context.uuid} current set value " "{}",
+        f"data modify storage mcs_{context.uuid} current.item set from storage {item.get_storage()} {item.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.nbt set from storage {nbt.get_storage()} {nbt.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.count set from storage {count.get_storage()} {count.get_nbt()}",
+
+        f"function {interpreter.datapack_id}:builtins/give_item with storage mcs_{context.uuid} current",
+    )
+
+    return commands, MCSNull(context)
+
+
 builtin_functions = (
     log, command, get_block, set_block,
-    raycast_block, raycast_entity
+    raycast_block, raycast_entity,
+    give_item,
 )
