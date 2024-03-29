@@ -73,6 +73,22 @@ class Compiler:
                 f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins/{filename}'
             )
 
+    def import_tags_folder(self):
+        module_tags_folder = f'{module_folder}/compiler/build_templates/tags'
+        datapack_tags_folder = f'{self.datapack_name}/data/{self.datapack_id}/tags'
+
+        mkdir(datapack_tags_folder)
+        for directory_name in listdir(module_tags_folder):
+            current_module_folder = f'{module_tags_folder}/{directory_name}'
+            current_datapack_folder = f'{datapack_tags_folder}/{directory_name}'
+
+            mkdir(current_datapack_folder)
+            for file_name in listdir(current_module_folder):
+                copyfile(
+                    f'{current_module_folder}/{file_name}',
+                    f'{current_datapack_folder}/{file_name}'
+                )
+
     def generate_builtin_functions(self, verbose: bool):
         if verbose:
             print('\rBuilding built-in functions...', end="")
@@ -155,14 +171,18 @@ class Compiler:
         self.generate_builtin_functions(verbose)
 
         if verbose:
-            print("Compiling program...", end=" ")
+            print("Generating datapack tags...", end=" ")
+        self.import_tags_folder()
+        if verbose:
+            print("Done!")
 
+        if verbose:
+            print("Compiling program...", end=" ")
         mcs_compile(
             self.ast,
             f'{self.datapack_name}/data/{self.datapack_id}/functions',
             self.datapack_id
         )
-
         if verbose:
             print("Done!")
 
