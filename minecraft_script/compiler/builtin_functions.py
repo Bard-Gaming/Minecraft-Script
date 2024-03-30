@@ -188,8 +188,36 @@ def give_item(interpreter, args, context) -> function_output:
     return commands, MCSNull(context)
 
 
+def concatenate(interpreter, args, context) -> function_output:
+    from .compile_interpreter import CompileContext
+
+    value_1: MCSString = args[0]
+    value_2: MCSString = args[1]
+    value_3: MCSString | None = args[2] if len(args) > 2 else None
+
+    local_context = CompileContext(f":cb_{generate_uuid()}", context)
+    output_string = MCSString(context)
+
+    concat_macro = f"$data modify storage {output_string.get_storage()} {output_string.get_nbt()} set value '$(value_1)$(value_2)$(value_3)'"
+    interpreter.add_command(local_context.mcfunction_name, concat_macro)
+
+    commands = (
+        f"data modify storage mcs_{context.uuid} current set value " "{}",
+        f"data modify storage mcs_{context.uuid} current.value_1 set from storage {value_1.get_storage()} {value_1.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.value_2 set from storage {value_2.get_storage()} {value_2.get_nbt()}",
+
+        f"data modify storage mcs_{context.uuid} current.value_3 set from storage {value_3.get_storage()} {value_3.get_nbt()}"
+        if value_3 is not None else
+        f"data modify storage mcs_{context.uuid} current.value_3 set value \"\"",  # empty string for when no value is given
+
+        f"function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
+    )
+
+    return commands, output_string
+
+
 builtin_functions = (
     log, command, get_block, set_block,
     raycast_block, raycast_entity,
-    give_item,
+    give_item, concatenate,
 )
