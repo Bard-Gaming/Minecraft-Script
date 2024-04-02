@@ -1,6 +1,5 @@
 from .compile_types import *
 
-
 function_output = tuple[tuple[str, ...], mcs_type]
 
 
@@ -42,8 +41,10 @@ def get_block(interpreter, args, context) -> function_output:
     fnc_commands = (
         f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set value \"\"",
         "summon armor_stand ~ ~5 ~ {Invisible:1b, NoBasePlate:1b, NoGravity:1b, Tags:[\"mcs_get_block_temp\"]}",
-        "$loot replace entity @e[type=armor_stand, limit=1, sort=nearest, tag=mcs_get_block_temp] armor.head mine $(x) $(y) $(z) netherite_pickaxe{Enchantments:[{id:\"minecraft:silk_touch\", lvl:1s}]}",  # NOQA
-        f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set from entity @e[type=minecraft:armor_stand, tag=mcs_get_block_temp, limit=1, sort=nearest] ArmorItems[3].id",  # NOQA
+        "$loot replace entity @e[type=armor_stand, limit=1, sort=nearest, tag=mcs_get_block_temp] armor.head mine $(x) $(y) $(z) netherite_pickaxe{Enchantments:[{id:\"minecraft:silk_touch\", lvl:1s}]}",
+        # NOQA
+        f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set from entity @e[type=minecraft:armor_stand, tag=mcs_get_block_temp, limit=1, sort=nearest] ArmorItems[3].id",
+        # NOQA
         "kill @e[type=armor_stand, tag=mcs_get_block_temp]"
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
@@ -191,29 +192,56 @@ def give_item(interpreter, args, context) -> function_output:
 def concatenate(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
 
-    value_1: MCSString = args[0]
-    value_2: MCSString = args[1]
-    value_3: MCSString | None = args[2] if len(args) > 2 else None
+    init_context = CompileContext(f':cb_{generate_uuid()}', context)
+    iter_context = CompileContext(f':cb_{generate_uuid()}', context)
+    append_context = CompileContext(f':cb_{generate_uuid()}', context)
+    score_id = generate_uuid()
 
-    local_context = CompileContext(f":cb_{generate_uuid()}", context)
     output_string = MCSString(context)
 
-    concat_macro = f"$data modify storage {output_string.get_storage()} {output_string.get_nbt()} set value '$(value_1)$(value_2)$(value_3)'"
-    interpreter.add_command(local_context.mcfunction_name, concat_macro)
-
-    commands = (
-        f"data modify storage mcs_{context.uuid} current set value " "{}",
-        f"data modify storage mcs_{context.uuid} current.value_1 set from storage {value_1.get_storage()} {value_1.get_nbt()}",
-        f"data modify storage mcs_{context.uuid} current.value_2 set from storage {value_2.get_storage()} {value_2.get_nbt()}",
-
-        f"data modify storage mcs_{context.uuid} current.value_3 set from storage {value_3.get_storage()} {value_3.get_nbt()}"
-        if value_3 is not None else
-        f"data modify storage mcs_{context.uuid} current.value_3 set value \"\"",  # empty string for when no value is given
-
-        f"function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
+    setup_commands = f"data modify storage mcs_{context.uuid} current set value []",
+    setup_commands += tuple(
+        f"data modify storage mcs_{context.uuid} current append from storage {value.get_storage()} {value.get_nbt()}"
+        for value in args
+    )
+    setup_commands += (
+        f"data modify storage mcs_{context.uuid} string.result set from storage mcs_{context.uuid} current[0]",
+        f"function {interpreter.datapack_id}:code_blocks/{init_context.mcfunction_name[1:]}",
+        f"data modify storage {output_string.get_storage()} {output_string.get_nbt()} set from storage mcs_{context.uuid} string.result",
+        f"scoreboard players reset .len_{score_id} mcs_math",
+        f"scoreboard players reset .quote_{score_id} mcs_math",
+        f"scoreboard players reset .slash_{score_id} mcs_math",
     )
 
-    return commands, output_string
+    init_commands = (
+        f"data remove storage mcs_{context.uuid} current[0]",
+        f"execute if data storage mcs_{context.uuid} current[0] run function {interpreter.datapack_id}:code_blocks/{iter_context.mcfunction_name[1:]}",
+    )
+    interpreter.add_commands(init_context.mcfunction_name, init_commands)
+
+    iter_commands = (
+        'tellraw @a {' f'"storage":"mcs_{context.uuid}", "nbt":"string.char"' '}',
+        f'execute store result score .len_{score_id} mcs_math run data get storage mcs_{context.uuid} current[0]',
+        f'execute if score .len_{score_id} mcs_math matches 0 run return run function {interpreter.datapack_id}:code_blocks/{init_context.mcfunction_name[1:]}',
+        f'data modify storage mcs_{context.uuid} string.char set string storage mcs_{context.uuid} current[0] 0 1',
+        f'data modify storage mcs_{context.uuid} current[0] set string storage mcs_{context.uuid} current[0] 1',
+        f'data modify storage mcs_{context.uuid} string.quote set value "\\""',
+        f'data modify storage mcs_{context.uuid} string.slash set value "\\\\"',
+        f'execute store success score .quote_{score_id} mcs_math run data modify storage mcs_{context.uuid} string.quote set from storage mcs_{context.uuid} string.char',
+        f'execute store success score .slash_{score_id} mcs_math run data modify storage mcs_{context.uuid} string.slash set from storage mcs_{context.uuid} string.char',
+        f'execute if score .quote_{score_id} mcs_math matches 0 run data modify storage mcs_{context.uuid} string.char set value "\\\\\\""',
+        f'execute if score .slash_{score_id} mcs_math matches 0 run data modify storage mcs_{context.uuid} string.char set value "\\\\\\\\"',
+        f'function {interpreter.datapack_id}:code_blocks/{append_context.mcfunction_name[1:]} with storage mcs_{context.uuid} string',
+        f'function {interpreter.datapack_id}:code_blocks/{iter_context.mcfunction_name[1:]}',
+    )
+    interpreter.add_commands(iter_context.mcfunction_name, iter_commands)
+
+    append_command = (
+        f"$data modify storage mcs_{context.uuid} string.result set value \"$(result)$(char)\""
+    )
+    interpreter.add_command(append_context.mcfunction_name, append_command)
+
+    return setup_commands, output_string
 
 
 builtin_functions = (

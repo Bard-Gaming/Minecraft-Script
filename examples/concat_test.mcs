@@ -1,0 +1,7 @@
+function test = () => {
+    var a = "this is ";
+    var b = 'a nor\mal ';
+    var c = "test";
+
+    log(concatenate(a, b, c));
+}

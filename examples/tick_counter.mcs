@@ -1,7 +1,7 @@
 var current_tick = 0;
 
 function get_time_item = (time, count) => {
-    var nbt = concatenate(`{display:{Name:"{\"text\":\"`, time, `s Passed\", \"italic\":false}"}, Tags:["tick_counter_item"]}`);
+    var nbt = concatenate(`{display:{Name:"`, time, `s Passed"}, Tags:["tick_counter_item"]}`);
     give_item("minecraft:cod", nbt, count);
 }
 
