@@ -162,7 +162,7 @@ def raycast_entity(interpreter, args, context) -> function_output:
 
 def give_item(interpreter, args, context) -> function_output:
     item: MCSString = args[0]  # item name
-    nbt: MCSString = args[1] if len(args) > 1 else None  # item nbt (optional)
+    components: MCSString = args[1] if len(args) > 1 else None  # item nbt (optional)
     count: MCSString = args[2] if len(args) > 2 else None
 
     commands = (
@@ -172,10 +172,10 @@ def give_item(interpreter, args, context) -> function_output:
         # --- Item ---
         f"data modify storage mcs_{context.uuid} current.item set from storage {item.get_storage()} {item.get_nbt()}",
 
-        # --- NBT ---
-        f"data modify storage mcs_{context.uuid} current.nbt set from storage {nbt.get_storage()} {nbt.get_nbt()}"
-        if nbt is not None else
-        f"data modify storage mcs_{context.uuid} current.nbt set value " '"{}"',  # set value to default
+        # --- Components ---
+        f"data modify storage mcs_{context.uuid} current.nbt set from storage {components.get_storage()} {components.get_nbt()}"
+        if components is not None else
+        f"data modify storage mcs_{context.uuid} current.nbt set value ''",  # set value to default
 
         # --- Count ---
         f"data modify storage mcs_{context.uuid} current.count set from storage {count.get_storage()} {count.get_nbt()}"

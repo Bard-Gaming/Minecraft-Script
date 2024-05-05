@@ -1,1 +1,1 @@
-$give @s $(item)$(nbt) $(count)
+$give @s $(item)[$(components)] $(count)
