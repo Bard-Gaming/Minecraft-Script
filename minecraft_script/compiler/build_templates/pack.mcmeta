@@ -1,6 +1,6 @@
 {
     "pack": {
-        "pack_format": 26,
+        "pack_format": PACK_FORMAT,
         "description": "This datapack was generated using Minecraft-Script"
     }
 }

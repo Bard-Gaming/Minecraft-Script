@@ -1,5 +1,5 @@
 from .compile_interpreter import mcs_compile
-from ..common import module_folder
+from ..common import module_folder, COMMON_CONFIG
 from ..text_additions import text_error
 from os import mkdir, listdir
 from time import time
@@ -113,7 +113,6 @@ class Compiler:
         if verbose:
             print('\rBuilding built-in functions... Done!')
 
-
     def build(self, verbose: bool = True):
         start_time = time()  # keep track of start time
 
@@ -151,7 +150,11 @@ class Compiler:
             open(f'{module_folder}/compiler/build_templates/pack.mcmeta', 'rt') as template_file,
             open(f'{self.datapack_name}/pack.mcmeta', 'xt') as output_file
         ):
-            output_file.write(template_file.read())
+            template_text = template_file.read()
+            # copy pack.mcmeta template to datapack with correct pack_format version:
+            output_file.write(template_text.replace("PACK_FORMAT", COMMON_CONFIG["pack_format"]))
+
+        # Copy datapack icon img:
         copyfile(f'{module_folder}/compiler/build_templates/pack.png', f'{self.datapack_name}/pack.png')
 
         # minecraft function tags
