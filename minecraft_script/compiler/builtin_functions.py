@@ -1,6 +1,7 @@
 from .compile_types import *
+from ..common import COMMON_CONFIG
 
-function_output = tuple[tuple[str, ...], mcs_type]
+function_output = tuple[tuple[str, ...], mcs_type]  # [commands, return value]
 
 
 def log(interpreter, args, context) -> function_output:
@@ -165,7 +166,6 @@ def give_item(interpreter, args, context) -> function_output:
     count: MCSString = args[2] if len(args) > 2 else None
 
     commands = (
-
         # ------ Setup ------
         f"data modify storage mcs_{context.uuid} current set value " "{}",
 
@@ -191,55 +191,23 @@ def give_item(interpreter, args, context) -> function_output:
 
 def concatenate(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
+    string_1: MCSString = args[0]
+    string_2: MCSString = args[1]
 
-    init_context = CompileContext(f':cb_{generate_uuid()}', context)
-    iter_context = CompileContext(f':cb_{generate_uuid()}', context)
-    append_context = CompileContext(f':cb_{generate_uuid()}', context)
-    score_id = generate_uuid()
+    string_concat_context = CompileContext(f":cb_{generate_uuid()}")
 
     output_string = MCSString(context)
 
-    setup_commands = f"data modify storage mcs_{context.uuid} current set value []",
-    setup_commands += tuple(
-        f"data modify storage mcs_{context.uuid} current append from storage {value.get_storage()} {value.get_nbt()}"
-        for value in args
-    )
-    setup_commands += (
-        f"data modify storage mcs_{context.uuid} string.result set from storage mcs_{context.uuid} current[0]",
-        f"function {interpreter.datapack_id}:code_blocks/{init_context.mcfunction_name[1:]}",
-        f"data modify storage {output_string.get_storage()} {output_string.get_nbt()} set from storage mcs_{context.uuid} string.result",
-        f"scoreboard players reset .len_{score_id} mcs_math",
-        f"scoreboard players reset .quote_{score_id} mcs_math",
-        f"scoreboard players reset .slash_{score_id} mcs_math",
+    setup_commands = (
+        f"data modify storage mcs_{context.uuid} current.string_1 set from storage {string_1.get_storage()} {string_1.get_nbt()}",
+        f"data modify storage mcs_{context.uuid} current.string_2 set from storage {string_2.get_storage()} {string_2.get_storage()}",
+        f"function {interpreter.datapack_id}:code_blocks/{string_concat_context.mcfunction_name} with storage mcs_{context.uuid} current"
     )
 
-    init_commands = (
-        f"data remove storage mcs_{context.uuid} current[0]",
-        f"execute if data storage mcs_{context.uuid} current[0] run function {interpreter.datapack_id}:code_blocks/{iter_context.mcfunction_name[1:]}",
+    interpreter.add_command(
+        string_concat_context.mcfunction_name,
+        f"$data modify storage {output_string.get_storage()} {output_string.get_nbt()} set value \"$(string_1)$(string_2)\""
     )
-    interpreter.add_commands(init_context.mcfunction_name, init_commands)
-
-    iter_commands = (
-        'tellraw @a {' f'"storage":"mcs_{context.uuid}", "nbt":"string.char"' '}',
-        f'execute store result score .len_{score_id} mcs_math run data get storage mcs_{context.uuid} current[0]',
-        f'execute if score .len_{score_id} mcs_math matches 0 run return run function {interpreter.datapack_id}:code_blocks/{init_context.mcfunction_name[1:]}',
-        f'data modify storage mcs_{context.uuid} string.char set string storage mcs_{context.uuid} current[0] 0 1',
-        f'data modify storage mcs_{context.uuid} current[0] set string storage mcs_{context.uuid} current[0] 1',
-        f'data modify storage mcs_{context.uuid} string.quote set value "\\""',
-        f'data modify storage mcs_{context.uuid} string.slash set value "\\\\"',
-        f'execute store success score .quote_{score_id} mcs_math run data modify storage mcs_{context.uuid} string.quote set from storage mcs_{context.uuid} string.char',
-        f'execute store success score .slash_{score_id} mcs_math run data modify storage mcs_{context.uuid} string.slash set from storage mcs_{context.uuid} string.char',
-        f'execute if score .quote_{score_id} mcs_math matches 0 run data modify storage mcs_{context.uuid} string.char set value "\\\\\\""',
-        f'execute if score .slash_{score_id} mcs_math matches 0 run data modify storage mcs_{context.uuid} string.char set value "\\\\\\\\"',
-        f'function {interpreter.datapack_id}:code_blocks/{append_context.mcfunction_name[1:]} with storage mcs_{context.uuid} string',
-        f'function {interpreter.datapack_id}:code_blocks/{iter_context.mcfunction_name[1:]}',
-    )
-    interpreter.add_commands(iter_context.mcfunction_name, iter_commands)
-
-    append_command = (
-        f"$data modify storage mcs_{context.uuid} string.result set value \"$(result)$(char)\""
-    )
-    interpreter.add_command(append_context.mcfunction_name, append_command)
 
     return setup_commands, output_string
 
