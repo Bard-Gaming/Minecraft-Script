@@ -173,9 +173,9 @@ def give_item(interpreter, args, context) -> function_output:
         f"data modify storage mcs_{context.uuid} current.item set from storage {item.get_storage()} {item.get_nbt()}",
 
         # --- Components ---
-        f"data modify storage mcs_{context.uuid} current.nbt set from storage {components.get_storage()} {components.get_nbt()}"
+        f"data modify storage mcs_{context.uuid} current.components set from storage {components.get_storage()} {components.get_nbt()}"
         if components is not None else
-        f"data modify storage mcs_{context.uuid} current.nbt set value ''",  # set value to default
+        f"data modify storage mcs_{context.uuid} current.components set value ''",  # set value to default
 
         # --- Count ---
         f"data modify storage mcs_{context.uuid} current.count set from storage {count.get_storage()} {count.get_nbt()}"
@@ -199,9 +199,10 @@ def concatenate(interpreter, args, context) -> function_output:
     output_string = MCSString(context)
 
     setup_commands = (
+        f"data modify storage mcs_{context.uuid} current set value " "{}",
         f"data modify storage mcs_{context.uuid} current.string_1 set from storage {string_1.get_storage()} {string_1.get_nbt()}",
-        f"data modify storage mcs_{context.uuid} current.string_2 set from storage {string_2.get_storage()} {string_2.get_storage()}",
-        f"function {interpreter.datapack_id}:code_blocks/{string_concat_context.mcfunction_name} with storage mcs_{context.uuid} current"
+        f"data modify storage mcs_{context.uuid} current.string_2 set from storage {string_2.get_storage()} {string_2.get_nbt()}",
+        f"function {interpreter.datapack_id}:code_blocks/{string_concat_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
     )
 
     interpreter.add_command(

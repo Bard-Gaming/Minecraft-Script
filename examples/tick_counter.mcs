@@ -1,19 +1,23 @@
 var current_tick = 0;
 
 function get_time_item = (time, count) => {
-    var nbt = concatenate(`{display:{Name:"`, time, `s Passed"}, Tags:["tick_counter_item"]}`);
-    give_item("minecraft:cod", nbt, count);
+    var components = concatenate("minecraft:custom_data={tick_item: 1b}, minecraft:item_name=", time);
+    give_item("minecraft:cod", components, count);
+}
+
+function clear_tick_items = () => {
+    command("clear @a minecraft:cod[minecraft:custom_data={tick_item: 1b}]");
 }
 
 function main = () => {
-    @a command(`clear @s minecraft:cod{Tags:["tick_counter_item"]}`);
+    clear_tick_items();
     set current_tick = current_tick + 1;
-
-    @a get_time_item("Tick", (current_tick / 1200) % 60 + 1);
+    
+    @a get_time_item("Tick", current_tick % 20 + 1);
     @a get_time_item("Second", (current_tick / 20) % 60 + 1);
-    @a get_time_item("Minute", current_tick % 20 + 1);
+    @a get_time_item("Minute", (current_tick / 1200) % 60 + 1);
 }
 
 function kill = () => {
-    command(`clear @a minecraft:cod{Tags:["tick_counter_item"]}`);
+    clear_tick_items();
 }
