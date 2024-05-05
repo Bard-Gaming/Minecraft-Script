@@ -213,6 +213,24 @@ def concatenate(interpreter, args, context) -> function_output:
     return setup_commands, output_string
 
 
+def append(interpreter, args, context) -> function_output:
+    from .compile_interpreter import CompileContext
+    list_arg: MCSList = args[0]
+    value: mcs_type = args[1]
+
+    set_key_context = CompileContext(f":cb_{generate_uuid()}")
+
+    commands = (
+        f"data modify storage mcs_{context.uuid} current set value " "{}",
+        f"data modify storage mcs_{context.uuid} current.index set from storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
+        # TODO: Increment length, call set_key_context function
+    )
+
+    interpreter.add_command(
+        set_key_context.mcfunction_name,
+        f"$data modify storage {list_arg.get_storage} {list_arg.get_nbt()}.$(index) set from storage {value.get_storage()} {value.get_nbt()}"
+    )
+
 builtin_functions = (
     log, command, get_block, set_block,
     raycast_block, raycast_entity,

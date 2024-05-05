@@ -12,7 +12,7 @@ function clear_tick_items = () => {
 function main = () => {
     clear_tick_items();
     set current_tick = current_tick + 1;
-    
+
     @a get_time_item("Tick", current_tick % 20 + 1);
     @a get_time_item("Second", (current_tick / 20) % 60 + 1);
     @a get_time_item("Minute", (current_tick / 1200) % 60 + 1);
