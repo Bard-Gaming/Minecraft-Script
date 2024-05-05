@@ -125,8 +125,8 @@ class CompileInterpreter:
             self.commands.add_command(mcfunction, command)
 
     def add_commands(self, mcfunction: str, commands: iter) -> None:
-        for command in commands:
-            self.add_command(mcfunction, command)
+        multiline_command = "\n".join(commands)  # wrap all commands into a single string
+        self.add_command(mcfunction, multiline_command)
 
     def get_file_content(self, mcfunction):
         return self.commands.get_file_content(mcfunction)
