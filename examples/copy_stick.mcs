@@ -1,12 +1,26 @@
-var iter_array = ["0", "1", "2"];
+var iter_array = ["-1", "0", "1"];
 var saved_blocks = [];
 
-for (x in iter_array) {
-    for (z in iter_array) {
-        var x_coord = concatenate("~", x);
-        var z_coord = concatenate("~", z);
-        @a append(saved_blocks, get_block(x_coord, "~-1", z_coord));
+function save_blocks_local = () => {
+    set saved_blocks = [];
+    
+    for (x in iter_array) {
+        for (z in iter_array) {
+            var x_coord = concatenate("~", x);
+            var z_coord = concatenate("~", z);
+            append(saved_blocks, get_block(x_coord, "~", z_coord));
+        }
     }
 }
 
-log(saved_blocks[0]);
+function save_blocks_ray = () => {
+    raycast_block(save_blocks_local, 10);
+}
+
+function print_saved_blocks = () => {
+    var loop = [0, 3, 6];
+    for (i in loop) {
+        log(saved_blocks[i], saved_blocks[i + 1], saved_blocks[i + 2]);
+    }
+}
+
