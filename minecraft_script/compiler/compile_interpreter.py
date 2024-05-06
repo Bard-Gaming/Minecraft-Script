@@ -254,7 +254,7 @@ class CompileInterpreter:
         local_context = CompileContext(f":cb_{generate_uuid()}")  # context for function that retrieves value at index
         self.add_command(
             local_context.mcfunction_name,
-            f"data modify storage {result.get_storage()} {result.get_nbt()} set from storage {atom.get_storage()} {atom.get_nbt()}.$(index)"
+            f"$data modify storage {result.get_storage()} {result.get_nbt()} set from storage {atom.get_storage()} {atom.get_nbt()}.$(index)"
         )
 
         commands = (
