@@ -101,6 +101,14 @@ class MCSBoolean(MCSObject):
         return f"MCSBoolean({self.uuid !r})"
 
 
+class MCSUnknown(MCSObject):
+    def __init__(self, context):
+        super().__init__(context, "unknown")
+
+    def __repr__(self) -> str:
+        return f"MCSUnknown({self.uuid !r})"
+
+
 class MCSFunction:
     def __init__(self, name: str, body, parameter_names: list[str, ...], context):
         from .compile_interpreter import CompileContext
@@ -133,4 +141,4 @@ class MCSFunction:
         return f"MCSFunction({self.name !r})"
 
 
-mcs_type = MCSNull | MCSNumber | MCSString | MCSBoolean | MCSList | MCSFunction | MCSVariable
+mcs_type = MCSNull | MCSNumber | MCSString | MCSBoolean | MCSUnknown | MCSList | MCSFunction | MCSVariable
