@@ -245,6 +245,27 @@ class CompileInterpreter:
 
         return CompileResult()
 
+    def visit_GetKeyNode(self, node, context: CompileContext) -> CompileResult:
+        atom: mcs_type = self.visit(node.get_atom(), context).get_value()
+        key: MCSNumber = self.visit(node.get_key(), context).get_value()
+
+        result = MCSUnknown(context)
+
+        local_context = CompileContext(f":cb_{generate_uuid()}")  # context for function that retrieves value at index
+        self.add_command(
+            local_context.mcfunction_name,
+            f"data modify storage {result.get_storage()} {result.get_nbt()} set from storage {atom.get_storage()} {atom.get_nbt()}.$(index)"
+        )
+
+        commands = (
+            f"data modify storage mcs_{context.uuid} current set value " "{}",
+            f"data modify storage mcs_{context.uuid} current.index set from storage {key.get_storage()} {key.get_nbt()}",
+            f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current"
+        )
+        self.add_commands(context.mcfunction_name, commands)
+
+        return CompileResult(result)
+
     # ------------------ conditions & loops ------------------ :
     def visit_IfConditionNode(self, node, context: CompileContext) -> CompileResult:
         conditions: list[dict] = node.get_conditions()
