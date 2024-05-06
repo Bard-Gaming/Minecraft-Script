@@ -245,5 +245,5 @@ def append(interpreter, args, context) -> function_output:
 builtin_functions = (
     log, command, get_block, set_block,
     raycast_block, raycast_entity,
-    give_item, concatenate,
+    give_item, concatenate, append,
 )

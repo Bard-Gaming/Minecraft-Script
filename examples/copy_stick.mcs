@@ -1,8 +1,12 @@
-var iter_array = [1, 2, 3];
+var iter_array = ["0", "1", "2"];
 var saved_blocks = [];
 
 for (x in iter_array) {
-    for (y in iter_array) {
-        log(x, y);
+    for (z in iter_array) {
+        var x_cord = concatenate("~", x);
+        var z_cord = concatenate("~", z);
+        append(saved_blocks, get_block(x_cord, "~", z_cord));
     }
 }
+
+log(saved_blocks);
