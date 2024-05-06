@@ -3,10 +3,10 @@ var saved_blocks = [];
 
 for (x in iter_array) {
     for (z in iter_array) {
-        var x_cord = concatenate("~", x);
-        var z_cord = concatenate("~", z);
-        append(saved_blocks, get_block(x_cord, "~", z_cord));
+        var x_coord = concatenate("~", x);
+        var z_coord = concatenate("~", z);
+        @a append(saved_blocks, get_block(x_coord, "~-1", z_coord));
     }
 }
 
-log(saved_blocks);
+log(saved_blocks[0]);

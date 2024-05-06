@@ -42,7 +42,7 @@ def get_block(interpreter, args, context) -> function_output:
     fnc_commands = (
         f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set value \"\"",
         "summon armor_stand ~ ~5 ~ {Invisible:1b, NoBasePlate:1b, NoGravity:1b, Tags:[\"mcs_get_block_temp\"]}",
-        "$loot replace entity @e[type=armor_stand, limit=1, sort=nearest, tag=mcs_get_block_temp] armor.head mine $(x) $(y) $(z) netherite_pickaxe{Enchantments:[{id:\"minecraft:silk_touch\", lvl:1s}]}",
+        "$loot replace entity @e[type=armor_stand, limit=1, sort=nearest, tag=mcs_get_block_temp] armor.head mine $(x) $(y) $(z) netherite_pickaxe[minecraft:enchantments={levels:{\"minecraft:silk_touch\":1}}]",
         # NOQA
         f"data modify storage {mcs_obj.get_storage()} {mcs_obj.get_nbt()} set from entity @e[type=minecraft:armor_stand, tag=mcs_get_block_temp, limit=1, sort=nearest] ArmorItems[3].id",
         # NOQA
@@ -224,7 +224,7 @@ def append(interpreter, args, context) -> function_output:
         # Add element to list
         f"data modify storage mcs_{context.uuid} current set value " "{}",
         f"data modify storage mcs_{context.uuid} current.index set from storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
-        f"function {interpreter.datapack_id}:code_blocks/{set_key_context.mcfunction_name[1:]} with storage current"
+        f"function {interpreter.datapack_id}:code_blocks/{set_key_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
         
         # Increment list length
         f"execute store result score .temp mcs_math run data get storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
