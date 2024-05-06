@@ -221,15 +221,26 @@ def append(interpreter, args, context) -> function_output:
     set_key_context = CompileContext(f":cb_{generate_uuid()}")
 
     commands = (
+        # Add element to list
         f"data modify storage mcs_{context.uuid} current set value " "{}",
         f"data modify storage mcs_{context.uuid} current.index set from storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
-        # TODO: Increment length, call set_key_context function
+        f"function {interpreter.datapack_id}:code_blocks/{set_key_context.mcfunction_name[1:]} with storage current"
+        
+        # Increment list length
+        f"execute store result score .temp mcs_math run data get storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
+        f"scoreboard players set .1 mcs_math 1",
+        f"scoreboard players operation .temp mcs_math += .1 mcs_math",
+        f"execute store result storage {list_arg.get_storage()} {list_arg.get_nbt()}.length int 1 run scoreboard players get .temp mcs_math",
+        f"scoreboard players reset .1 mcs_math",
     )
 
     interpreter.add_command(
         set_key_context.mcfunction_name,
-        f"$data modify storage {list_arg.get_storage} {list_arg.get_nbt()}.$(index) set from storage {value.get_storage()} {value.get_nbt()}"
+        f"$data modify storage {list_arg.get_storage()} {list_arg.get_nbt()}.$(index) set from storage {value.get_storage()} {value.get_nbt()}"
     )
+
+    return commands, MCSNull(context)
+
 
 builtin_functions = (
     log, command, get_block, set_block,
