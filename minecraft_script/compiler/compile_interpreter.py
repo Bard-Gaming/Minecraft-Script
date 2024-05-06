@@ -448,6 +448,7 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
             f"data remove storage mcs_{context_id} string",
             f"data remove storage mcs_{context_id} list",
             f"data remove storage mcs_{context_id} boolean",
+            f"data remove storage mcs_{context_id} unknown",
             ""  # add newline to separate contexts (only visual)
         )
         interpreter.add_commands('kill', commands)
