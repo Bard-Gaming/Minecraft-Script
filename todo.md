@@ -29,11 +29,14 @@
   - [x] WhileLoopNode
   - [x] NullNode
   - [x] BooleanNode
-  - [ ] GetKeyNode
-  - [ ] SetKeyNode
+  - [x] GetKeyNode
+  - [x] SetKeyNode
   - [ ] AttributeGetNode
   - [ ] ReturnNode
   - [ ] UnaryOperationNode
+
+
+  - [ ] Fix EntitySelectorNode bug with variable declaration
 
 
   - [x] List implementation
