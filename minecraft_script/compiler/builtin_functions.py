@@ -55,7 +55,7 @@ def get_block(interpreter, args, context) -> function_output:
         f"data modify storage mcs_{context.uuid} current.x set from storage {x.get_storage()} {x.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.y set from storage {y.get_storage()} {y.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.z set from storage {z.get_storage()} {z.get_nbt()}",
-        f"function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
+        f"function {interpreter.datapack_id}:{local_context.mcfunction_name} with storage mcs_{context.uuid} current",
     )
 
     return setup_commands, mcs_obj
@@ -96,7 +96,7 @@ def raycast_block(interpreter, args, context) -> function_output:
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
-        f"execute if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:{local_context.mcfunction_name}",
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 
@@ -107,7 +107,7 @@ def raycast_block(interpreter, args, context) -> function_output:
         f"scoreboard players set .raycast_iter_{raycast_id} mcs_math 0",
 
         # Call raycast
-        f"execute anchored eyes positioned ^ ^ ^.00001 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute anchored eyes positioned ^ ^ ^.00001 run function {interpreter.datapack_id}:{local_context.mcfunction_name}",
 
         # Reset used scoreboards
         f"scoreboard players reset .raycast_iter_{raycast_id} mcs_math",
@@ -137,7 +137,7 @@ def raycast_entity(interpreter, args, context) -> function_output:
 
         # Start next loop
         f"scoreboard players add .raycast_iter_{raycast_id} mcs_math 1",
-        f"execute if block ~ ~ ~ #{interpreter.datapack_id}:no_collision if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute if block ~ ~ ~ #{interpreter.datapack_id}:no_collision if score .raycast_iter_{raycast_id} mcs_math < .raycast_end_{raycast_id} mcs_math positioned ^ ^ ^0.5 run function {interpreter.datapack_id}:{local_context.mcfunction_name}",
     )
     interpreter.add_commands(local_context.mcfunction_name, fnc_commands)
 
@@ -149,7 +149,7 @@ def raycast_entity(interpreter, args, context) -> function_output:
         f"tag @s add raycast_{raycast_id}",
 
         # Call raycast
-        f"execute anchored eyes positioned ^ ^ ^.00001 run function {interpreter.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+        f"execute anchored eyes positioned ^ ^ ^.00001 run function {interpreter.datapack_id}:{local_context.mcfunction_name}",
 
         # Reset used scoreboards
         f"tag @s remove raycast_{raycast_id}",
@@ -202,7 +202,7 @@ def concatenate(interpreter, args, context) -> function_output:
         f"data modify storage mcs_{context.uuid} current set value " "{}",
         f"data modify storage mcs_{context.uuid} current.string_1 set from storage {string_1.get_storage()} {string_1.get_nbt()}",
         f"data modify storage mcs_{context.uuid} current.string_2 set from storage {string_2.get_storage()} {string_2.get_nbt()}",
-        f"function {interpreter.datapack_id}:code_blocks/{string_concat_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
+        f"function {interpreter.datapack_id}:{string_concat_context.mcfunction_name} with storage mcs_{context.uuid} current",
     )
 
     interpreter.add_command(
@@ -224,7 +224,7 @@ def append(interpreter, args, context) -> function_output:
         # Add element to list
         f"data modify storage mcs_{context.uuid} current set value " "{}",
         f"data modify storage mcs_{context.uuid} current.index set from storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
-        f"function {interpreter.datapack_id}:code_blocks/{set_key_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current",
+        f"function {interpreter.datapack_id}:{set_key_context.mcfunction_name} with storage mcs_{context.uuid} current",
         
         # Increment list length
         f"execute store result score .temp mcs_math run data get storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",

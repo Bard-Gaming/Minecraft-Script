@@ -51,8 +51,16 @@ class CompileContext:
         self.parent: CompileContext = parent
         self.symbols = CompileSymbols(parent.symbols if parent is not None else None, load_builtins=top_level)  # NOQA
         self.top_level = top_level
-        self.mcfunction_name = mcfunction_name
+        self._mcfunction_name = mcfunction_name
         self.uuid = generate_uuid()
+
+    @property
+    def mcfunction_name(self) -> str:
+        return (
+            f"user_functions/{self._mcfunction_name}"
+            if self._mcfunction_name[0] != ":" else
+            f"code_blocks/{self._mcfunction_name[1:]}"
+        )
 
     def get(self, name: str) -> mcs_type:
         return self.symbols.get(name)
@@ -73,7 +81,7 @@ class CompileContext:
         raise NameError(f"name {var_name} is not defined")
 
     def __repr__(self) -> str:
-        return f'CompileContext({self.mcfunction_name !r}, {self.parent !r}, {self.top_level !r})'
+        return f'CompileContext({self._mcfunction_name !r}, {self.parent !r}, {self.top_level !r})'
 
 
 class CompileCommands:
@@ -260,7 +268,7 @@ class CompileInterpreter:
         commands = (
             f"data modify storage mcs_{context.uuid} current set value " "{}",
             f"data modify storage mcs_{context.uuid} current.index set from storage {key.get_storage()} {key.get_nbt()}",
-            f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]} with storage mcs_{context.uuid} current"
+            f"function {self.datapack_id}:{local_context.mcfunction_name} with storage mcs_{context.uuid} current"
         )
         self.add_commands(context.mcfunction_name, commands)
 
@@ -281,7 +289,7 @@ class CompileInterpreter:
                     expression.set_to_current_cmd(context),
                     f"execute store result score .out mcs_math run data get storage mcs_{context.uuid} current 1",
                     f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
-                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}"  # NOQA
+                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{local_context.mcfunction_name}"  # NOQA
                 )
                 self.add_commands(context.mcfunction_name, commands)
 
@@ -308,7 +316,7 @@ class CompileInterpreter:
             f"scoreboard players set .loop_iter_{loop_id} mcs_math 0",
             iterable.set_to_current_cmd(context),
             f"execute store result score .loop_end_{loop_id} mcs_math run data get storage mcs_{context.uuid} current.length 1",  # NOQA
-            f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+            f"function {self.datapack_id}:{local_context.mcfunction_name}",
             f"scoreboard players reset .loop_iter_{loop_id} mcs_math",  # remove to avoid clutter
             f"scoreboard players reset .loop_end_{loop_id} mcs_math",
         )
@@ -319,7 +327,7 @@ class CompileInterpreter:
 
         loop_init_commands = (
             f"execute store result storage mcs_{local_context.uuid} current.index int 1 run scoreboard players get .loop_iter_{loop_id} mcs_math",  # NOQA
-            f"function {self.datapack_id}:code_blocks/{macro_context.mcfunction_name[1:]} with storage mcs_{local_context.uuid} current",  # NOQA
+            f"function {self.datapack_id}:{macro_context.mcfunction_name} with storage mcs_{local_context.uuid} current",  # NOQA
         )
         self.add_commands(local_context.mcfunction_name, loop_init_commands)
         local_context.declare(element_name, MCSVariable(element_name, local_context))
@@ -328,7 +336,7 @@ class CompileInterpreter:
 
         loop_end_commands = (
             f"scoreboard players add .loop_iter_{loop_id} mcs_math 1",
-            f"execute if score .loop_iter_{loop_id} mcs_math < .loop_end_{loop_id} mcs_math run function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",
+            f"execute if score .loop_iter_{loop_id} mcs_math < .loop_end_{loop_id} mcs_math run function {self.datapack_id}:{local_context.mcfunction_name}",
         )
         self.add_commands(local_context.mcfunction_name, loop_end_commands)
 
@@ -346,11 +354,11 @@ class CompileInterpreter:
         loop_commands = (
             condition.set_to_current_cmd(loop_context),
             f"execute store result score .out mcs_math run data get storage mcs_{loop_context.uuid} current 1",
-            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:code_blocks/{loop_context.mcfunction_name[1:]}",  # NOQA
+            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",  # NOQA
         )
         self.add_commands(loop_context.mcfunction_name, loop_commands)
 
-        self.add_command(context.mcfunction_name, f"function {self.datapack_id}:code_blocks/{loop_context.mcfunction_name[1:]}")  # NOQA
+        self.add_command(context.mcfunction_name, f"function {self.datapack_id}:{loop_context.mcfunction_name}")  # NOQA
 
         return out if out.get_return() is not None else CompileResult()
 
@@ -372,7 +380,7 @@ class CompileInterpreter:
         # import parent context's variables and execute code block:
         commands = (
             f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
-            f"function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}"
+            f"function {self.datapack_id}:{local_context.mcfunction_name}"
         )
         self.add_commands(context.mcfunction_name, commands)  # add commands to parent context
 
@@ -398,7 +406,7 @@ class CompileInterpreter:
 
         setup_commands = (
             f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
-            f"execute as @{selector} at @s run function {self.datapack_id}:code_blocks/{local_context.mcfunction_name[1:]}",  # NOQA
+            f"execute as @{selector} at @s run function {self.datapack_id}:{local_context.mcfunction_name}",  # NOQA
         )
         self.add_commands(context.mcfunction_name, setup_commands)
 
@@ -454,11 +462,7 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
         interpreter.add_commands('kill', commands)
 
     for fnc_name in interpreter.get_mcs_functions():  # create the files for all functions
-        mcfunction_path = (
-            f"{functions_dir}/user_functions/{fnc_name}.mcfunction"  # if it's a function
-            if fnc_name[0:3] != ':cb' else
-            f"{functions_dir}/code_blocks/{fnc_name[1:]}.mcfunction"  # if code block (skip char 0 since it's invalid)
-        )
+        mcfunction_path = f"{functions_dir}/{fnc_name}.mcfunction"
 
         with open(mcfunction_path, "xt") as mcfunction_file:
             mcfunction_file.write(interpreter.get_file_content(fnc_name))
