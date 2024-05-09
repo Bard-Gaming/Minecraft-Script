@@ -48,7 +48,7 @@ def sh_compile(*args):
 
     path: str = args[0]
     datapack_name: str = (
-        "-".join(args[0].split("\\")[-1].split(".")[:-1]).replace("_", " ").capitalize()
+        "-".join(args[0].split("\\")[-1].split("/")[-1].split(".")[:-1]).replace("_", " ").title()
         if arg_count < 2 else
         args[1]
     )
