@@ -242,15 +242,54 @@ def append(interpreter, args, context) -> function_output:
     return commands, MCSNull(context)
 
 
-def mcs_range(interpreter, args, context) -> function_output:  # TODO: Implement range fnc
-    pass
-    # from .compile_interpreter import CompileContext
-    # range_bound: MCSNumber = args[0]
+def mcs_range(interpreter, args, context) -> function_output:
+    from .compile_interpreter import CompileContext
+    range_bound: MCSNumber = args[0]
+
+    result = MCSList(context)
+    scoreboard_id = f"{generate_uuid()}"
+    recursive_function = CompileContext(parent=context)
+    set_index_function = CompileContext(parent=context)
+
+    commands = (
+        # Initialize values:
+        f"scoreboard players set .range_current_{scoreboard_id} mcs_math 0",
+        f"execute store result score .range_max_{scoreboard_id} mcs_math run data get storage {range_bound.get_storage()} {range_bound.get_nbt()}",
+        f"data modify storage {result.get_storage()} {result.get_nbt()}.length set from storage {range_bound.get_storage()} {range_bound.get_nbt()}",
+
+        f"function {interpreter.datapack_id}:{recursive_function.mcfunction_name}",
+
+        # Clean up initial values:
+        f"scoreboard players reset .range_current_{scoreboard_id} mcs_math",
+        f"scoreboard players reset .range_max_{scoreboard_id} mcs_math",
+    )
+
+    recursive_function_commands = (
+        # Initialize values for set_index_function:
+        f"data modify storage mcs_{recursive_function.uuid} current set value " "{}",
+        f"execute store result storage mcs_{recursive_function.uuid} current.index int 1 run scoreboard players get .range_current_{scoreboard_id} mcs_math",
+
+        f"function {interpreter.datapack_id}:{set_index_function.mcfunction_name} with storage mcs_{recursive_function.uuid} current",
+        
+        # Recursive loop:
+        f"scoreboard players set .1 mcs_math 1",
+        f"scoreboard players operation .range_current_{scoreboard_id} mcs_math += .1 mcs_math",
+        f"scoreboard players reset .1 mcs_math",
+        f"execute unless score .range_current_{scoreboard_id} mcs_math >= .range_max_{scoreboard_id} mcs_math run function {interpreter.datapack_id}:{recursive_function.mcfunction_name}",
+    )
+    interpreter.add_commands(recursive_function.mcfunction_name, recursive_function_commands)
+
+    interpreter.add_command(
+        set_index_function.mcfunction_name,
+        f"$data modify storage {result.get_storage()} {result.get_nbt()}.$(index) set value $(index)"
+    )
+
+    return commands, result
 
 
 builtin_functions = (
     log, command, concatenate,
     get_block, set_block, give_item,
     raycast_block, raycast_entity,
-    append, mcs_range
+    append, mcs_range,
 )
