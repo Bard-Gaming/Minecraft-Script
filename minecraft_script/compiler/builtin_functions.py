@@ -35,7 +35,7 @@ def get_block(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
     x, y, z, *_ = args
 
-    local_context = CompileContext(f":cb_{generate_uuid()}", context)
+    local_context = CompileContext(parent=context)
 
     mcs_obj = MCSString(context)
 
@@ -78,7 +78,7 @@ def set_block(interpreter, args, context) -> function_output:
 
 def raycast_block(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
-    local_context = CompileContext(f":cb_{generate_uuid()}", context)
+    local_context = CompileContext(parent=context)
     raycast_id = generate_uuid()
     raycast_function: MCSFunction = args[0]  # get function to play on block (at raycast end)
     raycast_range: mcs_type = args[1]  # get raycast range
@@ -119,7 +119,7 @@ def raycast_block(interpreter, args, context) -> function_output:
 
 def raycast_entity(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
-    local_context = CompileContext(f":cb_{generate_uuid()}", context)
+    local_context = CompileContext(parent=context)
     raycast_id = generate_uuid()
     raycast_function: MCSFunction = args[0]
     raycast_range: mcs_type = args[1]  # get raycast range
@@ -194,7 +194,7 @@ def concatenate(interpreter, args, context) -> function_output:
     string_1: MCSString = args[0]
     string_2: MCSString = args[1]
 
-    string_concat_context = CompileContext(f":cb_{generate_uuid()}")
+    string_concat_context = CompileContext(parent=context)
 
     output_string = MCSString(context)
 
@@ -218,7 +218,7 @@ def append(interpreter, args, context) -> function_output:
     list_arg: MCSList = args[0]
     value: mcs_type = args[1]
 
-    set_key_context = CompileContext(f":cb_{generate_uuid()}")
+    set_key_context = CompileContext(parent=context)
 
     commands = (
         # Add element to list

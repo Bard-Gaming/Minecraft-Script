@@ -55,11 +55,11 @@ class CompileSymbols:
 
 
 class CompileContext:
-    def __init__(self, mcfunction_name: str = 'init', parent: "CompileContext" = None, *, top_level: bool = False):
+    def __init__(self, mcfunction_name: str = None, *, parent: "CompileContext" = None, top_level: bool = False):
         self.parent: CompileContext = parent
         self.symbols = CompileSymbols(parent.symbols if parent is not None else None, load_builtins=top_level)  # NOQA
         self.top_level = top_level
-        self._mcfunction_name = mcfunction_name
+        self._mcfunction_name = mcfunction_name if mcfunction_name is not None else f":cb_{generate_uuid()}"
         self.uuid = generate_uuid()
 
     @property
@@ -267,7 +267,7 @@ class CompileInterpreter:
 
         result = MCSUnknown(context)
 
-        local_context = CompileContext(f":cb_{generate_uuid()}")  # context for function that retrieves value at index
+        local_context = CompileContext(parent=context)  # context for function that retrieves value at index
         self.add_command(
             local_context.mcfunction_name,
             f"$data modify storage {result.get_storage()} {result.get_nbt()} set from storage {atom.get_storage()} {atom.get_nbt()}.$(index)"
@@ -289,7 +289,7 @@ class CompileInterpreter:
         for condition in conditions:
             if condition.get('type') == 'if':
                 # create local context with all parent variables and create all body commands there
-                local_context = CompileContext(f':cb_{generate_uuid()}', context)
+                local_context = CompileContext(parent=context)
                 out: CompileResult = self.visit(condition.get('body'), local_context)
 
                 expression: MCSNumber = self.visit(condition.get('expression'), context).get_value()
@@ -316,8 +316,8 @@ class CompileInterpreter:
         element_name: str = node.get_child_name()
         body = node.get_body()
 
-        local_context = CompileContext(f':cb_{generate_uuid()}', context)
-        macro_context = CompileContext(f':cb_{generate_uuid()}', context)
+        local_context = CompileContext(parent=context)
+        macro_context = CompileContext(parent=context)
         loop_id = f"{generate_uuid()}"
 
         init_commands = (
@@ -354,7 +354,7 @@ class CompileInterpreter:
         return CompileResult()
 
     def visit_WhileLoopNode(self, node, context: CompileContext) -> CompileResult:
-        loop_context = CompileContext(f':cb_{generate_uuid()}', context)
+        loop_context = CompileContext(parent=context)
 
         out: CompileResult = self.visit(node.get_body(), loop_context)  # add commands to loop context file
 
@@ -382,7 +382,7 @@ class CompileInterpreter:
         return CompileResult(MCSNull(context))  # if no return statement is encountered
 
     def visit_CodeBlockNode(self, node, context: CompileContext) -> CompileResult:
-        local_context = CompileContext(f':cb_{generate_uuid()}', context)
+        local_context = CompileContext(parent=context)
         return_value: CompileResult = self.visit(node.get_body(), local_context)
 
         # import parent context's variables and execute code block:
@@ -408,7 +408,7 @@ class CompileInterpreter:
     # ------------------ minecraft stuff ------------------ :
     def visit_EntitySelectorNode(self, node, context: CompileContext) -> CompileResult:
         selector: str = node.get_selector()
-        local_context = CompileContext(f":cb_{generate_uuid()}", context)
+        local_context = CompileContext(parent=context)  # Let context generate its own name
 
         out: CompileResult = self.visit(node.get_statement(), local_context)  # add commands to local context
 
@@ -448,7 +448,7 @@ class CompileInterpreter:
 
 
 def mcs_compile(ast, functions_dir: str, datapack_id):
-    context = CompileContext(top_level=True)
+    context = CompileContext('init', top_level=True)
     interpreter = CompileInterpreter(datapack_id)
 
     interpreter.visit(ast, context)  # compile whole program to have a list of commands for each function

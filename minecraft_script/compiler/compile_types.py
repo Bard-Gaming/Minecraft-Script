@@ -116,7 +116,7 @@ class MCSFunction:
         self.name = name
         self.body = body
         self.parameter_names = parameter_names
-        self.local_context = CompileContext(self.name, context)
+        self.local_context = CompileContext(self.name, parent=context)
 
     def generate_function(self, interpreter) -> None:
         for name in self.parameter_names:
