@@ -1,71 +1,121 @@
-from . import run_code
-from .compiler import build_datapack_from_file
-from .text_additions import text_error
-import os
+from . import debug_code
+from .compiler import build_datapack
+from .common import COMMON_CONFIG, update_config
 
+sh_help_message = """
+#-------------------------------HELP PAGE-------------------------------#
+    
+- help: displays this page!
+    
+- debug <path>: debug the minecraft script file found at the given path.
+    
+- compile <path> [<datapack name>] [<verbose>]: compile the associated
+mcs file into a datapack. The resulting datapack folder will be named after
+the mcs file, unless a datapack name is specified. The verbose argument
+specifies whether or not process information is to be displayed or not.
 
-def _run_filename(name: str):
-    with open(name, 'rt', encoding='utf-8') as file:
-        run_code(file.read())
+- config set <setting> <value>: Overwrite specified setting in config
+to the new value.
 
+- config get [<setting>]: prints out specified settings' value. If no setting
+is specified, all settings with their associated values will be shown.
 
-def sh_build(mcs_file: str, datapack_name: str = None, verbose: str | bool = True, *args) -> None:
-    if isinstance(verbose, str):
-        verbose = eval(verbose.capitalize())  # "true" or "True" --> True (bool)
-
-    datapack_name = datapack_name if datapack_name else mcs_file.split('/')[-1].split('.')[0].replace('_', ' ').replace('-', ' ').title()
-    mcs_file = f'{mcs_file}.mcs' if '.' not in mcs_file else mcs_file  # check for existing extension
-
-    build_datapack_from_file(mcs_file, datapack_name, verbose)
-
-
-def sh_run_file_iteration(filename: str, *args) -> None:
-    parse_confirm = input(f'Do you wish to parse {filename}? [y/n]: ')
-    if parse_confirm.lower() in ['y', 'yes']:
-        _run_filename(filename)
-
-    elif parse_confirm.lower() in ['n', 'no']:
-        pass
-    else:
-        sh_run_file_iteration(filename)
-
-
-def sh_run(*filenames) -> None:
-    if not filenames:
-        valid_files = filter(check_extension, os.listdir(os.getcwd()))
-        for file in valid_files:
-            sh_run_file_iteration(file)
-    else:
-        for name in filenames:
-            _run_filename(name)
+#-----------------------------------------------------------------------#
+"""
 
 
 def sh_help(*args) -> None:
-    help_message = """
-#-------------------------------HELP PAGE-------------------------------#
-    
-- help: display this help page!
-    
-- run *[file(s): optional]: run file(s) and output result to terminal.
-If filename is omitted, a prompt will ask you to choose between mcs
-files in work directory (if there are any).
-    
-- build [mcs file] [datapack name: optional] [verbose: optional]: build the mcs file
-into a functional datapack! If the datapack name is left empty,
-a matching name will be generated based on the file name.    
-Example: "example/test_file.mcs" turns to "Test File".
-    
-#-----------------------------------------------------------------------#
-    """
-    print(help_message)
+    print(sh_help_message)
 
 
-def check_extension(filename: str) -> bool:
-    return filename.split('.')[-1] == 'mcs'
+def sh_debug(*args):
+    if len(args) < 1:
+        print("No path specified to debug.")
+        exit()
+
+    path: str = args[0]
+
+    with open(path, 'rt', encoding='utf-8') as file:
+        code = file.read()
+    debug_code(code)  # run code only after closing file
+
+
+def sh_compile(*args):
+    arg_count = len(args)
+    if arg_count < 1:
+        print("No path specified to compile.")
+        exit()
+
+    path: str = args[0]
+    datapack_name: str = (
+        "-".join(args[0].split("\\")[-1].split(".")[:-1]).replace("_", " ").capitalize()
+        if arg_count < 2 else
+        args[1]
+    )
+    verbose: bool = (
+        True
+        if arg_count < 3 else
+        args[2].lower() == 'true'
+    )
+
+    with open(path, 'rt', encoding='utf-8') as file:
+        code = file.read()
+
+    build_datapack(code, datapack_name, verbose)
+
+
+def sh_config(*args):
+    arg_count = len(args)
+    args = list(args)
+    if arg_count < 1:
+        print("Invalid arguments. Use the \"help\" command for more information.")
+        exit()
+
+    arg_literal = args.pop(0)
+
+    if arg_literal in ("set", "get"):
+        eval(f"sh_config_{arg_literal}(args)")
+    else:
+        print(f"Invalid argument {arg_literal !r}. Use the \"help\" command for more information.")
+        exit()
+
+
+def sh_config_set(args: list):
+    if len(args) < 2:
+        print("Invalid arguments. Use the \"help\" command for more information.")
+        exit()
+    setting = args[0]
+    value = args[1]
+
+    if setting not in COMMON_CONFIG.keys():
+        print(f"Unknown setting {setting !r}.")
+        exit()
+
+    update_config(setting, value)
+    print(f"Updated setting {setting !r} to value {value !r}")
+
+
+def sh_config_get(args: list):
+    if len(args) < 1:
+        print("Minecraft Script configuration:")
+        for setting, value in COMMON_CONFIG.items():
+            print(f"- {setting}: {value !r}")
+        exit()
+
+    setting = args[0]
+    value = COMMON_CONFIG.get(setting)
+    if value is not None:
+        print(
+            f"Setting {setting !r} has the following value: \n"
+            f"{value !r}"
+        )
+    else:
+        print(f"Unknown setting {setting !r}.")
 
 
 shell_functions = {
     'help': sh_help,
-    'run': sh_run,
-    'build': sh_build,
+    'debug': sh_debug,
+    'compile': sh_compile,
+    'config': sh_config,
 }

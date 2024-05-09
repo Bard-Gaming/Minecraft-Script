@@ -3,7 +3,7 @@ from .parser.parser import Parser
 from .interpreter.interpreter import Interpreter, InterpreterContext, SymbolTable
 
 
-def run_code(code_input: str, *, print_variables: bool = False) -> None:
+def debug_code(code_input: str, *, print_variables: bool = False) -> None:
     lexer = Lexer(code_input)
     parser = Parser(lexer.tokenize())
 
@@ -30,14 +30,11 @@ def run_shell():
         ast = run_parser.parse()
 
         run_interpreter = Interpreter()
-        print(run_interpreter.visit(ast, context)[0])
+        print(run_interpreter.visit(ast, context))
 
 
-def get_ast_from_file(filepath: str):
-    with open(filepath, 'rt', encoding='utf-8') as file:
-        file_content = file.read()
-
-    run_lexer = Lexer(file_content + "\n")
+def parse_code(code: str):
+    run_lexer = Lexer(code + "\n")
     tokens = run_lexer.tokenize()
 
     run_parser = Parser(tokens)
