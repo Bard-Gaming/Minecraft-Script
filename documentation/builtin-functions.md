@@ -64,6 +64,26 @@ log(block);  // logs whatever block the player is standing on
 ```
 
 
-set_block,
+
+## Set Block
+The set block function ``set_block`` places a given block
+at specified x, y, z coordinates.
+
+### Parameters:
+- **x**: string / number -> X coordinate of block to be placed
+- **y**: string / number -> Y coordinate of block to be placed
+- **z**: string / number -> Z coordinate of block to be placed
+- **block**: string -> block to be placed (e.g. "dirt" or "minecraft:dirt")
+
+### Output:
+- None
+
+### Example:
+```js
+var block = "minecraft:white_concrete";
+set_block(0, 64, 0, block);  // places white concrete at 0 64 0
+```
+
+
 raycast_block, raycast_entity,
 give_item, concatenate, append,
