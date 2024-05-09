@@ -1,31 +1,3 @@
-<!-- TOC -->
-* [Utility Functions](#utility-functions)
-  * [Printing / Logging](#printing--logging)
-    * [Parameters](#parameters)
-    * [Output](#output)
-    * [Example](#example)
-* [World Manipulation](#world-manipulation)
-  * [Get Block](#get-block)
-    * [Parameters](#parameters-1)
-    * [Output](#output-1)
-    * [Example](#example-1)
-  * [Set Block](#set-block)
-    * [Parameters](#parameters-2)
-    * [Output](#output-2)
-    * [Example](#example-2)
-  * [Give Item](#give-item)
-    * [Parameters](#parameters-3)
-    * [Output](#output-3)
-    * [Example](#example-3)
-  * [Minecraft Command](#minecraft-command)
-    * [Parameters](#parameters-4)
-    * [Output](#output-4)
-    * [Example](#example-4)
-* [Ray-casting functions](#ray-casting-functions)
-  * [](#)
-<!-- TOC -->
-
-
 # Utility Functions
 
 ## Printing / Logging
