@@ -467,7 +467,7 @@ def mcs_compile(ast, functions_dir: str, datapack_id):
             f"data remove storage mcs_{context_id} unknown",
             ""  # add newline to separate contexts (only visual)
         )
-        interpreter.add_commands('kill', commands)
+        interpreter.add_commands('user_functions/kill', commands)  # specify full path since not a context
 
     for fnc_name in interpreter.get_mcs_functions():  # create the files for all functions
         mcfunction_path = f"{functions_dir}/{fnc_name}.mcfunction"

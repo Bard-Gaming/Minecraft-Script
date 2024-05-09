@@ -157,7 +157,7 @@ class Compiler:
         # Copy datapack icon img:
         copyfile(f'{module_folder}/compiler/build_templates/pack.png', f'{self.datapack_name}/pack.png')
 
-        # minecraft function tags
+        # Minecraft function tags
 
         with (
             open(f'{module_folder}/compiler/build_templates/function_tags.json', 'rt') as template_file,
