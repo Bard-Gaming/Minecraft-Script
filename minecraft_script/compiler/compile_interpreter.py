@@ -11,11 +11,19 @@ class CompileSymbols:
             self.load_builtins()
 
     def load_builtins(self) -> None:
+        # Lookup table to change function names
+        function_name_lookup = {
+            "mcs_range": "range"
+        }
+
         for fnc in builtin_functions:
             mcs_fnc = MCSFunction(None, None, None, None)
             mcs_fnc.call = fnc
 
-            self.declare(fnc.__name__, mcs_fnc)
+            self.declare(
+                function_name_lookup.get(fnc.__name__, fnc.__name__),  # get name in dict, otherwise just use fnc name
+                mcs_fnc
+            )
 
     def get(self, name: str, *, raise_error=True) -> mcs_type:
         value = self.symbols.get(name, None)

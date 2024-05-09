@@ -225,7 +225,7 @@ def append(interpreter, args, context) -> function_output:
         f"data modify storage mcs_{context.uuid} current set value " "{}",
         f"data modify storage mcs_{context.uuid} current.index set from storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
         f"function {interpreter.datapack_id}:{set_key_context.mcfunction_name} with storage mcs_{context.uuid} current",
-        
+
         # Increment list length
         f"execute store result score .temp mcs_math run data get storage {list_arg.get_storage()} {list_arg.get_nbt()}.length",
         f"scoreboard players set .1 mcs_math 1",
@@ -242,8 +242,15 @@ def append(interpreter, args, context) -> function_output:
     return commands, MCSNull(context)
 
 
+def mcs_range(interpreter, args, context) -> function_output:  # TODO: Implement range fnc
+    pass
+    # from .compile_interpreter import CompileContext
+    # range_bound: MCSNumber = args[0]
+
+
 builtin_functions = (
-    log, command, get_block, set_block,
+    log, command, concatenate,
+    get_block, set_block, give_item,
     raycast_block, raycast_entity,
-    give_item, concatenate, append,
+    append, mcs_range
 )
