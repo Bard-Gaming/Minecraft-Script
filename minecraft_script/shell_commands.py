@@ -2,6 +2,21 @@ from . import debug_code
 from .compiler import build_datapack
 from .common import COMMON_CONFIG, update_config, version
 
+
+def handle_arguments(arguments: list):
+    if not arguments:
+        sh_default()
+
+    function_name = arguments.pop(0)
+    function = shell_functions.get(function_name)
+
+    if function is not None:
+        function(*arguments)
+
+    else:
+        print(f'Unknown MCS command: "{function_name}"')
+
+
 sh_help_message = """
 #-------------------------------HELP PAGE-------------------------------#
     
