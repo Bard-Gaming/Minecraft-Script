@@ -1,6 +1,6 @@
 from . import debug_code
 from .compiler import build_datapack
-from .common import COMMON_CONFIG, update_config
+from .common import COMMON_CONFIG, update_config, version
 
 sh_help_message = """
 #-------------------------------HELP PAGE-------------------------------#
@@ -26,6 +26,14 @@ is specified, all settings with their associated values will be shown.
 
 def sh_help(*args) -> None:
     print(sh_help_message)
+
+
+def sh_default() -> None:
+    print(
+        f"Minecraft Script {version} (version {version}) \n"
+        "Type \"help\" for more information."
+    )
+    exit()
 
 
 def sh_debug(*args):

@@ -1,16 +1,10 @@
-from .common import version
-from .shell_commands import shell_functions
+from .shell_commands import shell_functions, sh_default
 from sys import argv
-from os import getcwd
 
 arguments = argv[1:]  # argv[0] is path of the file executing __main__
 
 if not arguments:
-    print(
-        f"Minecraft Script version {version}; currently in \"{getcwd()}\" \n"
-        "Use the \"help\" command for more information."
-    )
-    exit()
+    sh_default()
 
 function_name = arguments.pop(0)
 function = shell_functions.get(function_name)
