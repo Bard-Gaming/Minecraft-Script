@@ -25,12 +25,21 @@ function place_blocks_local = () => {
     }
 }
 
+function ray_particle = () => {
+    command("particle minecraft:end_rod ~ ~ ~ 0 0 0 0 1 force @s");
+}
+
 function save_blocks_ray = () => {
-    raycast_block(save_blocks_local, 10);
+    raycast_block(save_blocks_local, 10, ray_particle);
 }
 
 function place_blocks_ray = () => {
-    raycast_block(place_blocks_local, 10);
+    raycast_block(place_blocks_local, 10, ray_particle);
+}
+
+function get_items = () => {
+    give_clickable_item(save_blocks_ray, "Copy Stick");
+    give_clickable_item(place_blocks_ray, "Paste Stick");
 }
 
 function print_saved_blocks = () => {
