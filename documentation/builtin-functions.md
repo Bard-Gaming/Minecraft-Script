@@ -88,6 +88,32 @@ item with specified properties.
 
 
 
+## Give Clickable Item
+The give clickable item function ``give_clickable_item`` give the person executing the function
+an item that, when right-clicked, executes a function on the person who used it. The item itself
+is always a Carrot on a Stick, but using a custom model data with a texture pack can make the item
+look custom-made.
+
+### Parameters
+- **click_function**: function -> Function that executes on click
+- **item_name**: str | optional -> Specifies the item's name ("Carrot on a Stick" by default)
+- **custom_model_data**: str / number | optional -> Specifies the item's custom model data
+
+### Output
+- None
+
+### Example
+```js
+function hello = () => {
+    command("say Hello World!");
+}
+
+// give everyone an item that makes them say "Hello World!" on click:
+@a give_clickable_item(hello, "Hello Stick");
+```
+
+
+
 ## Minecraft Command
 The Minecraft command function ``command`` tries to run any Minecraft
 command it receives (even if it's wrong). The input command can be a variable
@@ -141,7 +167,33 @@ function display_particle = () => {
 
 
 ## Entity Raycast
+The entity ray-casting function ``raycast_entity`` makes the entity executing
+the function cast a ray that travels for a given amount of blocks and that runs
+any function when it reaches an entity (on the entity).
 
+### Parameters
+- **end_function**: function -> function to run on the entity when it is reached
+- **travel_distance**: number -> maximum number of blocks the ray travels before stopping
+- **ray_function**: function | optional -> function to run at every ray travel tick
+
+### Output
+- None
+
+### Example
+```js
+function kill_mob = () => {
+    command("kill @s");
+}
+
+function display_particle = () => {
+    command("particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+}
+
+// Make every player cast a ray that travels 10 blocks,
+// displays an end rod particle along the way,
+// and kills the mob it hit (if it hits one).
+@a raycast_block(kill_mob, 10, display_particle);
+```
 
 
 # Data Manipulation
