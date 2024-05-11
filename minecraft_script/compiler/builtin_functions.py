@@ -291,7 +291,7 @@ def give_clickable_item(interpreter, args, context) -> function_output:
     from .compile_interpreter import CompileContext
     click_function: MCSFunction = args[0]
     name: MCSString = args[1] if len(args) > 1 else None
-    custom_model_data: MCSString = args[2] if len(args) > 1 else None
+    custom_model_data: MCSNumber = args[2] if len(args) > 2 else None
 
     "give @s minecraft:carrot_on_a_stick[minecraft:custom_data={mcs_click: VALUE}, minecraft:item_name=NAME, minecraft:custom_model_data=0]"
     "function interpreter.datapack_id:clickable_items/id"
@@ -329,7 +329,7 @@ def give_clickable_item(interpreter, args, context) -> function_output:
             local_context.mcfunction_name,
             "$give @s carrot_on_a_stick["
             "minecraft:custom_data={mcs_click:" f"{click_function_id}" "}, "
-            "minecraft:item_name=\"$(name)\"" +  # + needed here otherwise ternary applies to whole string
+            "minecraft:item_name='{\"text\": \"$(name)\"}'" +  # + needed here otherwise ternary applies to whole string
             (", minecraft:custom_model_data=$(model)]" if custom_model_data is not None else "]")
         )
 
