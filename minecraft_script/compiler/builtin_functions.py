@@ -270,7 +270,7 @@ def mcs_range(interpreter, args, context) -> function_output:
         f"execute store result storage mcs_{recursive_function.uuid} current.index int 1 run scoreboard players get .range_current_{scoreboard_id} mcs_math",
 
         f"function {interpreter.datapack_id}:{set_index_function.mcfunction_name} with storage mcs_{recursive_function.uuid} current",
-        
+
         # Recursive loop:
         f"scoreboard players set .1 mcs_math 1",
         f"scoreboard players operation .range_current_{scoreboard_id} mcs_math += .1 mcs_math",
@@ -287,9 +287,59 @@ def mcs_range(interpreter, args, context) -> function_output:
     return commands, result
 
 
+def give_clickable_item(interpreter, args, context) -> function_output:
+    from .compile_interpreter import CompileContext
+    click_function: MCSFunction = args[0]
+    name: MCSString = args[1] if len(args) > 1 else None
+    custom_model_data: MCSString = args[2] if len(args) > 1 else None
+
+    "give @s minecraft:carrot_on_a_stick[minecraft:custom_data={mcs_click: VALUE}, minecraft:item_name=NAME, minecraft:custom_model_data=0]"
+    "function interpreter.datapack_id:clickable_items/id"
+
+    click_function_id = interpreter.click_item_lookup.get(click_function)
+    if click_function_id is None:
+        click_function_id = max(interpreter.click_item_lookup.values()) + 1 if interpreter.click_item_lookup.values() else 0
+        interpreter.click_item_lookup[click_function.name] = click_function_id  # add id to dict
+        interpreter.add_command(
+            f"clickable_items/{click_function_id}",
+            f"function {interpreter.datapack_id}:user_functions/{click_function.name}"
+        )
+
+    local_context = CompileContext(parent=context)
+
+    if name is None:
+        commands = (
+            "give @s carrot_on_a_stick[minecraft:custom_data={mcs_click:" f"{click_function_id}" "}]",
+        )
+
+    else:
+        commands = (
+            f"data modify storage mcs_{context.uuid} current set value " "{}",
+            # Name:
+            f"data modify storage mcs_{context.uuid} current.name set from storage {name.get_storage()} {name.get_nbt()}",
+            # Custom Model Data:
+            f"data modify storage mcs_{context.uuid} current.model set from storage {custom_model_data.get_storage()} {custom_model_data.get_nbt()}"
+            if custom_model_data is not None else
+            "\r",
+
+            f"function {interpreter.datapack_id}:{local_context.mcfunction_name} with storage mcs_{context.uuid} current",
+        )
+
+        interpreter.add_command(
+            local_context.mcfunction_name,
+            "$give @s carrot_on_a_stick["
+            "minecraft:custom_data={mcs_click:" f"{click_function_id}" "}, "
+            "minecraft:item_name=\"$(name)\"" +  # + needed here otherwise ternary applies to whole string
+            (", minecraft:custom_model_data=$(model)]" if custom_model_data is not None else "]")
+        )
+
+    return commands, MCSNull(context)
+
+
 builtin_functions = (
     log, command, concatenate,
-    get_block, set_block, give_item,
+    get_block, set_block,
+    give_item, give_clickable_item,
     raycast_block, raycast_entity,
     append, mcs_range,
 )

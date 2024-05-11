@@ -1,3 +1,5 @@
-for (i in range(5)) {
-    log(i);
+function onclick = () => {
+    command("say hi");
 }
+
+@a give_clickable_item(onclick, "Gamer", 0);

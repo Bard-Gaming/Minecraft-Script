@@ -135,6 +135,7 @@ class CompileInterpreter:
         self.commands = CompileCommands()
         self.used_context_ids = set()
         self.functions_to_generate = set()
+        self.click_item_lookup = dict()  # table containing clickable item functions and their associated ids
 
     def add_command(self, mcfunction: str, command: str | None) -> None:
         if command is not None:  # only add command if it's not nothing (makes it easier for dynamic commands)

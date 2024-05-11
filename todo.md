@@ -37,6 +37,8 @@
 
 
   - [ ] Fix EntitySelectorNode bug with variable declaration
+  - [ ] Make a separate file for CompileContext (better for import + helps with clutter)
+  - [ ] Separate base main and init functions from compiler into its own file
 
 
   - [x] List implementation
