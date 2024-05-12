@@ -15,7 +15,7 @@ setup(
     name="minecraft_script",
     version=version,
     author="Joyful-Bard",
-    author_email="<thisis@notarealemail.com>",
+    author_email="<christophe@dronne.fr>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
