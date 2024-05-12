@@ -350,10 +350,6 @@ class Parser:
         name = self.current_token  # keep track of function name
         self.advance()
 
-        if not self.current_token.matches('TT_EQUALS'):
-            self.raise_error(f"Expected '=', got {self.current_token.value !r}")
-        self.advance()  # skip '=' token
-
         parameter_names = []  # keep track of parameter names for DefineFunctionNode
 
         if not self.current_token.matches('TT_PARENTHESIS', 'LEFT'):
@@ -380,10 +376,6 @@ class Parser:
             self.advance()
 
         self.advance()  # skip right parenthesis (self.current_token has to be ')' here)
-
-        if not self.current_token.matches('TT_FUNCTION_ARROW'):
-            self.raise_error(f"Expected '=>', got {self.current_token.value !r}")
-        self.advance()
 
         body = self.code_block_statement()
 
