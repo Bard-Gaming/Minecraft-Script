@@ -1,7 +1,18 @@
 var iter_array = ["-1", "0", "1"];
 var saved_blocks = [];
 
+// ------------ Vanity ------------ :
+function ray_particle() {
+    command("particle minecraft:end_rod ~ ~ ~ 0 0 0 0 1 force @s");
+}
+
+function success_sound() {
+    command("playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1");
+}
+
+// ------------ Local functions ------------ :
 function save_blocks_local() {
+    success_sound();
     set saved_blocks = [];
     
     for (x in iter_array) {
@@ -14,6 +25,8 @@ function save_blocks_local() {
 }
 
 function place_blocks_local() {
+    success_sound();
+
     for (i in range(3)) {
         for (j in range(3)) {
             var arr_index = 3*i + j;
@@ -25,10 +38,7 @@ function place_blocks_local() {
     }
 }
 
-function ray_particle() {
-    command("particle minecraft:end_rod ~ ~ ~ 0 0 0 0 1 force @s");
-}
-
+// ------------ Raycasts ------------ :
 function save_blocks_ray() {
     raycast_block(save_blocks_local, 10, ray_particle);
 }
@@ -37,6 +47,7 @@ function place_blocks_ray() {
     raycast_block(place_blocks_local, 10, ray_particle);
 }
 
+// ------------ Utility ------------ :
 function get_items() {
     give_clickable_item(save_blocks_ray, "Copy Stick");
     give_clickable_item(place_blocks_ray, "Paste Stick");
@@ -48,4 +59,3 @@ function print_saved_blocks() {
         log(saved_blocks[i], " | ", saved_blocks[i + 1], " | ", saved_blocks[i + 2]);
     }
 }
-
