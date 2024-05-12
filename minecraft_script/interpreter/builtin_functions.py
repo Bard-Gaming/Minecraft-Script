@@ -189,6 +189,8 @@ def custom_append(args, context):
     if isinstance(value, (MCSFunction, MCSList)):
         raise MCSTypeError(f"Value can't be of type Function or List, got {value.class_name() !r}")
 
+    append_list.get_value().append(value)  # actually append the value
+
     return RuntimeResult(return_value=MCSNull())
 
 
