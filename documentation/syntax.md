@@ -51,8 +51,8 @@ log(bob);  // logs 5
 
 ### Changing a variable's value
 This implementation of variable definition means that it's impossible
-to change a variable that has been defined a parent's context just by redefining it.
-As such, the ``set`` keyword allows the changing of a variables value, such that
+to change a variable that has been defined in a parent's context just by redefining it.
+As such, the ``set`` keyword allows the changing of a variable's value, such that
 it also changes its value in any parent's context.
 
 #### Grammar

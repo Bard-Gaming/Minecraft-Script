@@ -83,7 +83,8 @@ item with specified properties.
 
 ### Example
 ```js
-@a give_item("minecraft:diamond", "", 64);  // give 64 diamonds to all players in the server
+// give 64 diamonds to all players in the server
+@a give_item("minecraft:diamond", "", 64);
 ```
 
 
@@ -104,7 +105,7 @@ look custom-made.
 
 ### Example
 ```js
-function hello = () => {
+function hello() {
     command("say Hello World!");
 }
 
@@ -150,11 +151,11 @@ any function when it reaches a block.
 
 ### Example
 ```js
-function place_block = () => {
+function place_block() {
     set_block("~", "~", "~", "diamond_block");
 }
 
-function display_particle = () => {
+function display_particle() {
     command("particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 }
 
@@ -181,11 +182,11 @@ any function when it reaches an entity (on the entity).
 
 ### Example
 ```js
-function kill_mob = () => {
+function kill_mob() {
     command("kill @s");
 }
 
-function display_particle = () => {
+function display_particle() {
     command("particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 }
 
@@ -250,7 +251,7 @@ and string_2 (right)
 
 ### Example
 ```js
-function give_nice_item = (name) => {
+function give_nice_item(name) {
     var components = concatenate("custom_data={cool: 1}, item_name=", name);
     give_item("diamond", components);
 }
