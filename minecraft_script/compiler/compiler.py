@@ -140,7 +140,7 @@ class Compiler:
 
         self.make_click_item_check_file()
         if verbose:
-            print('\rBuilding builtin-in functions... Done!', end="")
+            print('\rBuilding builtin-in functions... Done!')
 
     def build(self, verbose: bool = True):
         start_time = time()  # keep track of start time
