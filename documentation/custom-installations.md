@@ -1,5 +1,6 @@
-# Installations
-This page is mainly for making the usage of MCS easier.
+# Custom Installations
+This page mainly describes ways you can customize your
+MCS installation to ease its use.
 
 ## Python
 Minecraft Script is a Python package, requiring Python 3 to work.
@@ -8,11 +9,13 @@ Python 3.8, so getting the latest version is recommended.
 Python can be downloaded [here](https://www.python.org/downloads/).
 
 ## Command Line
-If you're using Windows, you can add a keyword to your command line to ease the usage of commands.
-In the following command, I'll be using ``mcs`` to replace ``python -m minecraft_script``.
+If you're using Windows, you can add a keyword to your command line to ease the
+use of commands. In the following example, we will create a ``mcs`` keyword, to
+replace the long ``python -m minecraft_script``.
 
 To get started, make a file with the ``.cmd`` extension. Since we want ``mcs`` as the keyword,
-the file's name should be ``mcs.cmd``. Inside this file, paste the following code:
+the file should be named ``mcs.cmd``. Inside this file, paste the following code:
+
 ```cmd
 @echo off
 python -m minecraft_script %*
@@ -21,7 +24,7 @@ python -m minecraft_script %*
 _Note: The ``%*`` here represents the arguments that follow the keyword._
 
 Now, all that's left to do is to add the file to the ``path`` environment variable.
-This can be done by first opening the System Properties video
+This can be done by first opening the System Properties settings
 (You can either search for "Environment Variables" or go to ``Settings > System > About > Advanced System Settings``).
 Once you've reached this point, click on ``Environment Variables`` (shown in image below).
 
@@ -56,7 +59,7 @@ or by using Sublime Text and clicking on ``Tools > Build System > New Build Syst
 {
     "target": "ansi_color_build",
     "syntax": "Packages/ANSIescape/ANSI.sublime-syntax",
-    "cmd": ["python", "-m", "minecraft_script", "run", "$file"],
+    "cmd": ["python", "-m", "minecraft_script", "debug", "$file"],
     "file_patterns": ["*.mcs"]
 }
 ```
@@ -69,8 +72,8 @@ This is so errors get their colors in the sublime text panel. If you don't have 
 all you need to do is hit ``Ctrl + Shift + P``, type ``package control: install package``,
 and search for "ANSIescape". Sublime Text should automatically download and install everything automatically.
 
-Hitting ``Ctrl + B`` when inside a .mcs file should now automatically interpret the code and output the result to
-Sublime's console.
+Hitting ``Ctrl + B`` when inside a .mcs file should now automatically debug the code and
+output the result to Sublime Text's console.
 
 ![img](resources/sublime_output.png)
 
