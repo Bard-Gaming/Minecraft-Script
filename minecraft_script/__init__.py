@@ -14,6 +14,8 @@ def debug_code(code_input: str, *, print_variables: bool = False) -> None:
     if print_variables:
         print(context.symbol_table.symbols)
 
+    print("\n\nCode ended with no errors.")
+
 
 def run_shell():
     context = InterpreterContext(top_level=True)
