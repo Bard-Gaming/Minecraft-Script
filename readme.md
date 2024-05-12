@@ -26,7 +26,7 @@ whilst the actual Python package is written with an underscore ``_``._
 To debug your program, you can first run your file like any other programming language.
 To do this, use the following command:
 ```commandline
-python -m minecraft_script run [file]
+python -m minecraft_script debug [file]
 ```
 _where [file] is a relative or absolute path to your mcs file_
 
@@ -34,7 +34,7 @@ _where [file] is a relative or absolute path to your mcs file_
 To actually build your minecraft datapack, which you can then simply drag & drop into your
 minecraft worlds, use the following command:
 ```commandline
-python -m minecraft_script build [file]
+python -m minecraft_script compile [file]
 ```
 _where [file] is a relative or absolute path to your mcs file_
 
@@ -43,7 +43,7 @@ For a list of all shell commands, you can use the following command:
 ```commandline
 python -m minecraft_script help
 ```
-If you want to simplify the usage of shell commands, you can check out [the installations page in the documentation](https://github.com/Bard-Gaming/Minecraft-Script/blob/main/documentation/installations.md).
+If you want to simplify the usage of shell commands, you can check out [the installations page in the documentation](https://github.com/Bard-Gaming/Minecraft-Script/blob/main/documentation/custom-installations.md).
 
 ## GitHub
 [**Link to GitHub Repository**](https://github.com/Bard-Gaming/Minecraft-Script)
