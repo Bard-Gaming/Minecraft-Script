@@ -10,9 +10,6 @@ Unlike Python, in most cases, whitespaces and newlines are ignored.
 Statements are separated by semicolons (``;``), and indentation is irrelevant,
 so feel free to structure your code however you desire.
 
-Cases in which whitespaces do matter, are the following:
-- []()
-
 ## Variables
 
 ### Defining a variable
