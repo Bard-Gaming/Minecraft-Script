@@ -97,7 +97,7 @@ look custom-made.
 ### Parameters
 - **click_function**: function -> Function that executes on click
 - **item_name**: str | optional -> Specifies the item's name ("Carrot on a Stick" by default)
-- **custom_model_data**: str / number | optional -> Specifies the item's custom model data
+- **custom_model_data**: string / number | optional -> Specifies the item's custom model data
 
 ### Output
 - None

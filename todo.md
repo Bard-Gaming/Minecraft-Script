@@ -56,5 +56,5 @@
     - [ ] Side note: make "true" keyword customizable in parser nodes (BooleanNode)
   - [ ] Revisit whole documentation
     - [ ] Remove obsolete/deprecated things
-    - [ ] Add new features
-    - [ ] Change "build" command to "compile"? -> Rework shell commands
+    - [x] Add documentation for all new builtin functions
+    - [x] Change "build" command to "compile"? -> Rework shell commands
