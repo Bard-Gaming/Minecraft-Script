@@ -1,7 +1,7 @@
 var iter_array = ["-1", "0", "1"];
 var saved_blocks = [];
 
-function save_blocks_local = () => {
+function save_blocks_local() {
     set saved_blocks = [];
     
     for (x in iter_array) {
@@ -13,7 +13,7 @@ function save_blocks_local = () => {
     }
 }
 
-function place_blocks_local = () => {
+function place_blocks_local() {
     for (i in range(3)) {
         for (j in range(3)) {
             var arr_index = 3*i + j;
@@ -25,24 +25,24 @@ function place_blocks_local = () => {
     }
 }
 
-function ray_particle = () => {
+function ray_particle() {
     command("particle minecraft:end_rod ~ ~ ~ 0 0 0 0 1 force @s");
 }
 
-function save_blocks_ray = () => {
+function save_blocks_ray() {
     raycast_block(save_blocks_local, 10, ray_particle);
 }
 
-function place_blocks_ray = () => {
+function place_blocks_ray() {
     raycast_block(place_blocks_local, 10, ray_particle);
 }
 
-function get_items = () => {
+function get_items() {
     give_clickable_item(save_blocks_ray, "Copy Stick");
     give_clickable_item(place_blocks_ray, "Paste Stick");
 }
 
-function print_saved_blocks = () => {
+function print_saved_blocks() {
     var loop = [0, 3, 6];
     for (i in loop) {
         log(saved_blocks[i], " | ", saved_blocks[i + 1], " | ", saved_blocks[i + 2]);

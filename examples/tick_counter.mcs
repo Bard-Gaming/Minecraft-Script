@@ -1,15 +1,15 @@
 var current_tick = 0;
 
-function get_time_item = (time, count) => {
+function get_time_item(time, count) {
     var components = concatenate("minecraft:custom_data={tick_item: 1b}, minecraft:item_name=", time);
     give_item("minecraft:cod", components, count);
 }
 
-function clear_tick_items = () => {
+function clear_tick_items() {
     command("clear @a minecraft:cod[minecraft:custom_data={tick_item: 1b}]");
 }
 
-function main = () => {
+function main() {
     clear_tick_items();
     set current_tick = current_tick + 1;
 
@@ -18,6 +18,6 @@ function main = () => {
     @a get_time_item("Minute", (current_tick / 1200) % 60 + 1);
 }
 
-function kill = () => {
+function kill() {
     clear_tick_items();
 }
