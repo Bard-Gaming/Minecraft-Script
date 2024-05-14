@@ -31,6 +31,7 @@
   - [x] BooleanNode
   - [x] GetKeyNode
   - [x] SetKeyNode
+  - [ ] UnaryNotNode
   - [ ] AttributeGetNode
   - [ ] ReturnNode
   - [ ] UnaryOperationNode
