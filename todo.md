@@ -24,7 +24,7 @@
       - [x] .length
 
 ## Compiler
-  - [x] IfConditionNode
+  - [ ] IfConditionNode
   - [x] ForLoopNode
   - [x] WhileLoopNode
   - [x] NullNode

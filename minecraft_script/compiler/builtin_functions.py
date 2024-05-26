@@ -1,5 +1,4 @@
 from .compile_types import *
-from ..common import COMMON_CONFIG
 
 function_output = tuple[tuple[str, ...], mcs_type]  # [commands, return value]
 

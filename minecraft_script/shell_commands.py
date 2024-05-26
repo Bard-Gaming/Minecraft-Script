@@ -115,25 +115,26 @@ def sh_config_set(args: list):
         exit()
 
     update_config(setting, value)
-    print(f"Updated setting {setting !r} to value {value !r}")
 
 
 def sh_config_get(args: list):
     if len(args) < 1:
         print("Minecraft Script configuration:")
         for setting, value in COMMON_CONFIG.items():
-            print(f"- {setting}: {value !r}")
+            print(f"- {setting}: {value}")
         exit()
 
     setting = args[0]
-    value = COMMON_CONFIG.get(setting)
-    if value is not None:
-        print(
-            f"Setting {setting !r} has the following value: \n"
-            f"{value !r}"
-        )
-    else:
+    value: any = COMMON_CONFIG.get(setting)
+
+    if value is None:
         print(f"Unknown setting {setting !r}.")
+        exit()
+
+    print(
+        f"Setting {setting !r} has the following value: \n"
+        f"{value !r}"
+    )
 
 
 shell_functions = {
