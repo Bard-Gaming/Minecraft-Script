@@ -192,7 +192,7 @@ class CompileInterpreter:
     def visit_BooleanNode(self, node, context: CompileContext) -> CompileResult:
         boolean: bool = node.get_value()
         mcs_obj = MCSBoolean(context)
-        value = "1b" if boolean is True else "0b"
+        value = "1" if boolean is True else "0"
 
         # add value creation command to compiled commands
         self.add_command(context.mcfunction_name, mcs_obj.save_to_storage_cmd(value))
@@ -229,7 +229,8 @@ class CompileInterpreter:
 
         commands = [
             variable_value.set_to_current_cmd(context),
-            f"data modify storage mcs_{context.uuid} variable.{variable_name} set from storage mcs_{context.uuid} current"  # NOQA
+            f"data modify storage mcs_{context.uuid} variable.{variable_name} set from storage mcs_{context.uuid} current"
+            # NOQA
         ]
         # garbage collect variable_value if it's not a variable (was only used to define current variable):
         if not isinstance(variable_value, MCSVariable):
@@ -256,7 +257,8 @@ class CompileInterpreter:
 
         commands = (
             new_value.set_to_current_cmd(context),
-            f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage mcs_{context.uuid} current",  # NOQA
+            f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage mcs_{context.uuid} current",
+        # NOQA
         )
         self.add_commands(context.mcfunction_name, commands)
 
@@ -298,7 +300,8 @@ class CompileInterpreter:
                     expression.set_to_current_cmd(context),
                     f"execute store result score .out mcs_math run data get storage mcs_{context.uuid} current 1",
                     f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
-                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{local_context.mcfunction_name}"  # NOQA
+                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{local_context.mcfunction_name}"
+                # NOQA
                 )
                 self.add_commands(context.mcfunction_name, commands)
 
@@ -324,7 +327,8 @@ class CompileInterpreter:
         init_commands = (
             f"scoreboard players set .loop_iter_{loop_id} mcs_math 0",
             iterable.set_to_current_cmd(context),
-            f"execute store result score .loop_end_{loop_id} mcs_math run data get storage mcs_{context.uuid} current.length 1",  # NOQA
+            f"execute store result score .loop_end_{loop_id} mcs_math run data get storage mcs_{context.uuid} current.length 1",
+            # NOQA
             f"function {self.datapack_id}:{local_context.mcfunction_name}",
             f"scoreboard players reset .loop_iter_{loop_id} mcs_math",  # remove to avoid clutter
             f"scoreboard players reset .loop_end_{loop_id} mcs_math",
@@ -335,8 +339,10 @@ class CompileInterpreter:
         self.add_command(macro_context.mcfunction_name, macro_cmd)
 
         loop_init_commands = (
-            f"execute store result storage mcs_{local_context.uuid} current.index int 1 run scoreboard players get .loop_iter_{loop_id} mcs_math",  # NOQA
-            f"function {self.datapack_id}:{macro_context.mcfunction_name} with storage mcs_{local_context.uuid} current",  # NOQA
+            f"execute store result storage mcs_{local_context.uuid} current.index int 1 run scoreboard players get .loop_iter_{loop_id} mcs_math",
+            # NOQA
+            f"function {self.datapack_id}:{macro_context.mcfunction_name} with storage mcs_{local_context.uuid} current",
+        # NOQA
         )
         self.add_commands(local_context.mcfunction_name, loop_init_commands)
         local_context.declare(element_name, MCSVariable(element_name, local_context))
@@ -363,7 +369,8 @@ class CompileInterpreter:
         loop_commands = (
             condition.set_to_current_cmd(loop_context),
             f"execute store result score .out mcs_math run data get storage mcs_{loop_context.uuid} current 1",
-            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",  # NOQA
+            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",
+        # NOQA
         )
         self.add_commands(loop_context.mcfunction_name, loop_commands)
 
@@ -421,7 +428,7 @@ class CompileInterpreter:
 
         return out if out.get_return() is not None else CompileResult()
 
-    # ------------------ miscellaneous ------------------ :
+    # ------------------ Operations ------------------ :
     def visit_BinaryOperationNode(self, node, context: CompileContext) -> CompileResult:
         left_value: mcs_type = self.visit(node.get_left_node(), context).get_value()
         right_value: mcs_type = self.visit(node.get_right_node(), context).get_value()
@@ -434,12 +441,29 @@ class CompileInterpreter:
             right_value.set_to_current_cmd(context),
             f"execute store result score .b mcs_math run data get storage mcs_{context.uuid} current",
             f"function {self.datapack_id}:math/{operation}",
-            f"execute store result storage mcs_{context.uuid} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",  # NOQA
+            f"execute store result storage mcs_{context.uuid} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",
+        # NOQA
         )
         self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult(result)
 
+    def visit_UnaryOperationNode(self, node, context: CompileContext) -> CompileResult:
+        operation = f"u_{node.get_operator()}"
+        root: mcs_type = self.visit(node.get_root(), context).get_value()
+
+        result = MCSBoolean(context)
+
+        commands = (
+            f"execute store result score .a mcs_math run data get storage {root.get_storage()} {root.get_nbt()}",
+            f"function {self.datapack_id}:math/{operation}",
+            f"execute store result storage {result.get_storage()} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",
+        )
+        self.add_commands(context.mcfunction_name, commands)
+
+        return CompileResult(result)
+
+    # ------------------ miscellaneous ------------------ :
     @staticmethod
     def visit_unknown(node, context):
         raise ValueError(f'Unknown node {node !r}')

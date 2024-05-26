@@ -1,13 +1,13 @@
 var is_active = true;
 
 function get_state() {
-    print(is_active);
+    log(is_active);
+}
+
+function test_print() {
+    log(--+---+---+-5);
 }
 
 function toggle_active() {
-    if (is_active) {
-        set is_active = false;
-    } else (!is_active) {
-        set is_active = true;
-    }
+    set is_active = !is_active;
 }

@@ -1,0 +1,1 @@
+scoreboard players operation .out mcs_math = .a mcs_math
