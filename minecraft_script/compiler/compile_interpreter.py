@@ -228,9 +228,7 @@ class CompileInterpreter:
         variable_value = self.visit(variable_value, context).get_value()
 
         commands = [
-            variable_value.set_to_current_cmd(context),
-            f"data modify storage mcs_{context.uuid} variable.{variable_name} set from storage mcs_{context.uuid} current"
-            # NOQA
+            f"data modify storage mcs_{context.uuid} variable.{variable_name} set from storage {variable_value.get_storage()} {variable_value.get_nbt()}",
         ]
         # garbage collect variable_value if it's not a variable (was only used to define current variable):
         if not isinstance(variable_value, MCSVariable):
@@ -255,12 +253,10 @@ class CompileInterpreter:
 
         owner_context = context.get_context_ownership(var_name)
 
-        commands = (
-            new_value.set_to_current_cmd(context),
-            f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage mcs_{context.uuid} current",
-        # NOQA
+        self.add_command(
+            context.mcfunction_name,
+            f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage {new_value.get_storage()} {new_value.get_nbt()}"
         )
-        self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult()
 
@@ -326,11 +322,10 @@ class CompileInterpreter:
 
         init_commands = (
             f"scoreboard players set .loop_iter_{loop_id} mcs_math 0",
-            iterable.set_to_current_cmd(context),
-            f"execute store result score .loop_end_{loop_id} mcs_math run data get storage mcs_{context.uuid} current.length 1",
-            # NOQA
+            f"execute store result score .loop_end_{loop_id} mcs_math run data get storage {iterable.get_storage()} {iterable.get_nbt()}.length 1",
             f"function {self.datapack_id}:{local_context.mcfunction_name}",
-            f"scoreboard players reset .loop_iter_{loop_id} mcs_math",  # remove to avoid clutter
+            # remove scoreboard values to avoid clutter:
+            f"scoreboard players reset .loop_iter_{loop_id} mcs_math",
             f"scoreboard players reset .loop_end_{loop_id} mcs_math",
         )
         self.add_commands(context.mcfunction_name, init_commands)
@@ -436,13 +431,10 @@ class CompileInterpreter:
         result: mcs_type = MCSNumber(context)
 
         commands = (
-            left_value.set_to_current_cmd(context),
-            f"execute store result score .a mcs_math run data get storage mcs_{context.uuid} current",
-            right_value.set_to_current_cmd(context),
-            f"execute store result score .b mcs_math run data get storage mcs_{context.uuid} current",
+            f"execute store result score .a mcs_math run data get storage {left_value.get_storage()} {left_value.get_nbt()}",
+            f"execute store result score .b mcs_math run data get storage {right_value.get_storage()} {right_value.get_nbt()}",
             f"function {self.datapack_id}:math/{operation}",
             f"execute store result storage mcs_{context.uuid} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",
-        # NOQA
         )
         self.add_commands(context.mcfunction_name, commands)
 
