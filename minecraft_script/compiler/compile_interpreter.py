@@ -1,5 +1,13 @@
 from .builtin_functions import builtin_functions
 from .compile_types import *
+from ..common import COMMON_CONFIG
+
+
+def add_comment(commands: tuple, comment: str) -> tuple:
+    if COMMON_CONFIG["debug_comments"] is False:
+        return commands
+
+    return (f"\n# {comment}",) + commands
 
 
 class CompileSymbols:
@@ -297,7 +305,7 @@ class CompileInterpreter:
                     f"execute store result score .out mcs_math run data get storage mcs_{context.uuid} current 1",
                     f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
                     f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{local_context.mcfunction_name}"
-                # NOQA
+                    # NOQA
                 )
                 self.add_commands(context.mcfunction_name, commands)
 
@@ -337,7 +345,7 @@ class CompileInterpreter:
             f"execute store result storage mcs_{local_context.uuid} current.index int 1 run scoreboard players get .loop_iter_{loop_id} mcs_math",
             # NOQA
             f"function {self.datapack_id}:{macro_context.mcfunction_name} with storage mcs_{local_context.uuid} current",
-        # NOQA
+            # NOQA
         )
         self.add_commands(local_context.mcfunction_name, loop_init_commands)
         local_context.declare(element_name, MCSVariable(element_name, local_context))
@@ -365,7 +373,7 @@ class CompileInterpreter:
             condition.set_to_current_cmd(loop_context),
             f"execute store result score .out mcs_math run data get storage mcs_{loop_context.uuid} current 1",
             f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",
-        # NOQA
+            # NOQA
         )
         self.add_commands(loop_context.mcfunction_name, loop_commands)
 
@@ -404,6 +412,7 @@ class CompileInterpreter:
         commands, return_value = fnc.call(self, arguments, context)
 
         if commands is not None:
+            commands = add_comment(tuple(commands), f"Function call")
             self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult(return_value)
@@ -419,6 +428,7 @@ class CompileInterpreter:
             f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
             f"execute as @{selector} at @s run function {self.datapack_id}:{local_context.mcfunction_name}",  # NOQA
         )
+        commands = add_comment(setup_commands, f"Entity selector {selector !r}")
         self.add_commands(context.mcfunction_name, setup_commands)
 
         return out if out.get_return() is not None else CompileResult()
@@ -436,6 +446,7 @@ class CompileInterpreter:
             f"function {self.datapack_id}:math/{operation}",
             f"execute store result storage mcs_{context.uuid} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",
         )
+        commands = add_comment(commands, f"Binary Operation {operation !r}")
         self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult(result)
@@ -451,6 +462,7 @@ class CompileInterpreter:
             f"function {self.datapack_id}:math/{operation}",
             f"execute store result storage {result.get_storage()} {result.get_nbt()} int 1 run scoreboard players get .out mcs_math",
         )
+        commands = add_comment(commands, f"Unary Operation {operation !r}")
         self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult(result)
