@@ -1,6 +1,7 @@
 from . import debug_code
 from .compiler import build_datapack
-from .common import COMMON_CONFIG, update_config, version
+from .common import COMMON_CONFIG, version
+from .config_utils import update_config
 
 
 def handle_arguments(arguments: list):
@@ -115,6 +116,7 @@ def sh_config_set(args: list):
         exit()
 
     update_config(setting, value)
+    print(f"Updated setting {setting !r} to value {value}")
 
 
 def sh_config_get(args: list):
