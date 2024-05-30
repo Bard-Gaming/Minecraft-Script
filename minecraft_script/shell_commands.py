@@ -82,8 +82,15 @@ def sh_compile(*args):
         args[2].lower() == 'true'
     )
 
-    with open(path, 'rt', encoding='utf-8') as file:
-        code = file.read()
+    try:
+        file = open(path, 'rt', encoding='utf-8')
+
+    except FileNotFoundError:
+        print(f"Error: Could not find file at {path !r}")
+        exit(-1)
+
+    code = file.read()
+    file.close()
 
     build_datapack(code, datapack_name, verbose)
 
