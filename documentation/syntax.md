@@ -10,6 +10,18 @@ Unlike Python, in most cases, whitespaces and newlines are ignored.
 Statements are separated by semicolons (``;``), and indentation is irrelevant,
 so feel free to structure your code however you desire.
 
+### Grammatical priorities
+Grammatical classes have a given priority, which defines which
+element gets treated first when parsing a program.
+These priorities are as follows (descending order):
+
+- Statement
+- Code Block
+- Expression
+- Atom
+
+
+
 ## Variables
 
 ### Defining a variable
@@ -89,6 +101,16 @@ log(bob[1]);  // logs 4, since bob is now [1, 4, 3]
 
 
 
+## Operations
+
+### Addition
+### Subtraction
+### Multiplication
+### Division
+### Boolean Not
+
+
+
 ## Loops
 
 ### For Loops
@@ -115,5 +137,31 @@ for (i in range(5)) {
 var blocks = ["dirt", "grass_block", "stone"];
 for (block in blocks) {
     set_block(block, "~", "~", "~");
+}
+```
+
+
+
+## Conditions
+
+### If Clause
+In Minecraft-Script, if clauses are syntactically equal
+to their JavaScript counterparts. The code block that
+follows a given boolean expression will only execute if the
+expression is evaluated to being true.
+
+#### Grammar
+- "if" "(" [expression] ")" [code block]
+
+#### Grammatical class: Statement
+
+#### Examples
+```js
+if (true) {
+    log("hello!");  // logs "hello!" in the chat
+}
+
+if (false) {
+    log("goodbye!");  // doesn't log anything since block is never executed
 }
 ```
