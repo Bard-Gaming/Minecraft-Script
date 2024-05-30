@@ -4,8 +4,12 @@ function get_state() {
     log(is_active);
 }
 
-function test_print() {
-    log(--+---+---+-5);
+function test_fnc() {
+    if (is_active) {
+        log("Program is active!");
+    } else {
+        log("Program is inactive.");
+    }
 }
 
 function toggle_active() {

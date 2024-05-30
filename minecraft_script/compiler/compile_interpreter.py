@@ -261,10 +261,8 @@ class CompileInterpreter:
 
         owner_context = context.get_context_ownership(var_name)
 
-        self.add_command(
-            context.mcfunction_name,
-            f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage {new_value.get_storage()} {new_value.get_nbt()}"
-        )
+        command = f"data modify storage mcs_{owner_context.uuid} variable.{var_name} set from storage {new_value.get_storage()} {new_value.get_nbt()}"
+        self.add_command(context.mcfunction_name, command)
 
         return CompileResult()
 
@@ -292,30 +290,39 @@ class CompileInterpreter:
     # ------------------ conditions & loops ------------------ :
     def visit_IfConditionNode(self, node, context: CompileContext) -> CompileResult:
         conditions: list[dict] = node.get_conditions()
+        local_context = CompileContext(parent=context)
+
+        init_commands = (
+            f"function {self.datapack_id}:{local_context.mcfunction_name}",  # runs the function with all conditional logic
+        )
+        init_commands = add_comment(init_commands, "If condition block")
+        self.add_commands(context.mcfunction_name, init_commands)
 
         for condition in conditions:
-            if condition.get('type') == 'if':
-                # create local context with all parent variables and create all body commands there
-                local_context = CompileContext(parent=context)
-                out: CompileResult = self.visit(condition.get('body'), local_context)
+            # create local context with all parent variables and create all body commands there
+            sublocal_context = CompileContext(parent=local_context)
+            out: CompileResult = self.visit(condition.get('body'), sublocal_context)
 
+            if condition.get('type') == 'if':
                 expression: MCSNumber = self.visit(condition.get('expression'), context).get_value()
                 commands = (
-                    expression.set_to_current_cmd(context),
-                    f"execute store result score .out mcs_math run data get storage mcs_{context.uuid} current 1",
-                    f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
-                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{local_context.mcfunction_name}"
-                    # NOQA
+                    f"execute store result score .out mcs_math run data get storage {expression.get_storage()} {expression.get_nbt()} 1",
+                    f"data modify storage mcs_{sublocal_context.uuid} variable set from storage mcs_{context.uuid} variable",
+                    f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{sublocal_context.mcfunction_name}",
+                    f"execute if score .out mcs_math matches 1 run return 0",
                 )
-                self.add_commands(context.mcfunction_name, commands)
-
-                if out.get_return() is not None:
-                    return out
+                commands = add_comment(commands, "If condition:")
+                self.add_commands(local_context.mcfunction_name, commands)
 
             else:
-                out: CompileResult = self.visit(condition.get('body'), context)
-                if out.get_return() is not None:
-                    return out
+                commands = (
+                    f"function {self.datapack_id}:{sublocal_context.mcfunction_name}",
+                )
+                commands = add_comment(commands, "Else condition:")
+                self.add_commands(local_context.mcfunction_name, commands)
+
+            if out.get_return() is not None:
+                return out
 
         return CompileResult()
 
@@ -336,16 +343,15 @@ class CompileInterpreter:
             f"scoreboard players reset .loop_iter_{loop_id} mcs_math",
             f"scoreboard players reset .loop_end_{loop_id} mcs_math",
         )
+        init_commands = add_comment(init_commands, f"For loop (variable {element_name !r})")
         self.add_commands(context.mcfunction_name, init_commands)
 
-        macro_cmd = f"$data modify storage mcs_{local_context.uuid} variable.{element_name} set from storage {iterable.get_storage()} {iterable.get_nbt()}.$(index)"  # NOQA
+        macro_cmd = f"$data modify storage mcs_{local_context.uuid} variable.{element_name} set from storage {iterable.get_storage()} {iterable.get_nbt()}.$(index)"
         self.add_command(macro_context.mcfunction_name, macro_cmd)
 
         loop_init_commands = (
             f"execute store result storage mcs_{local_context.uuid} current.index int 1 run scoreboard players get .loop_iter_{loop_id} mcs_math",
-            # NOQA
             f"function {self.datapack_id}:{macro_context.mcfunction_name} with storage mcs_{local_context.uuid} current",
-            # NOQA
         )
         self.add_commands(local_context.mcfunction_name, loop_init_commands)
         local_context.declare(element_name, MCSVariable(element_name, local_context))
@@ -375,8 +381,8 @@ class CompileInterpreter:
             f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",
             # NOQA
         )
+        loop_commands = add_comment(loop_commands, f"While loop")
         self.add_commands(loop_context.mcfunction_name, loop_commands)
-
         self.add_command(context.mcfunction_name, f"function {self.datapack_id}:{loop_context.mcfunction_name}")  # NOQA
 
         return out if out.get_return() is not None else CompileResult()
@@ -401,6 +407,7 @@ class CompileInterpreter:
             f"data modify storage mcs_{local_context.uuid} variable set from storage mcs_{context.uuid} variable",
             f"function {self.datapack_id}:{local_context.mcfunction_name}"
         )
+        commands = add_comment(commands, f"Code block (parent: {context.mcfunction_name !r})")
         self.add_commands(context.mcfunction_name, commands)  # add commands to parent context
 
         return return_value
@@ -412,7 +419,7 @@ class CompileInterpreter:
         commands, return_value = fnc.call(self, arguments, context)
 
         if commands is not None:
-            commands = add_comment(tuple(commands), f"Function call")
+            commands = add_comment(tuple(commands), "Function call")
             self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult(return_value)
