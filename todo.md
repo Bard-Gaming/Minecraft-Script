@@ -3,11 +3,13 @@
 
 ## Lexer
 - [ ] Add async while loop (keyword)
-- [ ] Fix entity selector not supporting spaces
+- [x] Make entity selector work in lexer instead of parser
+- [x] Fix entity selector not supporting spaces
 
 
 ## Parser
 - [ ] Add async while loop (variant to normal while loop)
+- [ ] Update entity selector
 
 
 ## Interpreter

@@ -53,6 +53,7 @@ class Lexer:
     def next_char(self) -> str | None:
         return self.code_input[self.current_index + 1] if self.current_index < len(self.code_input) - 2 else None
 
+    # ---------------- Special cases ---------------- :
     def make_number(self) -> Token:
         number = self.current_char
         position = (self.position_x, self.position_y)
@@ -95,6 +96,32 @@ class Lexer:
 
         return Token(string, 'TT_STRING', position)
 
+    def make_entity_selector(self) -> Token:
+        selector = self.current_char  # should be "@" char
+        self.advance()
+
+        position = self.position_x, self.position_y
+        depth = 0
+
+        while self.current_char is not None and not (depth == 0 and self.current_char == ' '):
+            if self.current_char == '[':
+                depth += 1
+            elif self.current_char == ']':
+                depth -= 1
+
+            if depth < 0:
+                raise MCSSyntaxError(f'Malformed entity selector at line {position[1]}, {position[0]}')
+
+            selector += self.current_char
+            self.advance()
+
+        if self.current_char is None:
+            raise MCSSyntaxError(f'Malformed entity selector at line {position[1]}, {position[0]}')
+        self.advance()  # skip space (is going to get skipped anyway)
+
+        return Token(selector, 'TT_SELECTOR', position)
+
+    # ---------------- Main implementation (turning code into tokens) ---------------- :
     def default_tokenize_treatment(self) -> None:
         position = (self.position_x, self.position_y)
 
@@ -140,6 +167,9 @@ class Lexer:
 
             elif self.current_char in token_type_chars['TT_QUOTE']:
                 self.__token_list.append(self.make_string())
+
+            elif self.current_char in token_type_chars['TT_AT']:
+                self.__token_list.append(self.make_entity_selector())
 
             elif self.next_char is not None and self.current_char + self.next_char in token_type_chars['TT_COMMENT']:
                 self.advance()  # skip second "/" (self.next_char)
