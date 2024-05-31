@@ -283,6 +283,7 @@ class CompileInterpreter:
             f"data modify storage mcs_{context.uuid} current.index set from storage {key.get_storage()} {key.get_nbt()}",
             f"function {self.datapack_id}:{local_context.mcfunction_name} with storage mcs_{context.uuid} current"
         )
+        commands = add_comment(commands, f"Get key (from {atom.get_nbt() !r})")
         self.add_commands(context.mcfunction_name, commands)
 
         return CompileResult(result)
@@ -373,10 +374,10 @@ class CompileInterpreter:
         loop_context = CompileContext(parent=context)
 
         # Start loop:
-        self.add_command(
-            context.mcfunction_name,
-            f"# Run while loop:\nfunction {self.datapack_id}:{loop_context.mcfunction_name}"
-        )
+        init_cmd = f"function {self.datapack_id}:{loop_context.mcfunction_name}"
+        if COMMON_CONFIG["debug_comments"] is True:
+            init_cmd = f"# Initialize while loop:\n{init_cmd}"
+        self.add_command(context.mcfunction_name, init_cmd)
 
         # Add visit while loop body inside local context:
         out: CompileResult = self.visit(node.get_body(), loop_context)
