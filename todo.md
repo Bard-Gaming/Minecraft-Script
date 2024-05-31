@@ -38,6 +38,7 @@
   - [ ] Loops
     - [x] For loop
     - [ ] While loop
+    - [ ] Async while loop
   - [ ] Operations
     - [ ] Addition
     - [ ] Subtraction

@@ -1,0 +1,57 @@
+var is_giant = false;
+var attribute_size = 5;
+var attribute_list = [
+    "minecraft:generic.scale",
+    "minecraft:generic.max_health",
+    "minecraft:generic.jump_strength",
+    "minecraft:generic.safe_fall_distance",
+    "minecraft:generic.step_height",
+];
+
+var default_value_list = [
+    "1.0",
+    "20.0",
+    "0.42",
+    "3.0",
+    "0.6",
+];
+
+var giant_value_list = [
+    "5.0",
+    "80.0",
+    "1.0",
+    "12.0",
+    "1.6",
+];
+
+function turn_giant() {
+    var base_command = "attribute @s ";
+    var base_command_comp = " base set ";
+    for (i in range(attribute_size)) {
+        var cmd = concatenate(concatenate(base_command, attribute_list[i]), concatenate(base_command_comp, giant_value_list[i]));
+        command(cmd);
+    }
+}
+
+function turn_normal() {
+    var base_command = "attribute @s ";
+    var base_command_comp = " base set ";
+    for (i in range(attribute_size)) {
+        var cmd = concatenate(concatenate(base_command, attribute_list[i]), concatenate(base_command_comp, default_value_list[i]));
+        command(cmd);
+    }
+}
+
+function toggle_size() {
+    if (is_giant) {
+        turn_normal();
+    } else {
+        turn_giant();
+    }
+
+    set is_giant = !is_giant;
+}
+
+function get_item() {
+    give_clickable_item(toggle_size, "Gigantificator")
+}
