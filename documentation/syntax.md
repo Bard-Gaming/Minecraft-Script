@@ -20,6 +20,28 @@ These priorities are as follows (descending order):
 - Expression
 - Atom
 
+### Code blocks
+Code blocks are used to isolate part of a program within its own context.
+They are most often used with other structures, such as functions,
+[conditions](#conditions), and [loops](#loops), but they can be
+used on their own.
+
+#### Grammar
+- "{" [statement]* "}"
+
+_Note that the semicolon ``;`` after a code block is implicit, and thus not required._
+
+#### Grammatical class: Code Block
+
+#### Examples
+```js
+var text = "Hello World!";
+
+{
+    log(text);  // code blocks inherit variables from their parents
+}
+```
+
 
 
 ## Variables
