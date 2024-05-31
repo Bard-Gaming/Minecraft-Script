@@ -372,18 +372,22 @@ class CompileInterpreter:
     def visit_WhileLoopNode(self, node, context: CompileContext) -> CompileResult:
         loop_context = CompileContext(parent=context)
 
-        out: CompileResult = self.visit(node.get_body(), loop_context)  # add commands to loop context file
-
-        condition: mcs_type = self.visit(node.get_condition(), loop_context).get_value()
-        loop_commands = (
-            condition.set_to_current_cmd(loop_context),
-            f"execute store result score .out mcs_math run data get storage mcs_{loop_context.uuid} current 1",
-            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",
-            # NOQA
+        # Start loop:
+        self.add_command(
+            context.mcfunction_name,
+            f"# Run while loop:\nfunction {self.datapack_id}:{loop_context.mcfunction_name}"
         )
-        loop_commands = add_comment(loop_commands, f"While loop")
+
+        # Add visit while loop body inside local context:
+        out: CompileResult = self.visit(node.get_body(), loop_context)
+        condition: mcs_type = self.visit(node.get_condition(), loop_context).get_value()
+
+        loop_commands = (
+            f"execute store result score .out mcs_math run data get storage {condition.get_storage()} {condition.get_nbt()} 1",
+            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",
+        )
+        loop_commands = add_comment(loop_commands, f"While loop:")
         self.add_commands(loop_context.mcfunction_name, loop_commands)
-        self.add_command(context.mcfunction_name, f"function {self.datapack_id}:{loop_context.mcfunction_name}")  # NOQA
 
         return out if out.get_return() is not None else CompileResult()
 
