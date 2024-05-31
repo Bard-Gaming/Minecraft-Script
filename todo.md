@@ -1,61 +1,51 @@
 # MCS Todo list
 
-## Parser
-  - [x] Rework ParserNode parent class
-    - [x] Rework every parser node to fit new parent class
-    - [x] Make sure everything still has the same functionality
 
-  - [x] SetKeyNode
-    - [x] Node
-    - [x] Parser Implementation
-  - [x] AttributeGetNode
-    - [x] Node
-    - [x] Parser implementation
+## Lexer
+- [ ] Add async while loop (keyword)
+- [ ] Fix entity selector not supporting spaces
+
+
+## Parser
+- [ ] Add async while loop (variant to normal while loop)
+
 
 ## Interpreter
-  - [x] SetKeyNode
-    - [x] Iterable implementation
-    - [x] Interpreter implementation
+- [ ] Add async while loop (exact same as normal while loop)
 
-  - [x] Attributes/methods
-    - [x] AttributeGetNode
-    - [x] List
-      - [x] .append()
-      - [x] .length
 
 ## Compiler
-  - [ ] IfConditionNode
-  - [x] ForLoopNode
-  - [x] WhileLoopNode
-  - [x] NullNode
-  - [x] BooleanNode
-  - [x] GetKeyNode
-  - [x] SetKeyNode
-  - [x] UnaryOperationNode
-  - [ ] AttributeGetNode
-  - [ ] ReturnNode
-  - [ ] UnaryOperationNode
+- [ ] Add async while loop (uses a function subscribed to tick.mcfunction)
 
 
-  - [ ] Fix EntitySelectorNode bug with variable declaration
-  - [ ] Make a separate file for CompileContext (better for import + helps with clutter)
-  - [ ] Separate base main and init functions from compiler into its own file
+## Shell Commands
+- [ ] Update ``compile`` command
+  - [ ] Change args to \<path> \[\<datapack name>] \[\<output path>]
+  - [ ] Added errors in case a path doesn't exist
+- [ ] Add config for verbose option
+- [ ] Add config for default output path
 
-
-  - [x] List implementation
-    - [x] Data mcjson dict
-    - [x] "length" (key) element for list length
-
-
-  - [x] Builtin functions
-    - [x] log() -> ``tellraw @a {"storage":"mcs_context_id", "nbt":"variable.name"}``
-    - [x] command() function to run raw minecraft commands
-    - [x] get_block() function to get block located at given x, y, z coordinates
 
 ## Documentation
-  - [ ] Add page on customizing the language
-    - [ ] Side note: make "true" keyword customizable in parser nodes (BooleanNode)
-  - [ ] Revisit whole documentation
-    - [ ] Remove obsolete/deprecated things
-    - [x] Add documentation for all new builtin functions
-    - [x] Change "build" command to "compile"? -> Rework shell commands
+- [ ] Finish syntax documentation
+  - [ ] Special functions (main, init, kill)
+  - [ ] Code blocks (context)
+  - [ ] Conditionals
+    - [x] If clause
+    - [ ] Else clause
+  - [ ] Loops
+    - [x] For loop
+    - [ ] While loop
+  - [ ] Operations
+    - [ ] Addition
+    - [ ] Subtraction
+    - [ ] Multiplication
+    - [ ] Division
+    - [ ] Modulus
+    - [ ] Equality
+    - [ ] Inequality (LESSER, LEQ, GEQ, GREATER)
+    - [ ] Boolean Not
+  - [ ] Entity selection
+
+
+- [ ] Finish data types documentation
