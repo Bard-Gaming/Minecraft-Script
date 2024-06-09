@@ -2,7 +2,7 @@
 
 
 ## Lexer
-- [ ] Add async while loop (keyword)
+- [x] Add async while loop (keyword)
 - [x] Make entity selector work in lexer instead of parser
 - [x] Fix entity selector not supporting spaces
 

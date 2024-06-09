@@ -7,8 +7,9 @@
   "else"     : "TT_ELSE_CONDITIONAL",
 
   "for"      : "TT_FOR_LOOP",
-  "while"    : "TT_WHILE_LOOP",
   "in"       : "TT_IN",
+  "while"    : "TT_WHILE_LOOP",
+  "async"    : "TT_ASYNC",
 
   "function" : "TT_FUNC_DEFINE",
   "return"   : "TT_RETURN",
