@@ -7,10 +7,14 @@ from shutil import copyfile
 
 
 class Compiler:
-    def __init__(self, ast: list, datapack_name: str):
+    def __init__(self, ast: list, datapack_name: str, output_path: str, verbose: bool):
         self.ast = ast
         self.datapack_name = datapack_name
         self.datapack_id = datapack_name.lower().replace(' ', '_')
+        self.output_path = output_path
+        self.verbose = verbose
+
+        self.root_folder = f"{self.output_path}/{self.datapack_name}"
 
     def make_init_file(self):
         text = (
@@ -26,7 +30,7 @@ class Compiler:
             f"function {self.datapack_id}:user_functions/init\n"  # call user-defined init
         )
 
-        with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file:
+        with open(f'{self.root_folder}/data/{self.datapack_id}/functions/init.mcfunction', 'xt') as init_file:
             init_file.write(text)
 
     def make_main_file(self):
@@ -42,7 +46,7 @@ class Compiler:
             f"function {self.datapack_id}:user_functions/main\n"  # call user-defined main
         )
 
-        with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file:
+        with open(f'{self.root_folder}/data/{self.datapack_id}/functions/main.mcfunction', 'xt') as main_file:
             main_file.write(text)
 
     def make_kill_file(self):
@@ -62,7 +66,7 @@ class Compiler:
             f"datapack disable \"file/{self.datapack_name}\"\n"
         )
 
-        with open(f'{self.datapack_name}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file:
+        with open(f'{self.root_folder}/data/{self.datapack_id}/functions/kill.mcfunction', 'xt') as kill_file:
             kill_file.write(text)
 
     def make_click_item_check_file(self):
@@ -73,7 +77,7 @@ class Compiler:
             f"function {self.datapack_id}:clickable_items/run with storage mcs_click\n"
         )
 
-        click_path = f'{self.datapack_name}/data/{self.datapack_id}/functions/clickable_items'
+        click_path = f'{self.root_folder}/data/{self.datapack_id}/functions/clickable_items'
         mkdir(click_path)  # create clickable_items directory
 
         with open(f'{click_path}/check.mcfunction', 'xt') as check_file:
@@ -83,24 +87,24 @@ class Compiler:
             run_file.write(f"$function {self.datapack_id}:clickable_items/$(id)\n")
 
     def import_math_files(self):
-        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/math')
+        mkdir(f'{self.root_folder}/data/{self.datapack_id}/functions/math')
         for filename in listdir(f'{module_folder}/compiler/build_templates/math'):
             copyfile(
                 f'{module_folder}/compiler/build_templates/math/{filename}',
-                f'{self.datapack_name}/data/{self.datapack_id}/functions/math/{filename}'
+                f'{self.root_folder}/data/{self.datapack_id}/functions/math/{filename}'
             )
 
     def import_builtins_files(self):
-        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins')
+        mkdir(f'{self.root_folder}/data/{self.datapack_id}/functions/builtins')
         for filename in listdir(f'{module_folder}/compiler/build_templates/builtins'):
             copyfile(
                 f'{module_folder}/compiler/build_templates/builtins/{filename}',
-                f'{self.datapack_name}/data/{self.datapack_id}/functions/builtins/{filename}'
+                f'{self.root_folder}/data/{self.datapack_id}/functions/builtins/{filename}'
             )
 
     def import_tags_folder(self):
         module_tags_folder = f'{module_folder}/compiler/build_templates/tags'
-        datapack_tags_folder = f'{self.datapack_name}/data/{self.datapack_id}/tags'
+        datapack_tags_folder = f'{self.root_folder}/data/{self.datapack_id}/tags'
 
         mkdir(datapack_tags_folder)
         for directory_name in listdir(module_tags_folder):
@@ -114,111 +118,113 @@ class Compiler:
                     f'{current_datapack_folder}/{file_name}'
                 )
 
-    def generate_builtin_functions(self, verbose: bool):
-        if verbose:
+    def generate_builtin_functions(self):
+        if self.verbose:
             print('\rBuilding built-in functions...', end="")
 
         self.make_init_file()
-        if verbose:
+        if self.verbose:
             print('\rBuilding built-in functions... 17%', end="")
 
         self.make_main_file()
-        if verbose:
+        if self.verbose:
             print('\rBuilding built-in functions... 33%', end="")
 
         self.make_kill_file()
-        if verbose:
+        if self.verbose:
             print('\rBuilding built-in functions... 50%', end="")
 
         self.import_math_files()
-        if verbose:
+        if self.verbose:
             print('\rBuilding built-in functions... 67%', end="")
 
         self.import_builtins_files()
-        if verbose:
+        if self.verbose:
             print('\rBuilding built-in functions... 83%', end="")
 
         self.make_click_item_check_file()
-        if verbose:
+        if self.verbose:
             print('\rBuilding builtin-in functions... Done!')
 
-    def build(self, verbose: bool = True):
+    def build(self):
         start_time = time()  # keep track of start time
 
-        if verbose:
+        if self.verbose:
             print(f'Building with name "{self.datapack_name}" (id: "{self.datapack_id}")')
 
         try:
-            mkdir(self.datapack_name)  # main folder
+            mkdir(f"{self.root_folder}")  # create root folder
         except FileExistsError:
             print(text_error(f"Can't build file: {self.datapack_name !r} folder exists already!"))
             exit()
 
-        mkdir(f'{self.datapack_name}/data')
+        mkdir(f'{self.root_folder}/data')
 
         # minecraft folders:
-        if verbose:
+        if self.verbose:
             print('Creating default folders...', end=" ")
 
-        mkdir(f'{self.datapack_name}/data/minecraft')
-        mkdir(f'{self.datapack_name}/data/minecraft/tags')
-        mkdir(f'{self.datapack_name}/data/minecraft/tags/functions')
+        mkdir(f'{self.root_folder}/data/minecraft')
+        mkdir(f'{self.root_folder}/data/minecraft/tags')
+        mkdir(f'{self.root_folder}/data/minecraft/tags/functions')
 
         # datapack folders:
-        mkdir(f'{self.datapack_name}/data/{self.datapack_id}')
-        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions')
-        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/code_blocks')
-        mkdir(f'{self.datapack_name}/data/{self.datapack_id}/functions/user_functions')
+        mkdir(f'{self.root_folder}/data/{self.datapack_id}')
+        mkdir(f'{self.root_folder}/data/{self.datapack_id}/functions')
+        mkdir(f'{self.root_folder}/data/{self.datapack_id}/functions/code_blocks')
+        mkdir(f'{self.root_folder}/data/{self.datapack_id}/functions/user_functions')
 
         # default stuff
-        if verbose:
+        if self.verbose:
             print('Done!')
             print('Building Templates...', end=" ")
 
         with (
             open(f'{module_folder}/compiler/build_templates/pack.mcmeta', 'rt') as template_file,
-            open(f'{self.datapack_name}/pack.mcmeta', 'xt') as output_file
+            open(f'{self.root_folder}/pack.mcmeta', 'xt') as output_file
         ):
             template_text = template_file.read()
             # copy pack.mcmeta template to datapack with correct pack_format version:
             output_file.write(template_text.replace("PACK_FORMAT", COMMON_CONFIG["pack_format"]))
 
         # Copy datapack icon img:
-        copyfile(f'{module_folder}/compiler/build_templates/pack.png', f'{self.datapack_name}/pack.png')
+        copyfile(f'{module_folder}/compiler/build_templates/pack.png', f'{self.root_folder}/pack.png')
 
         # Minecraft function tags
 
         with (
             open(f'{module_folder}/compiler/build_templates/function_tags.json', 'rt') as template_file,
-            open(f'{self.datapack_name}/data/minecraft/tags/functions/tick.json', 'xt') as tick_file,
-            open(f'{self.datapack_name}/data/minecraft/tags/functions/load.json', 'xt') as load_file
+            open(f'{self.root_folder}/data/minecraft/tags/functions/tick.json', 'xt') as tick_file,
+            open(f'{self.root_folder}/data/minecraft/tags/functions/load.json', 'xt') as load_file
         ):
             template_content = template_file.read()
             tick_file.write(template_content.replace('NAME', self.datapack_id).replace('FILETYPE', 'main'))
             load_file.write(template_content.replace('NAME', self.datapack_id).replace('FILETYPE', 'init'))
 
-        if verbose:
+        if self.verbose:
             print("Done!")
 
-        self.generate_builtin_functions(verbose)
+        self.generate_builtin_functions()
 
-        if verbose:
+        # Tags folder:
+        if self.verbose:
             print("Generating datapack tags...", end=" ")
         self.import_tags_folder()
-        if verbose:
+        if self.verbose:
             print("Done!")
 
-        if verbose:
+        # Functions folder and mcfunction files:
+        if self.verbose:
             print("Compiling program...", end=" ")
         mcs_compile(
             self.ast,
-            f'{self.datapack_name}/data/{self.datapack_id}/functions',
+            f'{self.root_folder}/data/{self.datapack_id}/functions',
             self.datapack_id
         )
-        if verbose:
+        if self.verbose:
             print("Done!")
 
         elapsed_time = time() - start_time
 
-        if verbose:
+        if self.verbose:
             print(f'Finished compiling {self.datapack_name}! Time Elapsed: {elapsed_time: 0.3f}s')

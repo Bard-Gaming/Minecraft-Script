@@ -21,12 +21,12 @@
 
 
 ## Shell Commands
-- [ ] Update ``compile`` command
-  - [ ] Change args to \<path> \[\<datapack name>] \[\<output path>]
-  - [ ] Added errors in case a path doesn't exist
-- [ ] Add config for verbose option
-- [ ] Add config for default output path
-
+- [x] Update ``compile`` command
+  - [x] Change args to \<path> \[\<datapack name>] \[\<output path>]
+  - [x] Added errors in case a path doesn't exist
+- [x] Add config for verbose option
+- [x] Add config for default output path
+- [ ] Add ``config default`` command to reset config to default (needs confirmation)
 
 ## Documentation
 - [ ] Finish syntax documentation

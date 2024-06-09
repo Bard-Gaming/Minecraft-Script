@@ -2,6 +2,7 @@ from . import debug_code
 from .compiler import build_datapack
 from .common import COMMON_CONFIG, version
 from .config_utils import update_config
+import os.path
 
 
 def handle_arguments(arguments: list):
@@ -25,10 +26,10 @@ sh_help_message = """
     
 - debug <path>: debug the minecraft script file found at the given path.
     
-- compile <path> [<datapack name>] [<verbose>]: compile the associated
+- compile <path> [<datapack name>] [<output path>]: compile the associated
 mcs file into a datapack. The resulting datapack folder will be named after
-the mcs file, unless a datapack name is specified. The verbose argument
-specifies whether or not process information is to be displayed or not.
+the mcs file, unless a datapack name is specified. The output path argument
+specifies where the datapack should be generated (default to current path).
 
 - config set <setting> <value>: Overwrite specified setting in config
 to the new value.
@@ -65,6 +66,7 @@ def sh_debug(*args):
 
 
 def sh_compile(*args):
+    # Manage args & parameters:
     arg_count = len(args)
     if arg_count < 1:
         print("No path specified to compile.")
@@ -76,23 +78,28 @@ def sh_compile(*args):
         if arg_count < 2 else
         args[1]
     )
-    verbose: bool = (
-        True
+    output_path: str = (
+        "."  # default is current path
         if arg_count < 3 else
-        args[2].lower() == 'true'
+        args[2].replace("\\", '/').rstrip("/")
     )
 
-    try:
-        file = open(path, 'rt', encoding='utf-8')
+    verbose = COMMON_CONFIG["verbose"]
 
-    except FileNotFoundError:
+    # Check if given paths are valid:
+    if not os.path.isfile(path):
         print(f"Error: Could not find file at {path !r}")
         exit(-1)
 
-    code = file.read()
-    file.close()
+    if not os.path.isdir(output_path):
+        print(f"Error: Output path is not a directory ({output_path !r})")
+        exit(-1)
 
-    build_datapack(code, datapack_name, verbose)
+    # Build datapack
+    with open(path, 'rt', encoding='utf-8') as mcs_file:
+        code = mcs_file.read()
+
+    build_datapack(code, datapack_name, output_path, verbose)
 
 
 def sh_config(*args):
