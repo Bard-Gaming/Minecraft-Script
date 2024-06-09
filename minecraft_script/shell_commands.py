@@ -79,7 +79,7 @@ def sh_compile(*args):
         args[1]
     )
     output_path: str = (
-        "."  # default is current path
+        COMMON_CONFIG["default_output_path"]
         if arg_count < 3 else
         args[2].replace("\\", '/').rstrip("/")
     )
