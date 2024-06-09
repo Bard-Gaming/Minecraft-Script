@@ -26,7 +26,7 @@
   - [x] Added errors in case a path doesn't exist
 - [x] Add config for verbose option
 - [x] Add config for default output path
-- [ ] Add ``config default`` command to reset config to default (needs confirmation)
+- [x] Add ``config default`` command to reset config to default (needs confirmation)
 
 ## Documentation
 - [ ] Finish syntax documentation

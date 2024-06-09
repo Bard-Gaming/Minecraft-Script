@@ -3,6 +3,42 @@ import os.path
 from .common import COMMON_CONFIG, module_folder
 
 
+def reset_config() -> None:
+    default_config = {
+        "pack_format": "41",
+        "debug_comments": True,
+        "verbose": True,
+        "default_output_path": "."
+    }
+
+    json_file_content: str = (
+        json.dumps(default_config)
+        .replace("{", "{\n\t")
+        .replace("}", "\n}")
+        .replace(", ", ",\n\t")
+    )
+
+    with open(f"{module_folder}/config.json", "wt", encoding="utf-8") as file:
+        file.write(json_file_content)
+
+
+def update_config(setting: str, value: str) -> None:
+    value_wrapper_fnc = config_value_wrapper[setting]
+    py_value = value_wrapper_fnc(value)
+    COMMON_CONFIG[setting] = py_value
+
+    json_file_content: str = (
+        json.dumps(COMMON_CONFIG)
+        .replace("{", "{\n\t")
+        .replace("}", "\n}")
+        .replace(", ", ",\n\t")
+    )
+
+    with open(f"{module_folder}/config.json", "wt", encoding="utf-8") as file:
+        file.write(json_file_content)
+
+
+# ----------------- CONFIG VALUE UPDATE CHECKS ----------------- :
 def config_boolean_check(value: str, setting: str) -> bool:
     py_value = value.lower().capitalize()
 
@@ -20,22 +56,6 @@ def config_path_check(value: str, setting: str) -> str:
         exit(-1)
 
     return path
-
-
-def update_config(setting: str, value: str) -> None:
-    value_wrapper_fnc = config_value_wrapper[setting]
-    py_value = value_wrapper_fnc(value)
-    COMMON_CONFIG[setting] = py_value
-
-    json_file_content: str = (
-        json.dumps(COMMON_CONFIG)
-        .replace("{", "{\n\t")
-        .replace("}", "\n}")
-        .replace(", ", ",\n\t")
-    )
-
-    with open(f"{module_folder}/config.json", "wt", encoding="utf-8") as file:
-        file.write(json_file_content)
 
 
 config_value_wrapper = {

@@ -1,7 +1,7 @@
 from . import debug_code
 from .compiler import build_datapack
 from .common import COMMON_CONFIG, version
-from .config_utils import update_config
+from .config_utils import update_config, reset_config
 import os.path
 
 
@@ -37,6 +37,8 @@ to the new value.
 - config get [<setting>]: prints out specified settings' value. If no setting
 is specified, all settings with their associated values will be shown.
 
+- config default: Resets all config values to their default values.
+
 #-----------------------------------------------------------------------#
 """
 
@@ -53,7 +55,7 @@ def sh_default() -> None:
     exit()
 
 
-def sh_debug(*args):
+def sh_debug(*args) -> None:
     if len(args) < 1:
         print("No path specified to debug.")
         exit()
@@ -65,7 +67,7 @@ def sh_debug(*args):
     debug_code(code)  # run code only after closing file
 
 
-def sh_compile(*args):
+def sh_compile(*args) -> None:
     # Manage args & parameters:
     arg_count = len(args)
     if arg_count < 1:
@@ -102,7 +104,7 @@ def sh_compile(*args):
     build_datapack(code, datapack_name, output_path, verbose)
 
 
-def sh_config(*args):
+def sh_config(*args) -> None:
     arg_count = len(args)
     args = list(args)
     if arg_count < 1:
@@ -111,14 +113,14 @@ def sh_config(*args):
 
     arg_literal = args.pop(0)
 
-    if arg_literal in ("set", "get"):
+    if arg_literal in ("set", "get", "default"):
         eval(f"sh_config_{arg_literal}(args)")
     else:
         print(f"Invalid argument {arg_literal !r}. Use the \"help\" command for more information.")
         exit()
 
 
-def sh_config_set(args: list):
+def sh_config_set(args: list) -> None:
     if len(args) < 2:
         print("Invalid arguments. Use the \"help\" command for more information.")
         exit()
@@ -130,20 +132,21 @@ def sh_config_set(args: list):
         exit()
 
     update_config(setting, value)
-    print(f"Updated setting {setting !r} to value {value}")
+    print(f"Updated setting {setting !r} to value {value !r}")
 
 
-def sh_config_get(args: list):
+def sh_config_get(args: list) -> None:
     if len(args) < 1:
         print("Minecraft Script configuration:")
         for setting, value in COMMON_CONFIG.items():
-            print(f"- {setting}: {value}")
+            print(f"- {setting}: {value !r}")
         exit()
 
     setting = args[0]
-    value: any = COMMON_CONFIG.get(setting)
+    nonexistent = object()
+    value: any = COMMON_CONFIG.get(setting, nonexistent)
 
-    if value is None:
+    if value is nonexistent:
         print(f"Unknown setting {setting !r}.")
         exit()
 
@@ -151,6 +154,15 @@ def sh_config_get(args: list):
         f"Setting {setting !r} has the following value: \n"
         f"{value !r}"
     )
+
+
+def sh_config_default(args: list) -> None:
+    confirm = input("Reset whole config to default values? (Y/N): ").lower().strip(" ")
+    if confirm != "y":
+        return
+
+    reset_config()
+    print("Successfully reset config to its default state")
 
 
 shell_functions = {
