@@ -162,6 +162,9 @@ class Parser:
         elif self.current_token.matches('TT_WHILE_LOOP'):
             return self.while_loop()
 
+        elif self.current_token.matches('TT_ASYNC'):
+            return self.async_statement()
+
         elif self.current_token.matches('TT_FOR_LOOP'):
             return self.for_loop()
 
@@ -517,3 +520,19 @@ class Parser:
         statement = self.statement()
 
         return EntitySelectorNode(selector_token.value, statement, selector_token.get_position())
+
+    def async_statement(self):
+        pos_x, pos_y = self.current_token.get_position()
+        self.advance()  # skip "async" keyword token
+
+        if self.current_token.matches("TT_WHILE_LOOP"):
+            return self.async_while_loop()
+
+        # No return -> invalid syntax, so raise error:
+        raise MCSSyntaxError(f"Invalid use of \"async\" keyword (line {pos_y}, {pos_x})")
+
+    def async_while_loop(self) -> AsyncWhileLoopNode:
+        while_loop_node = self.while_loop()  # syntactically the same as normal while loop
+        return AsyncWhileLoopNode(while_loop_node.condition, while_loop_node.body, while_loop_node.position)
+
+

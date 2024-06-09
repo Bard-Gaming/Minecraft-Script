@@ -8,7 +8,7 @@
 
 
 ## Parser
-- [ ] Add async while loop (variant to normal while loop)
+- [x] Add async while loop (variant to normal while loop)
 - [x] Update entity selector
 
 

@@ -321,6 +321,25 @@ class WhileLoopNode(ParserNode):
         return f"WhileLoopNode({self.condition !r}, {self.body !r}, {self.position !r})"
 
 
+class AsyncWhileLoopNode(ParserNode):
+    def __init__(self, condition: ParserNode, body: ParserNode, position: tuple[int, int]):
+        self.condition = condition
+        self.body = body
+        self.position = position
+
+    def get_condition(self) -> ParserNode:
+        return self.condition
+
+    def get_body(self) -> ParserNode:
+        return self.body
+
+    def get_position(self) -> tuple[int, int]:
+        return self.position
+
+    def __repr__(self) -> str:
+        return f"AsyncWhileLoopNode({self.condition !r}, {self.body !r}, {self.position !r})"
+
+
 class ForLoopNode(ParserNode):
     def __init__(self, iterable: ParserNode, child_name: Token, body: ParserNode, position: tuple[int, int]):
         self.iterable = iterable
