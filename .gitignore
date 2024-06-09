@@ -1,5 +1,6 @@
 .idea/
 twine_upload
+setup.py
 test_file.py
 minecraft_script/__pycache__/
 minecraft_script/lexer/__pycache__/
