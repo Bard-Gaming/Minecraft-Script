@@ -17,7 +17,7 @@
 
 
 ## Compiler
-- [ ] Add async while loop (uses a function subscribed to tick.mcfunction)
+- [x] Add async while loop (uses a function subscribed to tick.mcfunction)
 
 
 ## Shell Commands

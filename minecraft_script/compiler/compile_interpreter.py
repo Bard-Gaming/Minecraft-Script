@@ -3,11 +3,17 @@ from .compile_types import *
 from ..common import COMMON_CONFIG
 
 
-def add_comment(commands: tuple, comment: str) -> tuple:
+def add_comment(commands: tuple | list | str, comment: str) -> tuple | str:
+    if not isinstance(commands, (tuple, list, str)):
+        raise ValueError("Commands have to be tuple, list, or str")
+
     if COMMON_CONFIG["debug_comments"] is False:
         return commands
 
-    return (f"\n# {comment}",) + commands
+    if isinstance(commands, (tuple, list)):
+        return (f"\n# {comment}",) + commands
+
+    return f"\n# {comment}\n" + commands  # commands is str
 
 
 class CompileSymbols:
@@ -379,7 +385,7 @@ class CompileInterpreter:
             init_cmd = f"# Initialize while loop:\n{init_cmd}"
         self.add_command(context.mcfunction_name, init_cmd)
 
-        # Add visit while loop body inside local context:
+        # Add while loop body inside local context:
         out: CompileResult = self.visit(node.get_body(), loop_context)
         condition: mcs_type = self.visit(node.get_condition(), loop_context).get_value()
 
@@ -391,6 +397,54 @@ class CompileInterpreter:
         self.add_commands(loop_context.mcfunction_name, loop_commands)
 
         return out if out.get_return() is not None else CompileResult()
+
+    def visit_AsyncWhileLoopNode(self, node, context: CompileContext) -> CompileResult:
+        loop_context = CompileContext(parent=context)
+        schedule_context = CompileContext(parent=context)
+        selector_context = CompileContext(parent=context)
+        condition_context = CompileContext(parent=context)
+        selector_id = generate_uuid()
+
+        out: CompileResult = self.visit(node.get_body(), loop_context)
+        condition: mcs_type = self.visit(node.get_condition(), condition_context).get_value()
+
+        # Initialize loop:
+        loop_init_cmd = f"function {self.datapack_id}:{condition_context.mcfunction_name}"
+        loop_init_cmd = add_comment(loop_init_cmd, f"Initialize async while loop:")
+        self.add_command(context.mcfunction_name, loop_init_cmd)
+
+        # Check condition; if true, run while loop iteration
+        condition_commands = (
+            f"execute store result score .out mcs_math run data get storage {condition.get_storage()} {condition.get_nbt()} 1",
+            f"execute if score .out mcs_math matches 1 run function {self.datapack_id}:{loop_context.mcfunction_name}",
+        )
+        loop_condition_commands = add_comment(condition_commands, f"Async While Loop (condition segment - {context.mcfunction_name !r}):")
+        self.add_commands(condition_context.mcfunction_name, loop_condition_commands)
+
+        # Call scheduler in loop mcfunction file
+        loop_commands = (
+            f"tag @s add {selector_id}",
+            f"schedule function {self.datapack_id}:{schedule_context.mcfunction_name} 1t replace",
+        )
+        loop_commands = add_comment(loop_commands,
+                                    f"Async While Loop (initialize loop repetition - {context.mcfunction_name !r}):")
+        self.add_commands(loop_context.mcfunction_name, loop_commands)
+
+        # Run entity selector manager function from scheduler:
+        # TODO: Fix loop stopping when entities are dead
+        schedule_cmd = f"execute as @e[tag={selector_id}] at @s run function {self.datapack_id}:{selector_context.mcfunction_name}"
+        schedule_cmd = add_comment(schedule_cmd, f"Async While Loop (Scheduler - {context.mcfunction_name !r}):")
+        self.add_command(schedule_context.mcfunction_name, schedule_cmd)
+
+        # Make affected entities repeat loop:
+        selector_commands = (
+            f"tag @s remove {selector_id}",
+            f"function {self.datapack_id}:{condition_context.mcfunction_name}",
+        )
+        selector_commands = add_comment(selector_commands, f"Async While Loop (Entity selection - {context.mcfunction_name !r}):")
+        self.add_commands(selector_context.mcfunction_name, selector_commands)
+
+        return out
 
     # ------------------ scope nodes ------------------ :
     def visit_MultilineCodeNode(self, node, context: CompileContext) -> CompileResult:

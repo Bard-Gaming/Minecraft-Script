@@ -13,11 +13,8 @@ function test_fnc() {
 }
 
 function run_until_inactive() {
-    var e = 1;
-    while (e < 10) {
-        // command("particle end_rod ~ ~2.5 ~ 0 0 0 0 1 force");
-        log("hi");
-        set e = e + 1;
+    async while (is_active) {
+        command("particle end_rod ~ ~2.5 ~ 0 0 0 0 1 force");
     }
 }
 
