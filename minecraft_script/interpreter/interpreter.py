@@ -227,6 +227,9 @@ class Interpreter:
             if visit_value.get_return_value() is not None:
                 return visit_value  # already RuntimeResult, don't need to convert
 
+    def visit_AsyncWhileLoopNode(self, node, context: InterpreterContext) -> RuntimeResult:
+        return self.visit_WhileLoopNode(node, context)  # works same as while loop in interpreter
+
     def visit_ForLoopNode(self, node, context: InterpreterContext) -> RuntimeResult:
         iterable = self.visit(node.get_iterable(), context).get_value()
         child_name = node.get_child_name()

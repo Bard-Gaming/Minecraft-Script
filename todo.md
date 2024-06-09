@@ -13,7 +13,7 @@
 
 
 ## Interpreter
-- [ ] Add async while loop (exact same as normal while loop)
+- [x] Add async while loop (exact same as normal while loop)
 
 
 ## Compiler
