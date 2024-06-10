@@ -32,9 +32,9 @@
 - [ ] Finish syntax documentation
   - [ ] Special functions (main, init, kill)
   - [x] Code blocks (context)
-  - [ ] Conditionals
+  - [x] Conditionals
     - [x] If clause
-    - [ ] Else clause
+    - [x] Else clause
   - [x] Loops
     - [x] For loop
     - [x] While loop

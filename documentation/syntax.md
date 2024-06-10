@@ -360,8 +360,41 @@ expression is evaluated to being true.
 if (true) {
     log("hello!");  // logs "hello!" in the chat
 }
+```
 
+```js
 if (false) {
     log("goodbye!");  // doesn't log anything since block is never executed
+}
+```
+
+
+### Else Clause
+Else clauses execute if all previous conditions are false.
+
+#### Grammar
+- "else" "if" "(" [expression] ")" [code block]
+- "else" [code block]
+
+#### Grammatical class: Statement
+
+#### Examples
+```js
+if (false) {
+    log("goodye!");
+} else {
+    log("hello!);  // logs "hello! since all previous conditions are false
+}
+```
+
+```js
+var bob = 3;
+
+if (bob == 1) {
+    log("bob is 1!");  // doesn't log
+} else if (bob == 2) {
+    log("bob is 2!");  // doesn't log
+} else {
+    log("bob is not 1 or 2!");  // logs, since bob != 2 and bob != 3
 }
 ```
