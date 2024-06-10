@@ -1,7 +1,7 @@
 import json
 from uuid import uuid4 as _uuid4
 
-version = "0.2.1"
+version = "0.2.2"
 module_folder = "/".join(__file__.split('\\')[:-1])
 
 # load Minecraft-Script configuration
