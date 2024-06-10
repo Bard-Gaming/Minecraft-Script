@@ -162,6 +162,64 @@ for (block in blocks) {
 }
 ```
 
+### While Loops
+While loops are a way of repeating a code block
+until a given condition is false. Normal while loops
+are compiled in a recursive manner, meaning they execute
+all commands in a single tick, and are bound by the
+maxCommandChainLength game rule (by default 65,536 commands),
+meaning that the loop will forcefully stop if it doesn't end before
+the limit.
+
+
+#### Grammar
+- "while" "(" [expression] ")" [code block]
+
+#### Grammatical class: Statement
+
+#### Examples
+```js
+// Log all integers between 0 and 5 (exclusive):
+var i = 0;
+while (i < 5) {
+    log(i);
+}
+```
+
+```js
+// Say "hi!" 65,536 times in a single tick
+while (true) {
+    command("say hi!")
+}
+```
+
+### Async While Loops
+Asynchronous while loops are a way of repeating
+a code block until a given condition is false. Whilst normal
+while loops are bound by the maxCommandChainLength and end in
+a single tick, asynchronous while loops can run indefinitely
+and are only repeated once every tick.
+
+#### Grammar
+- "async" "while" "(" [expression] ")" [code block]
+
+#### Grammatical class: Statement
+
+#### Examples
+```js
+// Log all integers between 0 and 5 (exclusive):
+var i = 0;
+async while (i < 5) {
+    log(i);
+}
+```
+
+```js
+// Say "hi!" every single tick
+async while (true) {
+    command("say hi!")
+}
+```
 
 
 ## Conditions
