@@ -481,3 +481,38 @@ if (bob == 1) {
     log("bob is not 1 or 2!");  // logs, since bob != 2 and bob != 3
 }
 ```
+
+
+
+## Minecraft-related syntax
+### Entity Selection
+In order to specify which entities should execute what commands,
+MCS uses a custom syntax to allow for entity selection in a seamless way.
+The selectors themselves are simply taken as granted and passed onto the
+datapack, which means they follow exactly the same syntax as Minecraft's
+entity selectors.
+
+The debugger won't check the selectors themselves, and will simply
+execute the attached statement as if no selector was present
+(since it can't access anything within Minecraft).
+
+Selectors allow for spaces and quotation marks, as well as brackets,
+since it uses a counting-based system to determine if all brackets
+were closed to determine when the selector ends.
+
+#### Grammar
+- @ \[selector] [statement]
+
+#### Grammatical Class: Statement
+
+#### Examples
+```js
+@e[type=cow, name="Bob"] command("kill @s");  // kills all cows named "Bob".
+@a[nbt={Inventory:[{id:"minecraft:stick"}]}] command("say hi!");  // makes all players with sticks say hi.
+
+// set a diamond block under every player and give them dirt
+@a {
+    give_item("minecraft:dirt");
+    set_block("~", "~-1", "~", "minecraft:diamond_block");
+}
+```

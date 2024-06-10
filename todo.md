@@ -29,7 +29,7 @@
 - [x] Add ``config default`` command to reset config to default (needs confirmation)
 
 ## Documentation
-- [ ] Finish syntax documentation
+- [x] Finish syntax documentation
   - [x] Special functions (main, init, kill)
   - [x] Code blocks (context)
   - [x] Conditionals
@@ -48,7 +48,7 @@
     - [x] Equality
     - [x] Inequality (LESSER, LEQ, GEQ, GREATER)
     - [x] Boolean Not
-  - [ ] Entity selection
+  - [x] Entity selection
 
 
 - [ ] Finish data types documentation
