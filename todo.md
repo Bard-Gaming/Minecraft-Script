@@ -30,7 +30,7 @@
 
 ## Documentation
 - [ ] Finish syntax documentation
-  - [ ] Special functions (main, init, kill)
+  - [x] Special functions (main, init, kill)
   - [x] Code blocks (context)
   - [x] Conditionals
     - [x] If clause

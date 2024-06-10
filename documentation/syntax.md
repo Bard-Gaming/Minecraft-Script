@@ -126,6 +126,89 @@ log(bob[1]);  // logs 4, since bob is now [1, 4, 3]
 
 
 
+## Functions
+### User-defined functions
+Functions allow for organizing and optimizing a program/datapack
+by isolating bits of code into their own objects. These functions
+can then be called in-game with the following syntax:
+``/function [datapack name]:user_functions/[function name]``.
+
+#### Grammar
+- "function" [name] "(" [name]* ")" [code block]
+
+#### Grammatical Class: Statement
+
+#### Examples
+```js
+function do_stuff() {
+    log("doing stuff...");
+}
+
+do_stuff();
+```
+
+```js
+function do_thing(thing) {
+    var msg = concatenate("doing ", thing);
+    log(msg);
+}
+
+do_thing("stuff");
+```
+
+### Special functions
+Minecraft-Script has some functions that allow for special
+interaction with Minecraft. These functions are constructed
+like any normal function.
+
+The "main" function is called every tick (configured in the
+datapack's tick.json file).
+
+The "init" function is called when the world is
+loaded or when the ``/reload`` function is called
+(configured in the datapack's load.json file).
+
+The "kill" function is called when the datapack's
+main "kill" function called with the command
+``/function [datapack name]:kill``. The kill function
+adds a way to disable/uninstall the datapack in such a
+way that all used storages (``/data get storage ...``),
+all used scoreboards, and in general all data associated with
+the datapack is removed.
+
+#### Grammar
+- "function" "main" "(" ")" [code block]
+- "function" "init" "(" ")" [code block]
+- "function" "kill" "(" ")" [code block]
+
+#### Grammatical Class: Statement
+
+#### Example
+```js
+function main() {
+    log("hello!");  // logs "hello!" every tick.
+}
+
+function init() {
+    log("starting greetings...");
+    // logs "starting greetings..."
+    // when the world is first loaded (before main function)
+}
+
+function kill() {
+    log("stopping greetings...");
+    // logs "stopping greetings..."
+    // when the datapack is disabled using the kill function.
+}
+```
+
+
+### Builtin-Functions
+See [builtin-functions](builtin-functions.md) for reference.
+
+
+
+
 ## Operations
 
 ### Addition
