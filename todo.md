@@ -35,19 +35,19 @@
   - [ ] Conditionals
     - [x] If clause
     - [ ] Else clause
-  - [ ] Loops
+  - [x] Loops
     - [x] For loop
-    - [ ] While loop
-    - [ ] Async while loop
-  - [ ] Operations
-    - [ ] Addition
-    - [ ] Subtraction
-    - [ ] Multiplication
-    - [ ] Division
-    - [ ] Modulus
-    - [ ] Equality
-    - [ ] Inequality (LESSER, LEQ, GEQ, GREATER)
-    - [ ] Boolean Not
+    - [x] While loop
+    - [x] Async while loop
+  - [x] Operations
+    - [x] Addition
+    - [x] Subtraction
+    - [x] Multiplication
+    - [x] Division
+    - [x] Modulus
+    - [x] Equality
+    - [x] Inequality (LESSER, LEQ, GEQ, GREATER)
+    - [x] Boolean Not
   - [ ] Entity selection
 
 

@@ -18,6 +18,9 @@ These priorities are as follows (descending order):
 - Statement
 - Code Block
 - Expression
+- Logical Comparison
+- Term
+- Factor
 - Atom
 
 ### Code blocks
@@ -126,10 +129,127 @@ log(bob[1]);  // logs 4, since bob is now [1, 4, 3]
 ## Operations
 
 ### Addition
+Simple integer addition. Using a string in an addition
+does an integer addition with the string's length
+(default Minecraft behaviour).
+
+#### Grammar
+- [factor] "+" [factor]
+
+#### Grammatical class: Term
+
+#### Example
+```js
+var bob = 1;
+log(bob + 5);  // logs 6
+```
+
+
 ### Subtraction
+Simple integer subtraction.
+
+#### Grammar
+- [factor] "-" [factor]
+
+#### Grammatical class: Term
+
+#### Example
+```js
+var bob = 5;
+log(bob - 4);  // logs 1
+```
+
+
 ### Multiplication
+Simple integer multiplication.
+
+#### Grammar
+- [atom] "*" [atom]
+
+#### Grammatical class: Factor
+
+#### Example
+```js
+var bob = 5;
+log(1 + bob * 2);  // logs 11 (follows mathematical order)
+```
+
+
 ### Division
+Euclidean division. This is the same as
+applying a normal division and then flooring the result
+down to its nearest integer.
+
+#### Grammar
+- [atom] "/" [atom]
+
+#### Grammatical class: Factor
+
+#### Example
+```js
+var bob = 5;
+log(bob / 2);  // logs 2
+```
+
+
+### Modulus
+Modulus operation. This is the same as getting
+the remainder of the Euclidean division of two integers.
+
+#### Grammar
+- [atom] "%" [atom]
+
+#### Grammatical class: Factor
+
+#### Example
+```js
+var bob = 5;
+log(bob % 2);  // logs 1 (5 = 2*2 + 1, with 1 being the remainder)
+```
+
+
+### Equality
+The equality operation checks whether two operands are
+equal in value.
+
+#### Grammar
+- [term] "==" [term]
+
+#### Grammatical class: Logical Comparison
+
+#### Example
+```js
+var bob = 5;
+log(bob == 5);  // logs 1 (integer representation of true)
+```
+
+### Inequality
+The inequality operations compare two operands
+relative to each other.
+
+#### Grammar
+- [term] "<" [term]
+- [term] "<=" [term]
+- [term] ">" [term]
+- [term] ">=" [term]
+
+#### Grammatical Class: Logical Comparison
+
 ### Boolean Not
+The boolean not operation inverts a
+given boolean value. An inverted ``true`` is
+``false``, and an inverted ``false`` is ``true``.
+
+#### Grammar
+- "!" [atom]
+
+#### Grammatical Class: Atom
+
+#### Example
+```js
+var bob = true;
+log(!bob);  // logs 0 (integer representation of false)
+```
 
 
 
