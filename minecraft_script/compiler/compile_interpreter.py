@@ -340,6 +340,7 @@ class CompileInterpreter:
 
         local_context = CompileContext(parent=context)
         macro_context = CompileContext(parent=context)
+        self.used_context_ids.add(macro_context)  # nothing is visited in macro context, and variables are copied over
         loop_id = f"{generate_uuid()}"
 
         init_commands = (
